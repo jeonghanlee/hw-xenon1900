@@ -1,9 +1,11 @@
 Tools for the Barcode input
 --------------------------
-
+# Requirement
 ```
 aptitude install qt4-default
 ```
+
+# Installation
 
 ```
 $ git clone https://github.com/zint/zint
@@ -46,7 +48,10 @@ Install the project...
 ```
 
 
-Example
+# Example
 ```
 zint --whitesp=1  --barcode=71 --output=test.png --data="test"
 ```
+# References
+* https://zint.github.io/
+* https://cloud.github.com/downloads/zint/zint/zint_manual_242.pdf
