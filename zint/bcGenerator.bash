@@ -60,26 +60,37 @@ function build_barcodes() {
 function vd() {
 
     local output_format="$1"
+    local isVar=$(checkIfVar ${output_format})
+    if [[ $isVar -eq "$NON_EXIST" ]]; then
+	output_format=${DEFAULT_OUTPUT_FORMAT}
+    fi
+    
     build_barcodes "${VD_PRE}" "${VD_CSV}" "${VD_TGT}" "$output_format"
     
 }
 
 function ff() {
     local output_format="$1"
+    local isVar=$(checkIfVar ${output_format})
+    if [[ $isVar -eq "$NON_EXIST" ]]; then
+	output_format=${DEFAULT_OUTPUT_FORMAT}
+    fi
     build_barcodes "${FF_PRE}" "${FF_CSV}" "${FF_TGT}" "$output_format"
 }
+
+arg2=$2
 
 case "$1" in
     vd)
     ##	build_vendors
-	vd "eps"
+	vd  ${arg2}
 	;;
     ff)
-	ff "eps"
+	ff ${arg2}
 	;;
     all)
-	vd "eps"
-	ff "eps"
+	vd ${arg2}
+	ff ${arg2}
 	;;
     
     *)
@@ -87,13 +98,18 @@ case "$1" in
 	echo "">&2
         echo " Barcode Generator ">&2
 	echo ""
-	echo " Usage: $0 <arg>">&2 
+	echo " Usage: $0 <ar1> <arg2>">&2 
 	echo ""
-        echo "          <arg>               : info">&2 
+        echo "          <arg1> : info">&2 
 	echo ""
-	echo "          vd      : build vendors'     BarCodes << ">&2
-	echo "          ff      :       formfactors' Barcodes << ">&2
-	echo "          all     :        all          BarCodes << ">&2
+	echo "          vd     : build vendors'     BarCodes << ">&2
+	echo "          ff     :       formfactors' Barcodes << ">&2
+	echo "          all    :        all         BarCodes << ">&2
+	echo ""
+	echo "          <arg2> : info">&2
+	echo ""
+	echo "          png    : png file (default) << ">&2
+	echo "          eps    : eps file           << ">&2
 	echo "">&2 	
 	exit 0
 esac
