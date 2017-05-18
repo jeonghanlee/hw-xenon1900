@@ -24,3 +24,5 @@ record(stringin, "$(SYSDEV)RawScanData")
     field(SCAN, "I/O Intr")
     field(PINI, "YES")
 }
+
+

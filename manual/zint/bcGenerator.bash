@@ -47,11 +47,17 @@ function build_barcodes() {
     local output_target="$3"
     local output_format="$4"
     local output_dir=${SC_TOP}/${output_target}
-
+    local image_path=""
+    local output_tex="${prefix,,}.tex"
     mkdir -p ${output_dir}
+    rm -f ${output_dir}/${output_tex}
+    touch ${output_dir}/${output_tex}
+    
     while IFS=, read id name
     do
-	zint --whitesp=${WHITE_SP} --barcode=${QR} --output=${output_dir}/${name}.${output_format} --data="${prefix}${id}-${name}" 
+	image_path=${output_dir}/${name}.${output_format}
+	zint --whitesp=${WHITE_SP} --barcode=${QR} --output=${output_dir}/${name}.${output_format} --data="${prefix},${id},${name}"
+	m4 -DIMAGE_PATH=${image_path} -DCAPTION="${prefix},${id},${name^^}" ${SC_TOP}/template/figure.m4 >> ${output_dir}/${output_tex}
     done < ${input_filename}
     
     __end_func ${func_name};

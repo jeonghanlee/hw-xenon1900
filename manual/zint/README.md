@@ -2,7 +2,7 @@ Tools for the Barcode input
 --------------------------
 # Requirement
 ```
-aptitude install qt4-default
+aptitude install qt4-default cmake
 ```
 
 # Installation
