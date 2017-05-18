@@ -1,5 +1,12 @@
-\begin{figure}
-  \centering
-  \includegraphics[height=1cm,keepaspectratio]{IMAGE_PATH}
-  \caption{CAPTION}
-\end{figure}
+\noindent
+\vspace{0.6cm}
+\begin{minipage}{.2\textwidth}
+\begin{center}
+\includegraphics[height=1cm,keepaspectratio]{IMAGE_PATH}
+\end{center}
+\end{minipage}
+\begin{minipage}{.7\textwidth}
+CAPTION
+\end{minipage}
+
+

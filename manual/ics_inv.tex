@@ -10,6 +10,9 @@
 \usepackage{essdocs}
 \usepackage[numbers]{natbib}
 \usepackage[autostyle]{csquotes}
+\usepackage{float}
+\floatstyle{boxed} 
+\restylefloat{figure}
 
 \setsecnumdepth{subsection}
 
@@ -42,7 +45,7 @@
 %% Document Title
 %%
 \title{ICS Engineering Manual}
-\subtitle{for an EPICS Archiver Appliance Deployment}
+\subtitle{for an ICS Inventory System}
 %% Document Author(s), if more than one author,
 %% use \newline instead of \\ or \linebreak in order to seperate them
 \author{Jeong Han Lee, (han.lee@esss.se)}
@@ -71,22 +74,45 @@
 
 %%% Actual Document Start at below
 \chapter{Overview}
-At European Spallation Source (ESS), the Integrated Control System (ICS) is a distributed, network-based control system that allows the facility to be operated as an integrated unit. This control system is based on EPICS for the accelerator, conventional facilities, Neutron Scattering Systems (NSS), and target subsystems. The signals from all subsystems should be collected by the EPICS framework. The EPICS Archiver Appliance {\footnote{\url{http://slacmshankar.github.io/epicsarchiver_docs/index.html}}} is selected as its signal archiver for the ESS ICS. 
 
 \section{Scope}
 \begin{itemize}
-\item The purpose of this document is to describe the engineering procedure and possibly troubleshooting about how the EPICS Archiver Appliance can be deployed within the CentOS Linux environment. 
-\item This document attempts to maintain consistency with existing the ICS handbook~\cite{ESS006763} as much as possible.
+\item The purpose of this document is to describe how the ICS inventory system works.
+\item The purpose of this document is to provide the predefined bar codes in order to help users to stock any equipmen with only given bar code scanner.
 \end{itemize}
 
 \section{Target Audience}
-This document is targeted to ICS engineers and technical stakeholders of the ESS Archiver Appliance. It is assumed that the target audience has a technical background in the EPICS Archiver Appliance, the EPICS development, and a Linux environment.
+This document is targeted to ICS engineers and technical stakeholders of the ICS inventory system. 
 
-\chapter{System Environment}
-%% Before describing the engineering procedure for an EEE integration of the MRF PCIe-EVR-300 board, it is mandatory to have proper system environment that consists of specific hardware and software lists. Here we will show the hardware and software lists, their block diagrams, and their setup in the ICS lab at ESS. The information shown in this chapter is used in the ICS Lab at ESS.
+\chapter{Frequently Usage Case}
+\section{MTCA}
+\subsection{MTCA IOxOS IFC1410}
+\subsection{MRF EVR-300DC}
 
-\include{./zint/ff_images/ff}
+\section{Network Device}
+\subsection{MOXA Nport 6650}
+\subsection{HP Network Switch}
 
+\newpage
+\chapter{Predefined Bar Codes}
+\section{Vendor Codes}
+\input{./zint/vd_images/vd}
+
+\newpage
+\section{FormFactor Codes}
+\input{./zint/ff_images/ff}
+
+\newpage
+\section{ICS Location Codes}
+\input{./zint/lo_images/lo}
+\newpage
+\section{Status Codes}
+\input{./zint/st_images/st}
+
+
+\newpage
+\section{Model Codes}
+\input{./zint/mo_images/mo}
 
 %% \section{Hardware}
 %% Table~\ref{table:hwlist} shows the hardware list and its environment. The form factor and version of EVG can be changeable. It is assumed that the proper working EVG system is ready. Here, \texttt{TAG} is used as the prefix of the ICS internal inventory system in order to track it down. One can use only EVG without FOUT. Kontron Industrial PC can be able to replace with PC, workstation, or server with a compatible PCIe slot. Note that this PCIe slot for the MRF PCIe-EVR-300 should support more than 10W.
@@ -164,10 +190,6 @@ This document is targeted to ICS engineers and technical stakeholders of the ESS
 %%   \label{table:fwinfo}
 %% \end{table}
 
-
-%% \clearpage
-\chapter{Engineering Procedure}
-%% This chapter provides the minimal information to configure the EVR board properly. 
 
 %% \section{System Installation}
 %% Figure~\ref{fig:diagram} and Figure~\ref{fig:hw-setup} shows the glimpse of what system might be like in a Lab. \textbf{Note that the cable between the PCIe-EVR-300DC and IFB-300 should be connected, disconnected, or both only when powered down}. Please see the detail information in Reference \citep[][p54]{MRFEVENTSYSTEMDC}.

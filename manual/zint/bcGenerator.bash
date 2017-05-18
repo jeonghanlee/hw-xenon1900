@@ -20,6 +20,8 @@
 # Date   : 
 # version : 0.0.1
 #
+# bash 4 is needed
+# 
 
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_TOP="$(dirname "$SC_SCRIPT")"
@@ -33,72 +35,82 @@ set +a
 
 . ${SC_TOP}/functions
 
-
-
-# arg3 : output directory
-# arg1 : prefix
-# arg2 : csv filename
+function zint_ft() {
+    local tgt_name=$1
+    local tgt_data=$2
+    zint --whitesp=${WHITE_SP} --barcode=${DEFAULT_BC_TYPE} --output="${tgt_name}" --data="${tgt_data}";
+}
 
 function build_barcodes() {
     local func_name=${FUNCNAME[*]}; __ini_func ${func_name};
 
-    local prefix="$1"
-    local input_filename="$2"
-    local output_target="$3"
-    local output_format="$4"
-    local output_dir=${SC_TOP}/${output_target}
-    local image_path=""
-    local output_tex="${prefix,,}.tex"
-    mkdir -p ${output_dir}
-    rm -f ${output_dir}/${output_tex}
-    touch ${output_dir}/${output_tex}
+    local out_format="$1" && shift
+    local array=($@)
+
+    local tgt_pre=${array[0]}
+    local csv_name=${array[1]}
+    local tgt_path=${array[2]}
+    local out_path=${SC_TOP}/${tgt_path}
+    local out_tex="${tgt_pre,,}.tex"
+
+
+    
+    # create a directory where barcodes will be generated
+    mkdir -p ${out_path}
+    
+    # remove the existent tex file, and create an empty one
+
+    pushd ${out_path} 
+    rm -f ${out_tex}
+    touch ${out_tex}
+    popd
     
     while IFS=, read id name
     do
-	image_path=${output_dir}/${name}.${output_format}
-	zint --whitesp=${WHITE_SP} --barcode=${QR} --output=${output_dir}/${name}.${output_format} --data="${prefix},${id},${name}"
-	m4 -DIMAGE_PATH=${image_path} -DCAPTION="${prefix},${id},${name^^}" ${SC_TOP}/template/figure.m4 >> ${output_dir}/${output_tex}
-    done < ${input_filename}
+	target_name=${out_path}/${name}.${out_format}
+	target_data="${tgt_pre},${id},${name}"
+
+	zint_ft ${target_name} ${target_data};
+	m4 -DIMAGE_PATH=${target_name} -DCAPTION="${name^^}" ${SC_TOP}/template/figure.m4 >> ${out_path}/${out_tex}
+
+    done < ${SC_TOP}/${csv_name}
     
     __end_func ${func_name};
 }
 
-function vd() {
-
-    local output_format="$1"
-    local isVar=$(checkIfVar ${output_format})
-    if [[ $isVar -eq "$NON_EXIST" ]]; then
-	output_format=${DEFAULT_OUTPUT_FORMAT}
-    fi
-    
-    build_barcodes "${VD_PRE}" "${VD_CSV}" "${VD_TGT}" "$output_format"
-    
-}
-
-function ff() {
-    local output_format="$1"
-    local isVar=$(checkIfVar ${output_format})
-    if [[ $isVar -eq "$NON_EXIST" ]]; then
-	output_format=${DEFAULT_OUTPUT_FORMAT}
-    fi
-    build_barcodes "${FF_PRE}" "${FF_CSV}" "${FF_TGT}" "$output_format"
-}
 
 arg2=$2
+
+
+isVar=$(checkIfVar ${arg2})
+if [[ $isVar -eq "$NON_EXIST" ]]; then
+    out_format=${DEFAULT_OUTPUT_FORMAT}
+fi
 
 case "$1" in
     vd)
     ##	build_vendors
-	vd  ${arg2}
+	build_barcodes "${out_format}" ${VD_ARRAY[@]}
 	;;
     ff)
-	ff ${arg2}
+	build_barcodes "${out_format}" ${FF_ARRAY[@]}
+	;;
+    lo)
+	build_barcodes "${out_format}" ${LO_ARRAY[@]}
+	;;
+    st)
+	build_barcodes "${out_format}" ${ST_ARRAY[@]}
+	;;
+    mo)
+	build_barcodes "${out_format}" ${MO_ARRAY[@]}
 	;;
     all)
-	vd ${arg2}
-	ff ${arg2}
+	build_barcodes "${out_format}" ${VD_ARRAY[@]}
+	build_barcodes "${out_format}" ${FF_ARRAY[@]}
+	build_barcodes "${out_format}" ${LO_ARRAY[@]}
+	build_barcodes "${out_format}" ${ST_ARRAY[@]}
+	build_barcodes "${out_format}" ${MO_ARRAY[@]}
 	;;
-    
     *)
 
 	echo "">&2
@@ -114,8 +126,8 @@ case "$1" in
 	echo ""
 	echo "          <arg2> : info">&2
 	echo ""
-	echo "          png    : png file (default) << ">&2
-	echo "          eps    : eps file           << ">&2
+	echo "          eps    : eps file  (default)         << ">&2
+	echo "          png    : png file                    << ">&2
 	echo "">&2 	
 	exit 0
 esac
