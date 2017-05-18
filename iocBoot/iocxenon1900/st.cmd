@@ -8,7 +8,7 @@
 epicsEnvSet("EPICS_CAS_INTF_ADDR_LIST" "10.0.7.177")
 
 epicsEnvSet("STREAM_PROTOCOL_PATH", ".:${TOP}/db")
-epicsEnvSet("TTY","$(TTY=/dev/ttyACM0)")
+epicsEnvSet("TTY","$(TTY=/dev/ttyACM1)")
 
 cd "${TOP}"
 

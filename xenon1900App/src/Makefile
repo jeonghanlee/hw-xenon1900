@@ -25,7 +25,8 @@ xenon1900_DBD += drvAsynIPPort.dbd
 
 # Add all the support libraries needed by this IOC
 #xenon1900_LIBS += xxx
-xenon1900_LIBS += stream asyn
+xenon1900_LIBS += stream
+xenon1900_LIBS += asyn
 xenon1900_LIBS += devIocStats
 
 # xenon1900_registerRecordDeviceDriver.cpp derives from xenon1900.dbd
