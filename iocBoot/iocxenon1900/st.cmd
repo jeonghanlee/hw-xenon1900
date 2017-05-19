@@ -30,7 +30,7 @@ asynSetOption("L0", -1, "stop", "1")
 asynSetOption("L0", -1, "clocal", "Y")
 asynSetOption("L0", -1, "crtscts", "N")
 
-dbLoadRecords("db/iocAdminSoft.db", "IOC=ICSLAB:IocStat")
+#dbLoadRecords("db/iocAdminSoft.db", "IOC=ICSLAB:IocStat")
 dbLoadRecords("db/xenon1900.db",    "SYSDEV=ICSLAB:,PORT=L0")
 
 

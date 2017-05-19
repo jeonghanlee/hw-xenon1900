@@ -19,9 +19,32 @@ ReplyTimeout = 40;
 ReadTimeout  = 20;
 #PollPeriod = $ReplyTimeout;
 
+read_vd
+{
+    ExtraInput = Ignore;
+    in "VD,%*d,%s";
+}
+
+read_ff
+{
+    ExtraInput = Ignore;
+    in "FF,%*d,%s";
+}
+
+read_lo
+{
+    ExtraInput = Ignore;
+    in "LO,%*d,%s";
+}
+
+read_st
+{
+    ExtraInput = Ignore;
+    in "ST,%*d,%s";
+}
+
 
 read_raw
 {
-    in "%#s";
+    in "%(\$1)#s";
 }
-
