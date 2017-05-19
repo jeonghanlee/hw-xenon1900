@@ -18,7 +18,7 @@
 # 
 record(stringin, "$(SYSDEV)Vendor")
 {
-    field(DESC, "RAW Scanned data")
+    field(DESC, "Vendor Name")
     field(DTYP, "stream")
     field( INP, "@xenon1900.proto read_vd $(PORT)")
     field(SCAN, "I/O Intr")
@@ -26,30 +26,37 @@ record(stringin, "$(SYSDEV)Vendor")
 
 record(stringin, "$(SYSDEV)Formfactor")
 {
-    field(DESC, "RAW Scanned data")
+    field(DESC, "Formfactor Type")
     field(DTYP, "stream")
     field( INP, "@xenon1900.proto read_ff $(PORT)")
     field(SCAN, "I/O Intr")
-
 }
 
 record(stringin, "$(SYSDEV)Location")
 {
-    field(DESC, "RAW Scanned data")
+    field(DESC, "Location defined by ICS internally")
     field(DTYP, "stream")
     field( INP, "@xenon1900.proto read_lo $(PORT)")
     field(SCAN, "I/O Intr")
-
 }
 
 record(stringin, "$(SYSDEV)Status")
 {
-    field(DESC, "RAW Scanned data")
+    field(DESC, "Status")
     field(DTYP, "stream")
     field( INP, "@xenon1900.proto read_st $(PORT)")
     field(SCAN, "I/O Intr")
-
 }
+
+
+record(stringin, "$(SYSDEV)Model")
+{
+    field(DESC, "Model Type")
+    field(DTYP, "stream")
+    field( INP, "@xenon1900.proto read_mo $(PORT)")
+    field(SCAN, "I/O Intr")
+}
+
 
 record(stringin, "$(SYSDEV)RawData")
 {
@@ -62,6 +69,6 @@ record(stringin, "$(SYSDEV)RawData")
 
 record(stringin, "$(SYSDEV)SN")
 {
-    field(DESC, "User Setable IDs")
+    field(DESC, "Serial Number")
     field(DTYP, "Soft Channel")
  }

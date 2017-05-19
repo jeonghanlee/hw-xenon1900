@@ -15,8 +15,8 @@
 # OutTerminator = CR;
 # InTerminator = LF CR;
     
-ReplyTimeout = 40;
-ReadTimeout  = 20;
+ReplyTimeout = 20;
+ReadTimeout  = 10;
 #PollPeriod = $ReplyTimeout;
 
 read_vd
@@ -43,8 +43,18 @@ read_st
     in "ST,%*d,%s";
 }
 
+read_mo
+{
+    ExtraInput = Ignore;
+    in "MO,%*d,%s";
+}
 
 read_raw
 {
     in "%(\$1)#s";
 }
+
+# read_raw
+# {
+#     in "%#s";
+# }
