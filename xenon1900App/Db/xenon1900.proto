@@ -15,13 +15,13 @@
 # OutTerminator = CR;
 # InTerminator = LF CR;
     
-ReplyTimeout = 200;
-ReadTimeout  = 100;
+ReplyTimeout = 40;
+ReadTimeout  = 20;
 #PollPeriod = $ReplyTimeout;
 
 
 read_raw
 {
-    in "%39c";
+    in "%#s";
 }
 

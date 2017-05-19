@@ -22,7 +22,6 @@ record(stringin, "$(SYSDEV)RawScanData")
     field(DTYP, "stream")
     field( INP, "@xenon1900.proto read_raw $(PORT)")
     field(SCAN, "I/O Intr")
-    field(PINI, "YES")
+#    field(PINI, "YES")
 }
-
 
