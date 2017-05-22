@@ -72,3 +72,19 @@ record(stringin, "$(SYSDEV)SN")
     field(DESC, "Serial Number")
     field(DTYP, "Soft Channel")
  }
+
+
+record(sub,"$(SYSDEV)subExample")
+{
+    field(INAM,"mySubInit")
+    field(SNAM,"mySubProcess")
+}
+
+# record(aSub,"$(SYSDEV)aSubExample")
+# {
+#     field(INAM,"myAsubInit")
+#     field(SNAM,"myAsubProcess")
+#     field(FTA,"DOUBLE")
+#     field(NOA,"10")
+#     field(INPA,"$(SYSDEV)RawData CPP")
+# }

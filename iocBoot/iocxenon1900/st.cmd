@@ -5,7 +5,7 @@
 
 < envPaths
 
-epicsEnvSet("EPICS_CAS_INTF_ADDR_LIST" "10.0.7.177")
+#epicsEnvSet("EPICS_CAS_INTF_ADDR_LIST" "10.0.7.177")
 
 epicsEnvSet("STREAM_PROTOCOL_PATH", ".:${TOP}/db")
 epicsEnvSet("TTY","$(TTY=/dev/ttyACM1)")
@@ -16,7 +16,7 @@ cd "${TOP}"
 dbLoadDatabase "dbd/xenon1900.dbd"
 xenon1900_registerRecordDeviceDriver pdbbase
 
-drvAsynSerialPortConfigure("L0", "$(TTY)", 0,0,0)
+drvAsynSerialPortConfigure("L0", "$(TTY)", 0, 0, 0)
 
 # CR, "\r" , 0x0d.
 # LF, "\n" , 0x0a
@@ -32,6 +32,9 @@ asynSetOption("L0", -1, "crtscts", "N")
 
 #dbLoadRecords("db/iocAdminSoft.db", "IOC=ICSLAB:IocStat")
 dbLoadRecords("db/xenon1900.db",    "SYSDEV=ICSLAB:,PORT=L0")
+
+## Set this to see messages from mySub
+var mySubDebug 1
 
 
 cd "${TOP}/iocBoot/${IOC}"
