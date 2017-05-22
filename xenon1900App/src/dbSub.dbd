@@ -1,5 +1,3 @@
 variable(mySubDebug)
-function(mySubInit)
-function(mySubProcess)
 function(myAsubInit)
 function(myAsubProcess)

@@ -27,40 +27,33 @@ record(stringin, "$(SYSDEV)Vendor")
 record(stringin, "$(SYSDEV)Formfactor")
 {
     field(DESC, "Formfactor Type")
-    field(DTYP, "stream")
-    field( INP, "@xenon1900.proto read_ff $(PORT)")
-    field(SCAN, "I/O Intr")
+    field(DTYP, "Soft Channel")
 }
 
 record(stringin, "$(SYSDEV)Location")
 {
     field(DESC, "Location defined by ICS internally")
-    field(DTYP, "stream")
-    field( INP, "@xenon1900.proto read_lo $(PORT)")
-    field(SCAN, "I/O Intr")
+    field(DTYP, "Soft Channel")
 }
 
 record(stringin, "$(SYSDEV)Status")
 {
     field(DESC, "Status")
-    field(DTYP, "stream")
-    field( INP, "@xenon1900.proto read_st $(PORT)")
-    field(SCAN, "I/O Intr")
+    field(DTYP, "Soft Channel")
 }
 
 
 record(stringin, "$(SYSDEV)Model")
 {
     field(DESC, "Model Type")
-    field(DTYP, "stream")
-    field( INP, "@xenon1900.proto read_mo $(PORT)")
-    field(SCAN, "I/O Intr")
+    field(DTYP, "Soft Channel")
 }
 
 
 record(stringin, "$(SYSDEV)RawData")
 {
     field(DESC, "RAW Scanned data")
+    
     field(DTYP, "stream")
     field( INP, "@xenon1900.proto read_raw($(SYSDEV)SN) $(PORT)")
     field(SCAN, "I/O Intr")
@@ -74,17 +67,15 @@ record(stringin, "$(SYSDEV)SN")
  }
 
 
-record(sub,"$(SYSDEV)subExample")
+record(aSub,"$(SYSDEV)aSubExample")
 {
-    field(INAM,"mySubInit")
-    field(SNAM,"mySubProcess")
-}
-
-# record(aSub,"$(SYSDEV)aSubExample")
-# {
-#     field(INAM,"myAsubInit")
-#     field(SNAM,"myAsubProcess")
-#     field(FTA,"DOUBLE")
-#     field(NOA,"10")
-#     field(INPA,"$(SYSDEV)RawData CPP")
-# }
+    field(INAM,"myAsubInit")
+    field(SNAM,"myAsubProcess")
+    field(FTA,"STRING")
+    field(NOA,"1")
+    field(INPA,"$(SYSDEV)RawData CPP")
+    field(FTVA,"STRING")
+    field(OUTA, "$(SYSDEV)Formfactor" )
+    field(FTVA, "STRING")
+    field(OUTB, "$(SYSDEV)Model")
+ }
