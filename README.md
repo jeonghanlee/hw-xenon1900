@@ -53,15 +53,26 @@ Scan the bar codes in the Xenon User Guide books according to the following info
 
 ## Commands and Dir Structure
 
-
+```
+.
+├── [jhlee    4.0K]  configure
+├── [jhlee    4.0K]  iocBoot
+├── [jhlee    4.0K]  manual
+├── [jhlee    4.0K]  script
+└── [jhlee    4.0K]  xenon1900App
+```
 
 ### EPICS IOC
 
 ### caget script
-
-
+```
+ watch -n 1 bash script/caget_pvs.bash iocxenon1900_PVs.list
+```
 ## License
-* https://www.gnu.org/licenses/gpl-2.0.txt 
+EPICS Open License
+
+http://www.aps.anl.gov/epics/license/open.php
+
 
 # Reference
 * Xenon 1900, and others User's Guide <br />
