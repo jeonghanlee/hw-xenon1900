@@ -16,7 +16,7 @@ LIBRARY_IOC += xenon1900Support
 # DBD += xxxSupport.dbd
 
 # Compile and add the code to the support library
-xenon1900Support_SRCS += dbSub.c
+xenon1900Support_SRCS += xenonASub.c
 
 
 xenon1900Support_LIBS += $(EPICS_BASE_IOC_LIBS)
@@ -39,7 +39,7 @@ xenon1900_DBD += stream.dbd
 xenon1900_DBD += asyn.dbd
 xenon1900_DBD += drvAsynSerialPort.dbd
 xenon1900_DBD += drvAsynIPPort.dbd
-xenon1900_DBD += dbSub.dbd
+xenon1900_DBD += xenonASub.dbd
 
 # Add all the support libraries needed by this IOC
 #xenon1900_LIBS += xxx

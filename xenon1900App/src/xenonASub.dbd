@@ -1,0 +1,3 @@
+variable(xenonDebug)
+function(InitXenonASub)
+function(DistXenonASub)

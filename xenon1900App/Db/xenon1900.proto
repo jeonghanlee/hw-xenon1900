@@ -15,46 +15,12 @@
 # OutTerminator = CR;
 # InTerminator = LF CR;
     
-ReplyTimeout = 20;
+ReplyTimeout = 10;
 ReadTimeout  = 10;
 #PollPeriod = $ReplyTimeout;
 
-read_vd
-{
-    ExtraInput = Ignore;
-    in "VD,%*d,%s";
-}
-
-read_ff
-{
-    ExtraInput = Ignore;
-    in "FF,%*d,%s";
-}
-
-read_lo
-{
-    ExtraInput = Ignore;
-    in "LO,%*d,%s";
-}
-
-read_st
-{
-    ExtraInput = Ignore;
-    in "ST,%*d,%s";
-}
-
-read_mo
-{
-    ExtraInput = Ignore;
-    in "MO,%*d,%s";
-}
-
 read_raw
 {
-    in "%(\$1)#s";
+    extrainput = ignore;
+    in "%#s";
 }
-
-# read_raw
-# {
-#     in "%#s";
-# }

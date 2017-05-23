@@ -1,4 +1,8 @@
 #
+# This software is distributed under the EPICS Open License Agreement which
+# can be found in the file, LICENSE, included with this distribution.
+#
+# 
 #  Honeywell Xenon 1900 Barcode scanner
 #
 # macros required:
@@ -16,17 +20,16 @@
 
 # ReplyTimeout in the proto file should not be 0. 
 # 
-record(stringin, "$(SYSDEV)Vendor")
-{
-    field(DESC, "Vendor Name")
-    field(DTYP, "stream")
-    field( INP, "@xenon1900.proto read_vd $(PORT)")
-    field(SCAN, "I/O Intr")
-}
 
 record(stringin, "$(SYSDEV)Formfactor")
 {
     field(DESC, "Formfactor Type")
+    field(DTYP, "Soft Channel")
+}
+
+record(stringin, "$(SYSDEV)Vendor")
+{
+    field(DESC, "Vendor Type")
     field(DTYP, "Soft Channel")
 }
 
@@ -42,7 +45,6 @@ record(stringin, "$(SYSDEV)Status")
     field(DTYP, "Soft Channel")
 }
 
-
 record(stringin, "$(SYSDEV)Model")
 {
     field(DESC, "Model Type")
@@ -53,12 +55,11 @@ record(stringin, "$(SYSDEV)Model")
 record(stringin, "$(SYSDEV)RawData")
 {
     field(DESC, "RAW Scanned data")
-    
     field(DTYP, "stream")
-    field( INP, "@xenon1900.proto read_raw($(SYSDEV)SN) $(PORT)")
+    field( INP, "@xenon1900.proto read_raw $(PORT)")
     field(SCAN, "I/O Intr")
+    field(FLNK, "$(SYSDEV)Dist_aSub")
 }
-
 
 record(stringin, "$(SYSDEV)SN")
 {
@@ -67,15 +68,31 @@ record(stringin, "$(SYSDEV)SN")
  }
 
 
-record(aSub,"$(SYSDEV)aSubExample")
+record(aSub,"$(SYSDEV)Dist_aSub")
 {
-    field(INAM,"myAsubInit")
-    field(SNAM,"myAsubProcess")
-    field(FTA,"STRING")
-    field(NOA,"1")
-    field(INPA,"$(SYSDEV)RawData CPP")
-    field(FTVA,"STRING")
-    field(OUTA, "$(SYSDEV)Formfactor" )
+    field(INAM, "InitXenonASub")
+    field(SNAM, "DistXenonASub")
+    field(SCAN, "Passive")
+    field(INPA, "$(SYSDEV)RawData.VAL")
+    field( FTA, "STRING")
+    field( NOA, "1")
+    field(OUTA, "$(SYSDEV)SN PP")
+    field(OUTB, "$(SYSDEV)Formfactor PP" )
+    field(OUTC, "$(SYSDEV)Vendor PP")
+    field(OUTD, "$(SYSDEV)Location PP")
+    field(OUTE, "$(SYSDEV)Status PP")
+    field(OUTF, "$(SYSDEV)Model PP")
     field(FTVA, "STRING")
-    field(OUTB, "$(SYSDEV)Model")
+    field(FTVB, "STRING")
+    field(FTVC, "STRING")
+    field(FTVD, "STRING")
+    field(FTVE, "STRING")
+    field(FTVF, "STRING")
+    field(NOVA, "1")
+    field(NOVB, "1")
+    field(NOVC, "1")
+    field(NOVD, "1")
+    field(NOVE, "1")
+    field(NOVF, "1")
+	     
  }
