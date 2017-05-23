@@ -1,0 +1,5 @@
+SV,Save and overwrite scanned PVs in JSON
+CL,Clear any scanned PVs
+PD,Push the scanned PVs to RDB
+PJ,Push the scanned PVs to JIRA
+DJ,Push the scanned PVs to RDB and JIRA

@@ -1,5 +1,5 @@
 \noindent
-\vspace{1cm}
+\vspace{1.4cm}
 \begin{minipage}{.2\textwidth}
 \begin{center}
 \includegraphics[height=1cm,keepaspectratio]{IMAGE_PATH}

@@ -1,3 +1,7 @@
+#
+# This software is distributed under the EPICS Open License Agreement which
+# can be found in the file, LICENSE, included with this distribution.
+#
 #----------------------------------------------------------------------
 #
 #  StreamDevice protocol file for a reading/setting selected elements
@@ -15,7 +19,7 @@
 # OutTerminator = CR;
 # InTerminator = LF CR;
     
-ReplyTimeout = 10;
+ReplyTimeout = 20;
 ReadTimeout  = 10;
 #PollPeriod = $ReplyTimeout;
 
