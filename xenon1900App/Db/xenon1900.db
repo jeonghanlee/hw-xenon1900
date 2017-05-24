@@ -68,6 +68,8 @@ record(stringin, "$(SYSDEV)SN")
  }
 
 
+## PINI YES, please look at timeString in
+## xenonASub.cpp
 record(aSub,"$(SYSDEV)Dist_aSub")
 {
     field(INAM, "InitXenonASub")
@@ -94,5 +96,6 @@ record(aSub,"$(SYSDEV)Dist_aSub")
     field(NOVD, "1")
     field(NOVE, "1")
     field(NOVF, "1")
-	     
- }
+    field(PINI, "YES")
+
+  }

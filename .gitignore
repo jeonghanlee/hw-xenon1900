@@ -85,3 +85,4 @@ doc_*
 *.nav
 *.snm
 #*
+inv_data_at_*
