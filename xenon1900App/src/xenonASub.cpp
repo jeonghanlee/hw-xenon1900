@@ -36,6 +36,7 @@
 #include "stringinRecord.h"
 
 typedef struct InvDataType {
+  unsigned int hash;
   char *serialnumber;
   char *formfactor;
   char *vendor;
@@ -62,8 +63,8 @@ const char * const sv="SV"; /* Save and overwrite the current scanned PVs */
 const char * const cl="CL"; /* Clear any scanned PVs                      */
 const char * const pd="PD"; /* Push the saved PVs to RDB                  */
 const char * const pj="PJ"; /* Push the saved PVs to JIFA                 */
-const char * const DJ="DJ"; /* Push the saved PVs to RDB and JIRA         */
-
+const char * const dj="DJ"; /* Push the saved PVs to RDB and JIRA         */
+const char * const hs="HS"; /* Hash number per each SN                    */
 
 
 static char * getLinkStrVal(DBLINK *dbLink);
@@ -99,6 +100,7 @@ static char *getLinkStrVal(DBLINK *dbLink)
 
 static void InitInvDataType()
 {
+  outData.hash         = 0;
   outData.serialnumber = epicsStrDup("");
   outData.formfactor   = epicsStrDup("");
   outData.vendor       = epicsStrDup("");
@@ -116,6 +118,7 @@ static int fillInvDataType(aSubRecord *pRecord)
   outData.location     = getLinkStrVal(&pRecord->outd);
   outData.status       = getLinkStrVal(&pRecord->oute);
   outData.model        = getLinkStrVal(&pRecord->outf);
+  outData.hash         = epicsStrHash(outData.serialnumber,0);
   
   if(xenonDebug) printInvDataType(outData);
     
@@ -124,6 +127,7 @@ static int fillInvDataType(aSubRecord *pRecord)
 
 static void printInvDataType(InvDataType iDtype)
 {
+  printf("Hash       is %u\n", iDtype.hash);
   printf("SN         is %s\n", iDtype.serialnumber);
   printf("Formfactor is %s\n", iDtype.formfactor);
   printf("Vendor     is %s\n", iDtype.vendor);
@@ -153,6 +157,15 @@ static char *timeString(aSubRecord *pRecord)
   return epicsStrDup(buf);
 }	
 
+static char *checkStr(char *in)
+{
+  if ( epicsStrCaseCmp("", in) ) {
+    return in;
+  }
+  else {
+    return epicsStrDup(",,");
+  }
+}
 
 // static int csvWrite(InvDataType iDtype)
 // {
@@ -224,17 +237,26 @@ static long DistXenonASub(aSubRecord *pRecord)
       if( epicsStrCaseCmp("", outData.serialnumber) ) {
 	sprintf(fileName.pString, "inv_data_at_%s.csv", timeString(prec));
 	if (xenonDebug) printf ("printf %s\n", fileName.pString);
+	
+	//	printf("%s\n", epicsMemHash(outData.serialnumber,10,0));
+	
 	FILE *ofp;
 	ofp = fopen(fileName.pString, "w");
 	if (ofp == NULL) {
 	  printf("Error opening file!\n");
 	} else {
-	  fprintf(ofp, "SN,0,%s",  outData.serialnumber);
-	  fprintf(ofp, ",%s",      outData.formfactor);
-	  fprintf(ofp, ",%s",      outData.vendor);
-	  fprintf(ofp, ",%s",      outData.location);
-	  fprintf(ofp, ",%s",      outData.status);
-	  fprintf(ofp, ",%s\n",    outData.model);
+	  /* Since each data have own prefix,number,string
+	   * so, I introduce an additional seperatation as 
+	   * ,-, in order to distingush them
+	   */
+	  const char * pHolder = ",--";
+	  fprintf(ofp, "%s,0,%u",    hs, outData.hash);
+	  fprintf(ofp, "%s,SN,0,%s", pHolder, outData.serialnumber);
+	  fprintf(ofp, "%s,%s",      pHolder, checkStr(outData.formfactor));
+	  fprintf(ofp, "%s,%s",      pHolder, checkStr(outData.vendor));
+	  fprintf(ofp, "%s,%s",      pHolder, checkStr(outData.location));
+	  fprintf(ofp, "%s,%s",      pHolder, checkStr(outData.status));
+	  fprintf(ofp, "%s,%s\n",    pHolder, checkStr(outData.model));
 	  fclose(ofp);
 	}
       } else {
