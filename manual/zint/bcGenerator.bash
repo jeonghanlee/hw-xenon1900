@@ -65,13 +65,16 @@ function build_barcodes_from_csv() {
     touch ${out_tex}
     popd
     
-    while IFS=, read id name
+    while IFS=',' read id name
     do
+#	echo "$id and $name"
+#	safename="$(echo $name | sed 's/ /-/g')"
+#	echo ${safename}
 	target_name=${out_path}/${name}.${out_format}
 	target_data="${tgt_pre},${id},${name}"
 
 	zint_ft ${target_name} ${target_data};
-	m4 -DIMAGE_PATH=${target_name} -DCAPTION="${name^^}" ${SC_TOP}/template/figure.m4 >> ${out_path}/${out_tex}
+	m4 -DIMAGE_PATH=${target_name} -DCAPTION="${name}" ${SC_TOP}/template/figure.m4 >> ${out_path}/${out_tex}
 
     done < ${SC_TOP}/${csv_name}
     

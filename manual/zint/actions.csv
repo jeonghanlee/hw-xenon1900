@@ -1,5 +1,5 @@
-SV,Save and overwrite scanned PVs in JSON
+SV,Save and overwrite each scanned PV in each csv file (per second)
+PJ,Save and append scanned PVs in a csv file (per day)
 CL,Clear any scanned PVs
 PD,Push the scanned PVs to RDB
-PJ,Push the scanned PVs to JIRA
 DJ,Push the scanned PVs to RDB and JIRA

@@ -1,0 +1,56 @@
+{
+  "config.version" : "2.0",
+  "config.project.from.csv" : "false",
+  "config.encoding" : "UTF-8",
+  "config.email.suffix" : "@",
+  "config.field.mappings" : {
+    "Label ID" : {
+      "existing.custom.field" : "11002"
+    },
+    "Summary" : {
+      "jira.field" : "summary"
+    },
+    "Labels" : {
+      "jira.field" : "labels"
+    },
+    "Supplier" : {
+      "existing.custom.field" : "11000"
+    },
+    "Where" : {
+      "existing.custom.field" : "10502"
+    },
+    "Serial Number" : {
+      "existing.custom.field" : "10500"
+    }
+  },
+  "config.value.mappings" : {
+    "Label ID" : {
+      "1889797710" : "1889797710"
+    },
+    "Summary" : {
+      "Dyno-LabelWriter-450-Duo" : "Dyno-LabelWriter-450-Duo"
+    },
+    "Labels" : {
+      "undefined" : "undefined"
+    },
+    "Supplier" : {
+      "dymo" : "dymo"
+    },
+    "Where" : {
+      "ess" : "ess"
+    },
+    "Serial Number" : {
+      "1750113-0077969" : "1750113-0077969"
+    }
+  },
+  "config.delimiter" : ",",
+  "config.project" : {
+    "project.type" : null,
+    "project.key" : "TAG",
+    "project.description" : null,
+    "project.url" : null,
+    "project.name" : "ICS Inventory Management",
+    "project.lead" : "alexandersoderqvist"
+  },
+  "config.date.format" : "YYYY-MMM-dd HH:mm Z"
+}

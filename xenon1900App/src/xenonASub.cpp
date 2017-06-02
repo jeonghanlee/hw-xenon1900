@@ -22,6 +22,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <fcntl.h>
 
 #include "dbDefs.h"
 #include "dbAccess.h"
@@ -62,7 +63,7 @@ const char * const mo="MO"; /* Model      */
 const char * const sv="SV"; /* Save and overwrite the current scanned PVs */
 const char * const cl="CL"; /* Clear any scanned PVs                      */
 const char * const pd="PD"; /* Push the saved PVs to RDB                  */
-const char * const pj="PJ"; /* Push the saved PVs to JIFA                 */
+const char * const pj="PJ"; /* Push the saved PVs to JIRA                 */
 const char * const dj="DJ"; /* Push the saved PVs to RDB and JIRA         */
 const char * const hs="HS"; /* Hash number per each SN                    */
 
@@ -71,7 +72,10 @@ static char * getLinkStrVal(DBLINK *dbLink);
 static void InitInvDataType();
 static int fillInvDataType(aSubRecord *pRecord);
 static void printInvDataType(InvDataType iDtype);
-static char *timeString(aSubRecord *pRecord);
+static char *timeString(aSubRecord *pRecord, const char *pFormat);
+static char *timeStringDay(aSubRecord *pRecord);
+static char *timeStringSecond(aSubRecord *pRecord);
+
 //static int csvWrite(aSubRecord *pRecord);
 
 /* 
@@ -148,14 +152,28 @@ static void printInvDataType(InvDataType iDtype)
  * I force to use PINI in DB record, to get time at first. 
  * 
 */
-static char *timeString(aSubRecord *pRecord)
+static char *timeString(aSubRecord *pRecord, const char *pFormat)
 {
   epicsTime et = (epicsTimeStamp) pRecord->time;
   char buf[80];
-  const char * pFormat = "%Y%m%d_%H%M%S";
   et.strftime(buf, sizeof(buf), pFormat);
   return epicsStrDup(buf);
 }	
+
+static char *timeStringDay(aSubRecord *pRecord)
+{
+  const char * pFormat = "%Y%m%d";
+  return timeString(pRecord, pFormat);
+}	
+
+
+static char *timeStringSecond(aSubRecord *pRecord)
+{
+  const char * pFormat = "%Y%m%d_%H%M%S";
+  return timeString(pRecord, pFormat);
+}	
+
+
 
 static char *checkStr(char *in)
 {
@@ -166,6 +184,21 @@ static char *checkStr(char *in)
     return epicsStrDup(",,");
   }
 }
+
+static char *checkStrReturnDataOnly(char *in)
+{
+  if ( epicsStrCaseCmp("", in) ) {
+    char *p;
+    int cnt = 0;
+    while ((p = strsep(&in, ","))) {
+      cnt++;
+      if(cnt == 3) return p;
+    }
+  }
+  return in;
+}
+
+
 
 // static int csvWrite(InvDataType iDtype)
 // {
@@ -207,7 +240,7 @@ static long DistXenonASub(aSubRecord *pRecord)
 
   if(xenonDebug) {
     printf("%s id %s id StrHash %d, and fwr value %s.\n",
-	   timeString(prec), id, id_hash, fwd_val);
+	   timeStringSecond(prec), id, id_hash, fwd_val);
   }
   
   /* Serial Number should be the last Output value U */
@@ -235,7 +268,7 @@ static long DistXenonASub(aSubRecord *pRecord)
       fileName.pString=epicsStrDup("");
 
       if( epicsStrCaseCmp("", outData.serialnumber) ) {
-	sprintf(fileName.pString, "inv_data_at_%s.csv", timeString(prec));
+	sprintf(fileName.pString, "inv_data_at_%s.csv", timeStringSecond(prec));
 	if (xenonDebug) printf ("printf %s\n", fileName.pString);
 	
 	//	printf("%s\n", epicsMemHash(outData.serialnumber,10,0));
@@ -264,7 +297,70 @@ static long DistXenonASub(aSubRecord *pRecord)
       }
       
     }
-  else {
+    else if ( epicsStrnCaseCmp(pj, aval, 2) == 0 )
+    {
+      fillInvDataType(prec);
+      
+      epicsString fileName;
+      fileName.length=80;
+      fileName.pString=epicsStrDup("");
+
+      /* To make the system work quicly and dirty, I decided to create the csv file, which
+       * can be imported within the existent ICS Inventory system. Since I am not the admin
+       * on this jira, I cannot update them. However, to create them through csv file
+       * is the simple way to save time.... 
+       * jhlee, Monday, May 29 18:02:20 CEST 2017
+       */
+      if( epicsStrCaseCmp("", outData.serialnumber) && epicsStrCaseCmp("", outData.model) ) {
+	sprintf(fileName.pString, "create_issue_at_TAG_%s.csv", timeStringDay(prec));
+
+	
+	int file_exist = 0;
+
+	
+	if (fopen(fileName.pString, "r") == NULL) {
+	  file_exist = 0;
+	  if (xenonDebug) printf ("creating the non-existent %s\n", fileName.pString);
+	}
+	else {
+	  file_exist = 1;
+	  if (xenonDebug) printf ("opening the existent %s\n", fileName.pString);
+	}
+
+	FILE *ofp;
+
+	const char * header = "Summary,Serial Number,Label ID,Labels,Supplier,Where";
+	
+	if(file_exist) {
+	  ofp = fopen(fileName.pString, "a+");
+	  fprintf(ofp, "%s,",  checkStrReturnDataOnly(outData.model));
+	  fprintf(ofp, "%s,",  outData.serialnumber);
+	  /* Hash doesn't have "prefix,id," */
+	  fprintf(ofp, "%u,",  outData.hash);
+	  fprintf(ofp, "%s,",  checkStrReturnDataOnly(outData.formfactor));
+	  fprintf(ofp, "%s,",  checkStrReturnDataOnly(outData.vendor));
+	  fprintf(ofp, "%s\n", checkStrReturnDataOnly(outData.location));
+	  fclose(ofp);
+	}
+	else {
+	  ofp = fopen(fileName.pString, "w");
+	  fprintf(ofp, "%s\n", header);
+	  fprintf(ofp, "%s,",  checkStrReturnDataOnly(outData.model));
+	  fprintf(ofp, "%s,",  outData.serialnumber);
+	  /* Hash doesn't have "prefix,id," */
+	  fprintf(ofp, "%u,",  outData.hash);
+	  fprintf(ofp, "%s,",  checkStrReturnDataOnly(outData.formfactor));
+	  fprintf(ofp, "%s,",  checkStrReturnDataOnly(outData.vendor));
+	  fprintf(ofp, "%s\n", checkStrReturnDataOnly(outData.location));
+	  fclose(ofp);
+	}
+	
+      } else {
+	printf("SN and MO are mandatory data, please scan them!\n");
+      }
+      
+    }
+    else {
     prec->vala = fwd_val;
   }
   
