@@ -24,6 +24,8 @@
 #include <string.h>
 #include <fcntl.h>
 
+
+
 #include "dbDefs.h"
 #include "dbAccess.h"
 #include "dbFldTypes.h"
@@ -36,16 +38,7 @@
 #include "epicsTime.h"
 #include "stringinRecord.h"
 
-typedef struct InvDataType {
-  unsigned int hash;
-  char *serialnumber;
-  char *formfactor;
-  char *vendor;
-  char *location;
-  char *status;
-  char *model;
-
-} InvDataType;
+#include "ItemObject.hh"
 
 
 InvDataType outData;
@@ -231,6 +224,8 @@ static long DistXenonASub(aSubRecord *pRecord)
   epicsUInt32 id_hash = epicsStrHash(id,0);
   char      * fwd_val = epicsStrDup(aval);
 
+
+  
   /*
    * The XENON 1900 Scanner triggers aSub record twice, still unclear why it is so, and how to fix it. 
    * So simply ignore the second trigger with no data
@@ -262,6 +257,10 @@ static long DistXenonASub(aSubRecord *pRecord)
   else if ( epicsStrnCaseCmp(sv, aval, 2) == 0 )
     {
       fillInvDataType(prec);
+
+      ItemObject item (outData);
+      item.Print();
+	
       
       epicsString fileName;
       fileName.length=80;
