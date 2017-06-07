@@ -164,6 +164,17 @@ ItemObject::~ItemObject()
 void
 ItemObject::Print()
 {
+  // std::string out;
+  // std::string hash; 
+
+  // out = "Object Name " + this->GetName();
+  // out += "\n";
+  // out += "Hash ID ";
+  // out += std::to_string(this-> GetHashID()) ;   
+  // out += " ";
+
+  // std::cout << out << std::endl;
+  
   printf("Object Name   %s\n", fName.c_str());
   printf("Hash ID       %u\n", fHashID);
   printf("Serial Number %s\n", fSerialNumber.c_str());
@@ -172,3 +183,66 @@ ItemObject::Print()
   printf("Location      %s\n", fLocation.c_str());
   printf("Status        %s\n", fStatus.c_str());
 }
+
+
+
+bool
+ItemObject::IsValid()
+{
+  if (fName != "" && fSerialNumber != "" ) return true;
+  else                                     return false;
+}
+
+
+const std::string
+ItemObject::GetJiraCSV()
+{
+  std::stringstream out;
+  out << Split(fName)
+      << ","
+      << fSerialNumber
+      << ","
+      << fHashID
+      << ","
+      << Split(fFormfactor)
+      << ","
+      << Split(fVendor)
+      << ","
+      << Split(fLocation)
+      << "\n";
+  return out.str();
+};
+
+const std::string
+ItemObject::GetJiraJSON()
+{
+  std::stringstream out;
+  out << "{\n"
+      << "  \"fields\": { \n"
+      << "       \"project\": { \"key\": \"" << fJiraProjectName << "\" } \n"
+      << "     , \"issuetype\": { \"name\": \"" << fJiraIssueName << "\" } \n"
+      << "     , \"summary\": \""<< Split(fName) << "\"\n"
+      << "     , \"customfield_10502\": { \"value\": \"" << Split(fLocation) << "\" } \n"
+      << "     , \"customfield_10500\": \""<< fSerialNumber << "\"\n"
+      << "     , \"customfield_11002\": \""<< fHashID << "\"\n"
+      << "     , \"labels\" : [ \"" <<  Split(fFormfactor) << "\"]\n"
+    //      << ", \"assignee\" : {\"name\" : \"" >> potential_username << "\"}"
+      << "     , \"description\": \"" << fJiraDesc << "\"\n"
+      << "  }\n"
+      << "}\n";
+  
+  return out.str();
+
+   //  "fields": {
+   //     "project": { "key": "TAG" }
+   //     , "issuetype": { "name": "Hardware"}	
+   //     , "summary": "MO, Model"
+   //     , "customfield_10502" : {"value": "ICS Lab"}
+   //     , "customfield_10500" : "SN,SERIALNUMBER"
+   //     , "customfield_11002" : "HASH ID"
+   //     , "labels" : [ "FORMFACTOR"]
+   //     , "assignee" : {"name" : "hanlee"}
+   //     , "description": "Description.... Creating of an issue using ids for projects and issue types using the REST API"
+   // }
+};
+

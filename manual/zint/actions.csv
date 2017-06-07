@@ -1,5 +1,6 @@
 SV,Save and overwrite each scanned PV in each csv file (per second)
-PJ,Save and append scanned PVs in a csv file (per day)
-CL,Clear any scanned PVs
-PD,Push the scanned PVs to RDB
+SJ,Save and overwrite each scanned PV in each json file (per second)
+PJ,Save and append each scanned PV to CSV file which JIRA can import  (per day)
+CL,Clear all scanned PVs
 DJ,Push the scanned PVs to RDB and JIRA
+PD,Push the scanned PVs to RDB

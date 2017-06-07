@@ -44,7 +44,6 @@
 InvDataType outData;
 int       xenonDebug;
 
-
 /* Predefined PREFIX for Barcode */
 const char * const ff="FF"; /* Formfactor */
 const char * const vd="VD"; /* Vendor     */
@@ -53,10 +52,11 @@ const char * const st="ST"; /* Status     */
 const char * const mo="MO"; /* Model      */
   
   
-const char * const sv="SV"; /* Save and overwrite the current scanned PVs */
-const char * const cl="CL"; /* Clear any scanned PVs                      */
+const char * const sv="SV"; /* Save and overwrite each scanned PV in each csv file (per second)   */
+const char * const sj="SJ"; /* Save and overwrite each scanned PV in each json file (per second)  */
+const char * const pj="PJ"; /* Save and append each scanned PV to CSV file which JIRA can import  (per day) */
+const char * const cl="CL"; /* Clear all scanned PVs                      */
 const char * const pd="PD"; /* Push the saved PVs to RDB                  */
-const char * const pj="PJ"; /* Push the saved PVs to JIRA                 */
 const char * const dj="DJ"; /* Push the saved PVs to RDB and JIRA         */
 const char * const hs="HS"; /* Hash number per each SN                    */
 
@@ -178,32 +178,6 @@ static char *checkStr(char *in)
   }
 }
 
-static char *checkStrReturnDataOnly(char *in)
-{
-  if ( epicsStrCaseCmp("", in) ) {
-    char *p;
-    int cnt = 0;
-    while ((p = strsep(&in, ","))) {
-      cnt++;
-      if(cnt == 3) return p;
-    }
-  }
-  return in;
-}
-
-
-
-// static int csvWrite(InvDataType iDtype)
-// {
-//   iDtype.serialnumber;
-//   iDtype.formfactor;
-//   iDtype.vendor;
-//   iDtype.location;
-//   iDtype.status;
-//   iDtype.model;
-
-//   return 0;
-// }
 
 static long InitXenonASub(aSubRecord *pRecord)
 {
@@ -259,14 +233,14 @@ static long DistXenonASub(aSubRecord *pRecord)
       fillInvDataType(prec);
 
       ItemObject item (outData);
-      item.Print();
-	
+      if (xenonDebug) item.Print();
+      item.GetJiraCSV();
       
       epicsString fileName;
       fileName.length=80;
       fileName.pString=epicsStrDup("");
 
-      if( epicsStrCaseCmp("", outData.serialnumber) ) {
+      if( item.IsValid() ) {
 	sprintf(fileName.pString, "inv_data_at_%s.csv", timeStringSecond(prec));
 	if (xenonDebug) printf ("printf %s\n", fileName.pString);
 	
@@ -296,9 +270,11 @@ static long DistXenonASub(aSubRecord *pRecord)
       }
       
     }
-    else if ( epicsStrnCaseCmp(pj, aval, 2) == 0 )
+  else if ( epicsStrnCaseCmp(pj, aval, 2) == 0 )
     {
       fillInvDataType(prec);
+      ItemObject item (outData);
+      if (xenonDebug) item.Print();
       
       epicsString fileName;
       fileName.length=80;
@@ -310,7 +286,7 @@ static long DistXenonASub(aSubRecord *pRecord)
        * is the simple way to save time.... 
        * jhlee, Monday, May 29 18:02:20 CEST 2017
        */
-      if( epicsStrCaseCmp("", outData.serialnumber) && epicsStrCaseCmp("", outData.model) ) {
+      if( item.IsValid() ) {
 	sprintf(fileName.pString, "create_issue_at_TAG_%s.csv", timeStringDay(prec));
 
 	
@@ -332,25 +308,13 @@ static long DistXenonASub(aSubRecord *pRecord)
 	
 	if(file_exist) {
 	  ofp = fopen(fileName.pString, "a+");
-	  fprintf(ofp, "%s,",  checkStrReturnDataOnly(outData.model));
-	  fprintf(ofp, "%s,",  outData.serialnumber);
-	  /* Hash doesn't have "prefix,id," */
-	  fprintf(ofp, "%u,",  outData.hash);
-	  fprintf(ofp, "%s,",  checkStrReturnDataOnly(outData.formfactor));
-	  fprintf(ofp, "%s,",  checkStrReturnDataOnly(outData.vendor));
-	  fprintf(ofp, "%s\n", checkStrReturnDataOnly(outData.location));
+	  fprintf(ofp, "%s", item.GetJiraCSV().c_str());
 	  fclose(ofp);
 	}
 	else {
 	  ofp = fopen(fileName.pString, "w");
 	  fprintf(ofp, "%s\n", header);
-	  fprintf(ofp, "%s,",  checkStrReturnDataOnly(outData.model));
-	  fprintf(ofp, "%s,",  outData.serialnumber);
-	  /* Hash doesn't have "prefix,id," */
-	  fprintf(ofp, "%u,",  outData.hash);
-	  fprintf(ofp, "%s,",  checkStrReturnDataOnly(outData.formfactor));
-	  fprintf(ofp, "%s,",  checkStrReturnDataOnly(outData.vendor));
-	  fprintf(ofp, "%s\n", checkStrReturnDataOnly(outData.location));
+	  fprintf(ofp, "%s", item.GetJiraCSV().c_str());
 	  fclose(ofp);
 	}
 	
@@ -359,11 +323,34 @@ static long DistXenonASub(aSubRecord *pRecord)
       }
       
     }
-    else {
-    prec->vala = fwd_val;
-  }
-  
+  else if ( epicsStrnCaseCmp(sj, aval, 2) == 0 )
+    {
+      fillInvDataType(prec);
+      ItemObject item (outData);
+      std::string project = "TAG";
+      std::string issue = "Hardware";
+      std::string desc="";
+      
+      desc = "Created at ";
+      desc += timeStringSecond(prec);
+      desc += " using EPICS Xenon IOC";
+      
+      item.SetJIRAInfo(project, issue, desc);
+      if (xenonDebug) std::cout << item.GetJiraJSON().c_str() << std::endl;
+      if( item.IsValid() ) {
+	printf("is valid\n");
+      }
+      else {
+	printf("SN and MO are mandatory data, please scan them!\n");
+      }
+    }
+  else
+    {
+      prec->vala = fwd_val;
+    }
+
   return 0;
+
 }
 
 epicsExportAddress(int, xenonDebug);

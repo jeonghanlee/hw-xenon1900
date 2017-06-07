@@ -2,6 +2,7 @@
 #define INC_ItemObject_HH
 
 #include <iostream>
+#include <sstream>
 #include <cstdio>
 #include <string>
 #include <vector>
@@ -9,7 +10,6 @@
 
 extern "C" {
 #include "aSubRecord.h"
-  #
 }
 
   
@@ -26,7 +26,6 @@ typedef struct InvDataType {
 
 
 
-
 class ItemObject
 {
 public:
@@ -39,6 +38,9 @@ public:
 	     
   virtual ~ItemObject();
 
+
+  bool IsValid();
+  
   bool HasParent() { return fHasParent; } ;
   bool HasChild()  { return fHasChild; } ;
 
@@ -67,7 +69,13 @@ public:
   void SetLocation     (const char* lo)         {std::string l(lo);   fLocation = l;};
   void SetStatus       (const char* st)         {std::string sta(st); fStatus = sta;};
   void SetModel        (const char* mo)         { SetName(mo); };
-  
+
+
+  void SetJIRAInfo (const std::string& project, const std::string& issuetype, const std::string& desc) {
+    fJiraProjectName = project;
+    fJiraIssueName   = issuetype;
+    fJiraDesc        = desc;
+  }
   
   void AddParent(ItemObject *parent)    {
     fParentID = parent->GetHashID(); 
@@ -92,6 +100,8 @@ public:
     if ( fChildNumber == 0 ) fHasChild = false;
   };
 
+  const std::string GetJiraJSON();
+  const std::string GetJiraCSV();
 
   void Print ();
     
@@ -115,6 +125,19 @@ private:
   std::string  fVendor;
   std::string  fLocation;
   std::string  fStatus;
+
+  std::string  fJiraProjectName;
+  std::string  fJiraIssueName;
+  std::string  fJiraDesc;
+  
+  
+  
+  const std::string Split (const std::string& str) {
+    std::size_t found = str.find_last_of(",\\");
+    //    std::cout << " prefix: " << str.substr(0,found) << '\n';
+    return str.substr(found+1);
+  }
+
   
 };
 

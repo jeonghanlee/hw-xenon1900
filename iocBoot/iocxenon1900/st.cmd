@@ -8,7 +8,7 @@
 epicsEnvSet("EPICS_CAS_INTF_ADDR_LIST" "10.0.7.177")
 
 epicsEnvSet("STREAM_PROTOCOL_PATH", ".:${TOP}/db")
-epicsEnvSet("TTY","$(TTY=/dev/ttyACM4)")
+epicsEnvSet("TTY","$(TTY=/dev/ttyACM0)")
 
 cd "${TOP}"
 
@@ -36,7 +36,6 @@ dbLoadRecords("db/xenon1900.db",    "SYSDEV=ICSLAB:,PORT=L0")
 ## Set this to see messages from xenonASub.c
 
 var xenonDebug 1
-
 
 cd "${TOP}/iocBoot/${IOC}"
 iocInit
