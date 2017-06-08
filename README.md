@@ -2,6 +2,15 @@
 This repository will contain the EPICS IOC for the Honeywell Xenon 1900 bar code scanner. 
 
 
+## Requirements
+
+* libcurl
+
+```
+aptitude install  libcurl4-gnutls-dev libcurlpp-dev
+
+```
+
 ## Working Environment or Requirements
 
 * EPICS BASE 
@@ -75,11 +84,18 @@ http://www.aps.anl.gov/epics/license/open.php
 
 
 # Reference
+## Barcode scanner
 * Xenon 1900, and others User's Guide <br />
   https://www.honeywellaidc.com/products/barcode-scanners/general-duty/xenon-1900g-1902g
 * Xenon 1900 Date Sheet <br />
   https://www.honeywellaidc.com/-/media/en/files-public/data-sheets/xenon-1900-general-duty-scanner-data-sheet-en.pdf
 
+## curl : communication with jira
+* http://www.curlpp.org/
+* https://curl.haxx.se/libcurl/
+
+## zint : Barcode Generator 
+* https://zint.github.io/
 
 # Acknowledgement
 

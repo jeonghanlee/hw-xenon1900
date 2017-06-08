@@ -25,7 +25,6 @@
 #include <fcntl.h>
 
 
-
 #include "dbDefs.h"
 #include "dbAccess.h"
 #include "dbFldTypes.h"

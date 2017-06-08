@@ -1,0 +1,20 @@
+#
+# cflags returns null...
+#USR_CFLAGS  += `pkg-config --cflags libcurl`
+#USR_LDFLAGS += `pkg-config --libs libcurl`
+#PROD_LDLIBS += `pkg-config --libs libcurl`
+
+#USR_CFLAGS  += `pkg-config --cflags curlpp`
+USR_LDFLAGS += `pkg-config --libs curlpp`
+PROD_LDLIBS += `pkg-config --libs curlpp`
+
+## ZINT : source compile and make install
+#USR_CFLAGS  += -I/usr/local/include/
+#USR_LDFLAGS += -L/usr/local/lib/
+#PROD_LDLIBS += -L/usr/local/lib/
+
+## ZINT : Deb packages
+# don't need,
+#USR_CFLAGS  += -I/usr//include/
+#USR_LDFLAGS += -L/usr/lib/
+#PROD_LDLIBS += -L/usr/lib/

@@ -1,11 +1,18 @@
 Tools for the Barcode input
 --------------------------
 # Requirement
+* zint 
 ```
 aptitude install qt4-default cmake
 ```
 
-# Installation
+* debian
+
+```
+aptitude install  devscripts cdbs  build-essential
+```
+
+# Installation from source
 
 ```
 $ git clone https://github.com/zint/zint
@@ -27,7 +34,8 @@ $ cmake ..
 -- Build files have been written to: /home/jhlee/gitsrc/zint/build
 $ make
 $ su
- # make install
+
+# make install
 [ 57%] Built target zint
 [ 59%] Built target zint_frontend
 [ 61%] Built target QZint
@@ -45,7 +53,31 @@ Install the project...
 -- Installing: /usr/local/lib/libQZint.so
 -- Installing: /usr/local/include/qzint.h
 -- Installing: /usr/local/bin/zint-qt
+
+# make uninstall
+-- Uninstalling "/usr/share/cmake-3.0/Modules/FindZint.cmake"
+-- Uninstalling "/usr/local/lib/libzint.so.2.4.2"
+-- Uninstalling "/usr/local/lib/libzint.so.2.4"
+-- Uninstalling "/usr/local/lib/libzint.so"
+-- Uninstalling "/usr/local/include/zint.h"
+-- Uninstalling "/usr/local/bin/zint"
+-- Uninstalling "/usr/local/lib/libQZint.so.2.4.2"
+-- Uninstalling "/usr/local/lib/libQZint.so.2.4"
+-- Uninstalling "/usr/local/lib/libQZint.so"
+-- Uninstalling "/usr/local/include/qzint.h"
+-- Uninstalling "/usr/local/bin/zint-qt"
+Built target uninstall
+
 ```
+# Installation from Debian
+```
+$ git clone https://github.com/zint/zint
+$ cd zint
+$ dpkg-buildpackage -us -uc
+$ cd ../
+# dpkg -i *.deb
+```
+
 
 
 # Example

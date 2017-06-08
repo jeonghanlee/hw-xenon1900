@@ -86,3 +86,6 @@ doc_*
 *.snm
 #*
 inv_data_at_*
+*.deb
+*.dsc
+*.changes
