@@ -25,8 +25,8 @@ ItemObject::ItemObject()
 
 
 ItemObject::ItemObject(epicsUInt32  hashID,
-		       std::string serial_num,
-		       std::string model_name)
+		       string serial_num,
+		       string model_name)
 {
   fHasParent = false;
   fHasChild  = false;
@@ -76,12 +76,12 @@ ItemObject::ItemObject(epicsUInt32  hashID,
 
 
 ItemObject::ItemObject(epicsUInt32  hashID,
-		       std::string serial_num,
-		       std::string model_name,
-		       std::string formfactor,
-		       std::string vendor_name,
-		       std::string ics_location,
-		       std::string status)
+		       string serial_num,
+		       string model_name,
+		       string formfactor,
+		       string vendor_name,
+		       string ics_location,
+		       string status)
 {
   fHasParent = false;
   fHasChild  = false;
@@ -164,16 +164,16 @@ ItemObject::~ItemObject()
 void
 ItemObject::Print()
 {
-  // std::string out;
-  // std::string hash; 
+  // string out;
+  // string hash; 
 
   // out = "Object Name " + this->GetName();
   // out += "\n";
   // out += "Hash ID ";
-  // out += std::to_string(this-> GetHashID()) ;   
+  // out += to_string(this-> GetHashID()) ;   
   // out += " ";
 
-  // std::cout << out << std::endl;
+  // cout << out << endl;
   
   printf("Object Name   %s\n", fName.c_str());
   printf("Hash ID       %u\n", fHashID);
@@ -194,10 +194,10 @@ ItemObject::IsValid()
 }
 
 
-const std::string
+const string
 ItemObject::GetJiraCSV()
 {
-  std::stringstream out;
+  stringstream out;
   out << Split(fName)
       << ","
       << fSerialNumber
@@ -213,10 +213,10 @@ ItemObject::GetJiraCSV()
   return out.str();
 };
 
-const std::string
+const string
 ItemObject::GetJiraJSON()
 {
-  std::stringstream out;
+  stringstream out;
   out << "{\n"
       << "  \"fields\": { \n"
       << "       \"project\": { \"key\": \"" << fJiraProjectName << "\" } \n"
