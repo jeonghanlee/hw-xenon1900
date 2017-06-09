@@ -9,11 +9,6 @@
 #include <algorithm>
 
 #include <curl/curl.h>
-//#include <curlpp/cURLpp.hpp>
-//#include <curlpp/Easy.hpp>
-//#include <curlpp/Options.hpp>
-
-
 #include <zint.h>
 
 #include "aSubRecord.h"
@@ -66,14 +61,17 @@ public:
   const epicsUInt32 GetInstallationStrcutID()  const { return fInstallationStructID; };
 
   const epicsUInt32 GetHashID()                const { return fHashID; };
-  const string GetSerialNumber()          const { return fSerialNumber; };
-  const string GetName()                  const { return fName; };
-  const string GetFormfactor()            const { return fFormfactor; };
-  const string GetVendor()                const { return fVendor; };
-  const string GetLocation()              const { return fLocation; };
-  const string GetStatus()                const { return fStatus; };
-  const string GetModel()                 const { return fName; };
+  const string      GetSerialNumber()          const { return fSerialNumber; };
+  const string      GetName()                  const { return fName; };
+  const string      GetFormfactor()            const { return fFormfactor; };
+  const string      GetVendor()                const { return fVendor; };
+  const string      GetLocation()              const { return fLocation; };
+  const string      GetStatus()                const { return fStatus; };
+  const string      GetModel()                 const { return fName; };
+  const epicsUInt32 GetJiraIssueNumber()       const { return fJiraIssueNumber; };
 
+
+  
   void SetHashID       (const epicsUInt32 hash) {fHashID       = hash;};
   void SetSerialNumber (const char* sn)         {string s(sn);   fSerialNumber = s;};
   void SetName         (const char* name)       {string n(name); fName = n;};
@@ -113,6 +111,7 @@ public:
     if ( fChildNumber == 0 ) fHasChild = false;
   };
 
+  // maybe we will move the following functions to private 
   const string GetJiraJSON();
   const string GetJiraCSV();
 
@@ -131,19 +130,21 @@ private:
   epicsUInt32  fFacilityStructID;
   epicsUInt32  fInstallationStructID;
 
-  epicsUInt32  fHashID;
-  string  fSerialNumber;
-  string  fName;
-  string  fFormfactor;
-  string  fVendor;
-  string  fLocation;
-  string  fStatus;
+  epicsUInt32  fHashID;   // Used for the ICS Label 
 
-  string  fJiraProjectName;
-  string  fJiraIssueName;
-  string  fJiraDesc;
-  
-  
+  string       fSerialNumber;
+  string       fName;
+  string       fFormfactor;
+  string       fVendor;
+  string       fLocation;
+  string       fStatus;
+
+  string       fJiraProjectName;
+  string       fJiraIssueName;
+  string       fJiraDesc;
+
+  // Return value after curl command from JIRA
+  epicsUInt32  fJiraIssueNumber; // Used for the ICS Label 
   
   const string Split (const string& str) {
     size_t found = str.find_last_of(",\\");
