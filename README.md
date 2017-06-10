@@ -7,9 +7,13 @@ This repository will contain the EPICS IOC for the Honeywell Xenon 1900 bar code
 * libcurl
 
 ```
-aptitude install  libcurl4-gnutls-dev libcurlpp-dev
+aptitude install  libcurl4-gnutls-dev
 
 ```
+
+* zint
+Please look at docs/zint directory
+
 
 ## Working Environment or Requirements
 
@@ -96,6 +100,9 @@ http://www.aps.anl.gov/epics/license/open.php
 
 ## zint : Barcode Generator 
 * https://zint.github.io/
+
+## CUPS
+* https://www.cups.org/doc/options.html
 
 # Acknowledgement
 
