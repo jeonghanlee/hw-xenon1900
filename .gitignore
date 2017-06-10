@@ -89,3 +89,4 @@ inv_data_at_*
 *.deb
 *.dsc
 *.changes
+*_*.png
