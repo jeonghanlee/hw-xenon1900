@@ -80,10 +80,17 @@ $ cd ../
 
 
 
-# Example
+# Examples
+
+## Simple one
 ```
 zint --whitesp=1  --barcode=71 --output=test.png --data="test"
 ```
+## More 
+[See README in examples](examples/README.md)
+
+
+
 # References
 * https://zint.github.io/
 * https://cloud.github.com/downloads/zint/zint/zint_manual_242.pdf
