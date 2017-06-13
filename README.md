@@ -104,5 +104,13 @@ http://www.aps.anl.gov/epics/license/open.php
 ## CUPS
 * https://www.cups.org/doc/options.html
 
+
+## jsoncpp
+
+* https://github.com/open-source-parsers/jsoncpp
+```
+aptitude install  libjsoncpp-dev
+```
+
 # Acknowledgement
 
