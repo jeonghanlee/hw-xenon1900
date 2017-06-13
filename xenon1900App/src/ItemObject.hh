@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include <curl/curl.h>
+#include <jsoncpp/json/json.h>
 #include <zint.h>
 
 #include "aSubRecord.h"
@@ -114,6 +115,8 @@ public:
   // maybe we will move the following functions to private 
   const string GetJiraJSON();
   const string GetJiraCSV();
+
+  
 
   void Print ();
     

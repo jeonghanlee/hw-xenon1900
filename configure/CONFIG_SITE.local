@@ -1,12 +1,12 @@
 #
 # cflags returns null...
 USR_CFLAGS  += `pkg-config --cflags libcurl`
-USR_LDFLAGS += `pkg-config --libs libcurl`
-PROD_LDLIBS += `pkg-config --libs libcurl`
+USR_LDFLAGS += `pkg-config --libs   libcurl`             
+PROD_LDLIBS += `pkg-config --libs   libcurl`
 
-#USR_CFLAGS  += `pkg-config --cflags curlpp`
-#USR_LDFLAGS += `pkg-config --libs curlpp`
-#PROD_LDLIBS += `pkg-config --libs curlpp`
+USR_CFLAGS  += `pkg-config --cflags jsoncpp`
+USR_LDFLAGS += `pkg-config --libs   jsoncpp`
+PROD_LDLIBS += `pkg-config --libs   jsoncpp`
 
 ## ZINT : source compile and make install
 #USR_CFLAGS  += -I/usr/local/include/
