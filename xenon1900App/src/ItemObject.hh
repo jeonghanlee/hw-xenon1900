@@ -8,8 +8,8 @@
 #include <vector>
 #include <algorithm>
 
-#include <curl/curl.h>
-#include <jsoncpp/json/json.h>
+//#include <curl/curl.h>
+//#include <jsoncpp/json/json.h>
 #include <zint.h>
 
 #include "aSubRecord.h"

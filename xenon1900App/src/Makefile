@@ -18,6 +18,7 @@ LIBRARY_IOC += xenon1900Support
 # Compile and add the code to the support library
 xenon1900Support_SRCS += xenonASub.cpp
 xenon1900Support_SRCS += ItemObject.cpp
+xenon1900Support_SRCS += Jira.cpp
 
 xenon1900Support_LIBS += $(EPICS_BASE_IOC_LIBS)
 

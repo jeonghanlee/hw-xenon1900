@@ -38,7 +38,7 @@
 #include "stringinRecord.h"
 
 #include "ItemObject.hh"
-
+#include "Jira.hh"
 
 InvDataType outData;
 int       xenonDebug;
@@ -50,15 +50,26 @@ const char * const lo="LO"; /* Location   */
 const char * const st="ST"; /* Status     */
 const char * const mo="MO"; /* Model      */
   
-  
+
+
+const char * const hs="HS"; /* Hash number per each SN                    */
+const char * const cl="CL"; /* Clear all scanned PVs                         */
+
+const char * const le="LE"; /* Enable  Label Printing after JIRA action (JC) */
+const char * const ld="LD"; /* Disable Label Printing after JIRA action (JC) */
+
+const char * const jc="JC"; /* Create an JIRA issue                          */
+const char * const ju="JU"; /* Update an JIRA issue (Scan Hash ID and other fields first) */
+const char * const ji="JI"; /* Define the Child (Scan Hash ID later)         */
+const char * const jp="JP"; /* Define the Parent (Scan Hash ID later)        */
+
+const char * const pj="PJ"; /*Save and append each scanned PV to CSV file which JIRA can import  (per day) */
+const char * const dj="DJ"; /* Push the saved PVs to RDB and JIRA         */
+const char * const pd="PD"; /* Push the saved PVs to RDB                  */
+
+
 const char * const sv="SV"; /* Save and overwrite each scanned PV in each csv file (per second)   */
 const char * const sj="SJ"; /* Save and overwrite each scanned PV in each json file (per second)  */
-const char * const pj="PJ"; /* Save and append each scanned PV to CSV file which JIRA can import  (per day) */
-const char * const cl="CL"; /* Clear all scanned PVs                      */
-const char * const pd="PD"; /* Push the saved PVs to RDB                  */
-const char * const dj="DJ"; /* Push the saved PVs to RDB and JIRA         */
-const char * const hs="HS"; /* Hash number per each SN                    */
-
 
 static char * getLinkStrVal(DBLINK *dbLink);
 static void InitInvDataType();
@@ -67,8 +78,6 @@ static void printInvDataType(InvDataType iDtype);
 static char *timeString(aSubRecord *pRecord, const char *pFormat);
 static char *timeStringDay(aSubRecord *pRecord);
 static char *timeStringSecond(aSubRecord *pRecord);
-
-//static int csvWrite(aSubRecord *pRecord);
 
 /* 
   The following macro was removed from 3.15. 
@@ -321,6 +330,27 @@ static long DistXenonASub(aSubRecord *pRecord)
 	printf("SN and MO are mandatory data, please scan them!\n");
       }
       
+    }
+  else if ( epicsStrnCaseCmp(sj, aval, 2) == 0 )
+    {
+      fillInvDataType(prec);
+      ItemObject item (outData);
+      std::string project = "TAG";
+      std::string issue = "Hardware";
+      std::string desc="";
+      
+      desc = "Created at ";
+      desc += timeStringSecond(prec);
+      desc += " using EPICS Xenon IOC";
+      
+      item.SetJIRAInfo(project, issue, desc);
+      if (xenonDebug) std::cout << item.GetJiraJSON().c_str() << std::endl;
+      if( item.IsValid() ) {
+	printf("is valid\n");
+      }
+      else {
+	printf("SN and MO are mandatory data, please scan them!\n");
+      }
     }
   else if ( epicsStrnCaseCmp(sj, aval, 2) == 0 )
     {

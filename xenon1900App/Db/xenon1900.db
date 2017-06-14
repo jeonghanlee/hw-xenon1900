@@ -65,7 +65,7 @@ record(stringin, "$(SYSDEV)SN")
 {
     field(DESC, "Serial Number")
     field(DTYP, "Soft Channel")
- }
+}
 
 
 ## PINI YES, please look at timeString in
