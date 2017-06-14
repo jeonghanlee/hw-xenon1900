@@ -31,7 +31,7 @@ set -a
 set +a
 
 
-. ${ZINT_TOP}/zint/functions
+. ${ZINT_TOP}/functions
 
 
 pushd ${ZINT_TOP}
