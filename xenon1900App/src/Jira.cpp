@@ -4,16 +4,17 @@
 JiraProject::JiraProject()
 {
   
-  fUrl             = "";
-  fIssueUrl       = "";
-  fCreateUrl       = "";
-  fBulkCreateUrl   = "";
-  fSearchUrl       = "";
-  fUpdateDeleteUrl = "";
-  fAttachmentsUrl  = "";
+  fUrl.clear();
+  fIssueUrl.clear();
+  fCreateUrl.clear();
+  fBulkCreateUrl.clear();
+  fSearchUrl.clear(); 
+  fUpdateDeleteUrl.clear();
+  fAttachmentsUrl.clear();
 
-  fProjectName     = "";
-  fIssueName       = "";
+  fProjectName.clear(); 
+  fIssueName.clear();   
+  fIssueIdOrKey.clear();
  
 };
 
@@ -29,6 +30,7 @@ JiraProject::JiraProject(string projectUrl, string projectName, string issueName
   SetProjectUrl(projectUrl);
   fProjectName     = projectName;
   fIssueName       = issueName;
+  fIssueIdOrKey.clear();
   
 };
 
@@ -40,7 +42,62 @@ JiraProject::SetProjectUrl(const string& url)
   fIssueUrl        = fUrl + "/issue";
   fCreateUrl       = fIssueUrl;
   fBulkCreateUrl   = fIssueUrl + "/bulk";
-  fUpdateDeleteUrl = "";
-  fAttachmentsUrl  = "";
+  fUpdateDeleteUrl.clear();
+  fAttachmentsUrl.clear();
   fSearchUrl       = url + "/search";
+};
+
+
+
+string 
+JiraProject::CreateIssue(const ItemObject& obj)
+{
+  string jira_return_message;
+  
+  this->AddItem(obj);
+
+
+  return jira_return_message;
+  
+};
+
+
+
+string 
+JiraProject::UpdateIssue(const ItemObject& obj)
+{
+  string jira_return_message;
+  
+  this->AddItem(obj);
+
+  return jira_return_message;
+  
+};
+
+
+
+string 
+JiraProject::DeleteIssue(const ItemObject& obj)
+{
+  string jira_return_message;
+  
+  this->AddItem(obj);
+
+
+  return jira_return_message;
+  
+};
+
+
+
+string 
+JiraProject::SearchIssue(const ItemObject& obj)
+{
+  string jira_return_message;
+  
+  this->AddItem(obj);
+
+
+  return jira_return_message;
+  
 };

@@ -40,36 +40,46 @@
 #include "ItemObject.hh"
 #include "Jira.hh"
 
-InvDataType outData;
-int       xenonDebug;
-
+static InvDataType outData;
+static int       xenonDebug;
+//typedef enum { ENABLED, DISABLED} PrintStatus;
+typedef enum { DISABLED, ENABLED} PrintStatus;
+static PrintStatus enabled = ENABLED;
+static PrintStatus disabled = DISABLED;
 /* Predefined PREFIX for Barcode */
-const char * const ff="FF"; /* Formfactor */
-const char * const vd="VD"; /* Vendor     */
-const char * const lo="LO"; /* Location   */
-const char * const st="ST"; /* Status     */
-const char * const mo="MO"; /* Model      */
-  
+static const char * const ff="FF"; /* Formfactor */
+static const char * const vd="VD"; /* Vendor     */
+static const char * const lo="LO"; /* Location   */
+static const char * const st="ST"; /* Status     */
+static const char * const mo="MO"; /* Model      */
+static const char * const oo="00"; /* Place holder */
+
+static const char * const hs="HS"; /* Hash number per each SN                    */
+static const char * const cl="CL"; /* Clear all scanned PVs                         */
+
+static const char * const le="LE"; /* Enable  Label Printing after JIRA action (JC) */
+static const char * const ld="LD"; /* Disable Label Printing after JIRA action (JC) */
+
+static const char * const jc="JC"; /* Create an JIRA issue                          */
+static const char * const ju="JU"; /* Update an JIRA issue (Scan Hash ID and other fields first) */
+static const char * const jd="JD"; /* Delete an JIRA issue (Scan Hash ID and other fields first) */
+static const char * const js="JS"; /* Search an JIRA issue (Scan Hash ID and other fields first) */
+
+static const char * const ji="JI"; /* Define the Child (Scan Hash ID later)         */
+static const char * const jp="JP"; /* Define the Parent (Scan Hash ID later)        */
+
+static const char * const pj="PJ"; /*Save and append each scanned PV to CSV file which JIRA can import  (per day) */
+static const char * const dj="DJ"; /* Push the saved PVs to RDB and JIRA         */
+static const char * const pd="PD"; /* Push the saved PVs to RDB                  */
 
 
-const char * const hs="HS"; /* Hash number per each SN                    */
-const char * const cl="CL"; /* Clear all scanned PVs                         */
+static const char * const sv="SV"; /* Save and overwrite each scanned PV in each csv file (per second)   */
+static const char * const sj="SJ"; /* Save and overwrite each scanned PV in each json file (per second)  */
 
-const char * const le="LE"; /* Enable  Label Printing after JIRA action (JC) */
-const char * const ld="LD"; /* Disable Label Printing after JIRA action (JC) */
-
-const char * const jc="JC"; /* Create an JIRA issue                          */
-const char * const ju="JU"; /* Update an JIRA issue (Scan Hash ID and other fields first) */
-const char * const ji="JI"; /* Define the Child (Scan Hash ID later)         */
-const char * const jp="JP"; /* Define the Parent (Scan Hash ID later)        */
-
-const char * const pj="PJ"; /*Save and append each scanned PV to CSV file which JIRA can import  (per day) */
-const char * const dj="DJ"; /* Push the saved PVs to RDB and JIRA         */
-const char * const pd="PD"; /* Push the saved PVs to RDB                  */
-
-
-const char * const sv="SV"; /* Save and overwrite each scanned PV in each csv file (per second)   */
-const char * const sj="SJ"; /* Save and overwrite each scanned PV in each json file (per second)  */
+static const std::string project = "TAG";
+static const std::string issue = "Hardware";
+static const std::string url = "https://jira.esss.lu.se";
+static std::string jira_return_msg;
 
 static char * getLinkStrVal(DBLINK *dbLink);
 static void InitInvDataType();
@@ -79,16 +89,17 @@ static char *timeString(aSubRecord *pRecord, const char *pFormat);
 static char *timeStringDay(aSubRecord *pRecord);
 static char *timeStringSecond(aSubRecord *pRecord);
 
+
 /* 
-  The following macro was removed from 3.15. 
-  Until I find the proper way to do this,
-  I will use the macro locally
+   The following macro was removed from 3.15. 
+   Until I find the proper way to do this,
+   I will use the macro locally
  
 
- #define dbGetPdbAddrFromLink(PLNK) \
-     ( ( (PLNK)->type != DB_LINK ) \
-       ? 0 \
-       : ( ( (struct dbAddr *)( (PLNK)->value.pv_link.pvt) ) ) )
+   #define dbGetPdbAddrFromLink(PLNK) \
+   ( ( (PLNK)->type != DB_LINK ) \
+   ? 0 \
+   : ( ( (struct dbAddr *)( (PLNK)->value.pv_link.pvt) ) ) )
 */
 
 static char *getLinkStrVal(DBLINK *dbLink)
@@ -152,7 +163,7 @@ static void printInvDataType(InvDataType iDtype)
  * 
  * I force to use PINI in DB record, to get time at first. 
  * 
-*/
+ */
 static char *timeString(aSubRecord *pRecord, const char *pFormat)
 {
   epicsTime et = (epicsTimeStamp) pRecord->time;
@@ -187,9 +198,13 @@ static char *checkStr(char *in)
 }
 
 
+
+
 static long InitXenonASub(aSubRecord *pRecord)
 {
   InitInvDataType();
+  aSubRecord* prec = (aSubRecord*) pRecord;
+  prec->valu = &enabled;
   return 0;
 }
 
@@ -205,29 +220,32 @@ static long DistXenonASub(aSubRecord *pRecord)
 
   epicsUInt32 id_hash = epicsStrHash(id,0);
   char      * fwd_val = epicsStrDup(aval);
-
+  
 
   
   /*
    * The XENON 1900 Scanner triggers aSub record twice, still unclear why it is so, and how to fix it. 
-   * So simply ignore the second trigger with no data
+   * So simply ignore the second trigger with no data. Return value is selected 0.
+   * Return value has some dependency upon one of output (OUTU, now)
    */
   
-  if (id_hash == 0) return 1;
+  if (id_hash == 0) return 0;
 
   if(xenonDebug) {
-    printf("%s id %s id StrHash %d, and fwr value %s.\n",
+    printf("%s id %s id StrHash %d, and scanned value %s.\n",
 	   timeStringSecond(prec), id, id_hash, fwd_val);
   }
   
   /* Serial Number should be the last Output value U */
   /* strncpy((char *)prec->valb, aval, strlen(aval)); */
-  
-  if      ( epicsStrnCaseCmp(ff, aval, 2) == 0 ) prec->valb = fwd_val;
+  if      ( epicsStrnCaseCmp(oo, aval, 2) == 0 ) ; /* ignore */
+  else if ( epicsStrnCaseCmp(ff, aval, 2) == 0 ) prec->valb = fwd_val;
   else if ( epicsStrnCaseCmp(vd, aval, 2) == 0 ) prec->valc = fwd_val;
   else if ( epicsStrnCaseCmp(lo, aval, 2) == 0 ) prec->vald = fwd_val;
   else if ( epicsStrnCaseCmp(st, aval, 2) == 0 ) prec->vale = fwd_val;
   else if ( epicsStrnCaseCmp(mo, aval, 2) == 0 ) prec->valf = fwd_val;
+  else if ( epicsStrnCaseCmp(le, aval, 2) == 0 ) prec->valu = &enabled;
+  else if ( epicsStrnCaseCmp(ld, aval, 2) == 0 ) prec->valu = &disabled;
   else if ( epicsStrnCaseCmp(cl, aval, 2) == 0 )
     {
       /* Send the empty string to all data PVs (ff,vd,lo,st,mo,sn) */
@@ -235,6 +253,7 @@ static long DistXenonASub(aSubRecord *pRecord)
       prec->valb = fwd_val; prec->valc = fwd_val;
       prec->vald = fwd_val; prec->vale = fwd_val;
       prec->valf = fwd_val; prec->vala = fwd_val;
+      prec->valu = &disabled;
     }
   else if ( epicsStrnCaseCmp(sv, aval, 2) == 0 )
     {
@@ -335,8 +354,6 @@ static long DistXenonASub(aSubRecord *pRecord)
     {
       fillInvDataType(prec);
       ItemObject item (outData);
-      std::string project = "TAG";
-      std::string issue = "Hardware";
       std::string desc="";
       
       desc = "Created at ";
@@ -352,26 +369,63 @@ static long DistXenonASub(aSubRecord *pRecord)
 	printf("SN and MO are mandatory data, please scan them!\n");
       }
     }
-  else if ( epicsStrnCaseCmp(sj, aval, 2) == 0 )
+  else if ( epicsStrnCaseCmp(jc, aval, 2) == 0 )  /* Create */
     {
+      jira_return_msg.clear();
       fillInvDataType(prec);
       ItemObject item (outData);
-      std::string project = "TAG";
-      std::string issue = "Hardware";
-      std::string desc="";
-      
-      desc = "Created at ";
-      desc += timeStringSecond(prec);
-      desc += " using EPICS Xenon IOC";
-      
-      item.SetJIRAInfo(project, issue, desc);
-      if (xenonDebug) std::cout << item.GetJiraJSON().c_str() << std::endl;
-      if( item.IsValid() ) {
-	printf("is valid\n");
-      }
-      else {
-	printf("SN and MO are mandatory data, please scan them!\n");
-      }
+      JiraProject jira(url, project, issue);
+      jira_return_msg = jira.CreateIssue(item);
+      std::cout << jira.GetBulkCreateUrl() << std::endl;
+      std::cout << jira_return_msg  << std::endl;
+    }
+  else if ( epicsStrnCaseCmp(ju, aval, 2) == 0 ) /* Update */ 
+    {
+      jira_return_msg.clear();
+      fillInvDataType(prec);
+      ItemObject item (outData);
+      JiraProject jira(url, project, issue);
+      jira.SetIssueIdOrKey("TAG-333");
+      jira_return_msg = jira.UpdateIssue(item);
+      std::cout << jira.GetUpdateDeleteUrl() << std::endl;
+      std::cout << jira_return_msg  << std::endl;
+
+    }
+  else if ( epicsStrnCaseCmp(jd, aval, 2) == 0 ) /* Delete */
+    {
+      jira_return_msg.clear();
+      fillInvDataType(prec);
+      ItemObject item (outData);
+      JiraProject jira(url, project, issue);
+      jira_return_msg = jira.DeleteIssue(item);
+      std::cout << jira.GetUpdateDeleteUrl("TAG-334") << std::endl;
+      std::cout << jira_return_msg  << std::endl;
+
+    }
+  else if ( epicsStrnCaseCmp(js, aval, 2) == 0 ) /* Search */ 
+    {
+      jira_return_msg.clear();
+      fillInvDataType(prec);
+      ItemObject item (outData);
+      JiraProject jira(url, project, issue);
+      jira_return_msg = jira.SearchIssue(item);
+      std::cout << jira.GetSearchUrl() << std::endl;
+      std::cout << jira_return_msg  << std::endl;
+	    
+    }
+  else if ( epicsStrnCaseCmp(ji, aval, 2) == 0 )
+    {
+      //     fillInvDataType(prec);
+      //     // ItemObject item (outData);
+      //     JiraProject jira(url, project, issue);
+      //     std::cout << jira.GetCreateUrl() << std::endl;
+    }
+  else if ( epicsStrnCaseCmp(jp, aval, 2) == 0 )
+    {
+      //     fillInvDataType(prec);
+      //     // ItemObject item (outData);
+      //     JiraProject jira(url, project, issue);
+      //     std::cout << jira.GetCreateUrl() << std::endl;
     }
   else
     {

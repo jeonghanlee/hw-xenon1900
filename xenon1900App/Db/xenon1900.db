@@ -68,6 +68,26 @@ record(stringin, "$(SYSDEV)SN")
 }
 
 
+record(stringin, "$(SYSDEV)JiraMessage")
+{
+    field(DESC, "JIRA returned Message")
+    field(DTYP, "Soft Channel")
+}
+
+
+## A quick and dirty way to work around this issue is to set enabled in
+## INAM of aSub record. And please look at comment in DisXenonASub
+## It shold be matched with enum PrintStatus also.
+## Thursday, June 15 02:25:08 CEST 2017
+
+record(bi, "$(SYSDEV)EnableLabel")
+{
+    field(DESC, "Enable or Disable LabelPrinter")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+}
+
+
 ## PINI YES, please look at timeString in
 ## xenonASub.cpp
 record(aSub,"$(SYSDEV)Dist_aSub")
@@ -84,18 +104,25 @@ record(aSub,"$(SYSDEV)Dist_aSub")
     field(OUTD, "$(SYSDEV)Location PP")
     field(OUTE, "$(SYSDEV)Status PP")
     field(OUTF, "$(SYSDEV)Model PP")
+    field(OUTG, "$(SYSDEV)JiraMessage PP")
+    field(OUTU, "$(SYSDEV)EnableLabel PP")
     field(FTVA, "STRING")
     field(FTVB, "STRING")
     field(FTVC, "STRING")
     field(FTVD, "STRING")
     field(FTVE, "STRING")
     field(FTVF, "STRING")
+    field(FTVG, "STRING")
+    field(FTVU, "ENUM")
     field(NOVA, "1")
     field(NOVB, "1")
     field(NOVC, "1")
     field(NOVD, "1")
     field(NOVE, "1")
     field(NOVF, "1")
+    field(NOVG, "1")
+    field(NOVU, "1")
     field(PINI, "YES")
+    field(EFLG, "NEVER")
 
   }

@@ -4,10 +4,10 @@ This repository will contain the EPICS IOC for the Honeywell Xenon 1900 bar code
 
 ## Requirements
 
-* libcurl
+* libcurl, jsoncpp 
 
 ```
-aptitude install  libcurl4-gnutls-dev
+aptitude install  libcurl4-gnutls-dev libjsoncpp-dev 
 
 ```
 

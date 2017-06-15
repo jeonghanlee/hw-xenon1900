@@ -6,6 +6,7 @@ LD,Disable Label Printing after JIRA action (JC)
 JC,Create an JIRA issue 
 JU,Update an JIRA issue (Scan Hash ID and other fields first)
 JD,Delete an JIRA issue (Scan Hash ID first)
+JS,Search an JIRA issue (Scan Hash ID first)
 JI,Define the Child (Scan Hash ID later)
 JP,Define the Parent (Scan Hash ID later)
 00,----------- place holder ----------
