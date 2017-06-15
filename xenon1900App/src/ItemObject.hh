@@ -62,13 +62,23 @@ public:
   const epicsUInt32 GetInstallationStrcutID()  const { return fInstallationStructID; };
 
   const epicsUInt32 GetHashID()                const { return fHashID; };
-  const string      GetSerialNumber()          const { return fSerialNumber; };
-  const string      GetName()                  const { return fName; };
-  const string      GetFormfactor()            const { return fFormfactor; };
-  const string      GetVendor()                const { return fVendor; };
-  const string      GetLocation()              const { return fLocation; };
-  const string      GetStatus()                const { return fStatus; };
-  const string      GetModel()                 const { return fName; };
+  
+  string      GetSerialNumber()        { return fSerialNumber; };
+  string      GetName()                { return fName; };
+  string      GetFormfactor()          { return fFormfactor; };
+  string      GetVendor()              { return fVendor; };
+  string      GetLocation()            { return fLocation; };
+  string      GetStatus()              { return fStatus; };
+  string      GetModel()               { return fName; };
+
+  const char*       GetSerialNumber()        { return fSerialNumber.c_str(); };
+  char*       GetName()                { return fName.c_str(); };
+  char*       GetFormfactor()          { return fFormfactor.c_str(); };
+  char*       GetVendor()              { return fVendor.c_str(); };
+  char*       GetLocation()            { return fLocation.c_str(); };
+  char*       GetStatus()              { return fStatus.c_str(); };
+  char*       GetModel()               { return fName.c_str(); };
+  
   const epicsUInt32 GetJiraIssueNumber()       const { return fJiraIssueNumber; };
 
 

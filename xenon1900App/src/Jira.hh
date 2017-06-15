@@ -15,7 +15,7 @@
 #include "ItemObject.hh"
 
 using namespace std;
-        
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -97,9 +97,18 @@ private:
 
 
   ItemObject  fItemObject;
+
+
+  Json::StyleWriter jStyledWriter;
+  Json::FastWriter  jFasterWriter;
+
+  Json::Value       jRoot;
+
+  string            jRootJsonData;
+
   
   void SetUpdateJsonData();
-  void SetCreateJsonData();
+  void SetCreateJsonData(int no, bool json_style);
   void SetSearchJsonData();
   void AddItem(const ItemObject& obj) { fItemObject = obj; }; 
 
