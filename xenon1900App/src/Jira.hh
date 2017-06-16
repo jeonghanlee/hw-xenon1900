@@ -13,8 +13,9 @@
 #include <zint.h>
 
 #include "ItemObject.hh"
+#include "Jira_ess.hh"
 
-using namespace std;
+//using namespace std;
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,30 +28,30 @@ class JiraProject
   
 public:
   JiraProject();
-  JiraProject(string projectUrl, string projectName, string issueName);
+  JiraProject(std::string projectUrl, std::string projectName, std::string issueName);
   virtual ~JiraProject();
 
-  string CreateIssue(const ItemObject& obj);
-  string UpdateIssue(const ItemObject& obj);
-  string DeleteIssue(const ItemObject& obj);
-  string SearchIssue(const ItemObject& obj);
+  std::string CreateIssue(ItemObject& obj);
+  std::string UpdateIssue(ItemObject& obj);
+  std::string DeleteIssue(ItemObject& obj);
+  std::string SearchIssue(ItemObject& obj);
 
   //  void DefineChild();
   //  void DefineParent();
   
-  const string GetUrl()             const { return fUrl; };
-  const string GetCreateUrl()       const { return fCreateUrl; };
-  const string GetBulkCreateUrl()   const { return fBulkCreateUrl; };
-  const string GetSearchUrl()       const { return fSearchUrl; };
+  const std::string GetUrl()             const { return fUrl; };
+  const std::string GetCreateUrl()       const { return fCreateUrl; };
+  const std::string GetBulkCreateUrl()   const { return fBulkCreateUrl; };
+  const std::string GetSearchUrl()       const { return fSearchUrl; };
 
-  const string GetUpdateDeleteUrl() {
+  const std::string GetUpdateDeleteUrl() {
     fUpdateDeleteUrl.append(fIssueUrl);
     fUpdateDeleteUrl.append("/");
     fUpdateDeleteUrl.append(fIssueIdOrKey);
     return fUpdateDeleteUrl;
   };
 
-  const string GetAttachmentsUrl() {
+  const std::string GetAttachmentsUrl() {
     fAttachmentsUrl.append(fIssueUrl);
     fAttachmentsUrl.append("/");
     fAttachmentsUrl.append(fIssueIdOrKey);
@@ -58,14 +59,14 @@ public:
     return fAttachmentsUrl;
   };
   
-  const string GetUpdateDeleteUrl(const string& issueIdOrKey) {
+  const std::string GetUpdateDeleteUrl(const std::string& issueIdOrKey) {
     fUpdateDeleteUrl.append(fIssueUrl);
     fUpdateDeleteUrl.append("/");
     fUpdateDeleteUrl.append(issueIdOrKey);
     return fUpdateDeleteUrl;
   };
 
-  const string GetAttachmentsUrl(const string& issueIdOrKey) {
+  const std::string GetAttachmentsUrl(const std::string& issueIdOrKey) {
     fAttachmentsUrl.append(fIssueUrl);
     fAttachmentsUrl.append("/");
     fAttachmentsUrl.append(issueIdOrKey);
@@ -73,44 +74,59 @@ public:
     return fAttachmentsUrl;
   };
   
-  void SetProjectUrl(const string& url);
-  void SetIssueIdOrKey(const string& id)   {fIssueIdOrKey = id;} ;
+  void SetProjectUrl(const std::string& url);
+  void SetIssueIdOrKey(const std::string& id)   {fIssueIdOrKey = id;} ;
   void ClearIssueIdOrKey()                 {fIssueIdOrKey.clear();};
 
-
+  ItemObject  fItemObject;
   
 private:
   
-  string       fUrl;
-  string       fIssueUrl;
-  string       fCreateUrl;
-  string       fBulkCreateUrl;
-  string       fSearchUrl;
+  std::string       fUrl;
+  std::string       fIssueUrl;
+  std::string       fCreateUrl;
+  std::string       fBulkCreateUrl;
+  std::string       fSearchUrl;
 
   // Dynamically change according to Issue ID or Issue Key
-  string       fUpdateDeleteUrl;
-  string       fAttachmentsUrl;
+  std::string       fUpdateDeleteUrl;
+  std::string       fAttachmentsUrl;
 
-  string       fProjectName;
-  string       fIssueName;
-  string       fIssueIdOrKey;
+  std::string       fProjectName;
+  std::string       fIssueName;
+  std::string       fIssueIdOrKey;
 
+  std::string       fUserName;
+  std::string       fDescription;
 
-  ItemObject  fItemObject;
-
-
-  Json::StyleWriter jStyledWriter;
-  Json::FastWriter  jFasterWriter;
-
-  Json::Value       jRoot;
-
-  string            jRootJsonData;
 
   
-  void SetUpdateJsonData();
+  Json::StyledWriter jStyledWriter;
+  Json::FastWriter   jFasterWriter;
+  Json::Value        jRoot;
+  std::string        jRootJsonData;
+
+  CURL               *curl_obj;
+  CURLcode           curl_res;
+  struct curl_slist  *curl_headers;
+  std::string        fCurlResponse;
+
+  void AddItem(ItemObject &in) { fItemObject = in; }; 
+
+  void SetupCurlHeaders();
   void SetCreateJsonData(int no, bool json_style);
+  void SetUpdateJsonData();
   void SetSearchJsonData();
-  void AddItem(const ItemObject& obj) { fItemObject = obj; }; 
+
+  void SetCreateCurlData();
+  void SetUpdateCurlData();
+  void SetSearchCurlData();
+
+  static size_t CurlWriteToString(void *ptr, size_t size, size_t count, void *stream)
+  {
+    ((std::string*)stream)->append((char*)ptr, 0, size*count);
+    return size*count;
+  }
 
 };
 
@@ -118,6 +134,8 @@ private:
 #ifdef __cplusplus
 }
 #endif
+
+
 
 
 #endif

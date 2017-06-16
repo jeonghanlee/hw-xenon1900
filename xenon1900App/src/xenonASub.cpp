@@ -76,15 +76,12 @@ static const char * const pd="PD"; /* Push the saved PVs to RDB                 
 static const char * const sv="SV"; /* Save and overwrite each scanned PV in each csv file (per second)   */
 static const char * const sj="SJ"; /* Save and overwrite each scanned PV in each json file (per second)  */
 
-static const std::string project = "TAG";
-static const std::string issue = "Hardware";
-static const std::string url = "https://jira.esss.lu.se";
 static std::string jira_return_msg;
 
 static char * getLinkStrVal(DBLINK *dbLink);
 static void InitInvDataType();
 static int fillInvDataType(aSubRecord *pRecord);
-static void printInvDataType(InvDataType iDtype);
+//static void printInvDataType(InvDataType iDtype);
 static char *timeString(aSubRecord *pRecord, const char *pFormat);
 static char *timeStringDay(aSubRecord *pRecord);
 static char *timeStringSecond(aSubRecord *pRecord);
@@ -122,7 +119,7 @@ static void InitInvDataType()
   outData.vendor       = epicsStrDup("");
   outData.location     = epicsStrDup("");
   outData.status       = epicsStrDup("");
-  outData.model        = epicsStrDup("");
+  outData.model_name   = epicsStrDup("");
   return ;
 } 
 
@@ -133,26 +130,26 @@ static int fillInvDataType(aSubRecord *pRecord)
   outData.vendor       = getLinkStrVal(&pRecord->outc);
   outData.location     = getLinkStrVal(&pRecord->outd);
   outData.status       = getLinkStrVal(&pRecord->oute);
-  outData.model        = getLinkStrVal(&pRecord->outf);
+  outData.model_name   = getLinkStrVal(&pRecord->outf);
   outData.hash         = epicsStrHash(outData.serialnumber,0);
   
-  if(xenonDebug) printInvDataType(outData);
+  // printInvDataType(outData);
     
   return 0;
 }
 
-static void printInvDataType(InvDataType iDtype)
-{
-  printf("Hash       is %u\n", iDtype.hash);
-  printf("SN         is %s\n", iDtype.serialnumber);
-  printf("Formfactor is %s\n", iDtype.formfactor);
-  printf("Vendor     is %s\n", iDtype.vendor);
-  printf("Location   is %s\n", iDtype.location);
-  printf("Status     is %s\n", iDtype.status);
-  printf("Model      is %s\n", iDtype.model);
+// static void printInvDataType(InvDataType iDtype)
+// {
+//   printf("Hash       is %u\n", iDtype.hash);
+//   printf("SN         is %s\n", iDtype.serialnumber);
+//   printf("Formfactor is %s\n", iDtype.formfactor);
+//   printf("Vendor     is %s\n", iDtype.vendor);
+//   printf("Location   is %s\n", iDtype.location);
+//   printf("Status     is %s\n", iDtype.status);
+//   printf("Model      is %s\n", iDtype.model_name);
 
-  return;
-}
+//   return;
+// }
 
 /* 
  * TimeStamp has no accurate meaning, we only use this info
@@ -289,7 +286,7 @@ static long DistXenonASub(aSubRecord *pRecord)
 	  fprintf(ofp, "%s,%s",      pHolder, checkStr(outData.vendor));
 	  fprintf(ofp, "%s,%s",      pHolder, checkStr(outData.location));
 	  fprintf(ofp, "%s,%s",      pHolder, checkStr(outData.status));
-	  fprintf(ofp, "%s,%s\n",    pHolder, checkStr(outData.model));
+	  fprintf(ofp, "%s,%s\n",    pHolder, checkStr(outData.model_name));
 	  fclose(ofp);
 	}
       } else {
@@ -361,7 +358,7 @@ static long DistXenonASub(aSubRecord *pRecord)
       desc += " using EPICS Xenon IOC";
       
       item.SetJIRAInfo(project, issue, desc);
-      if (xenonDebug) std::cout << item.GetJiraJSON().c_str() << std::endl;
+ 
       if( item.IsValid() ) {
 	printf("is valid\n");
       }
@@ -374,10 +371,15 @@ static long DistXenonASub(aSubRecord *pRecord)
       jira_return_msg.clear();
       fillInvDataType(prec);
       ItemObject item (outData);
-      JiraProject jira(url, project, issue);
-      jira_return_msg = jira.CreateIssue(item);
-      std::cout << jira.GetBulkCreateUrl() << std::endl;
-      std::cout << jira_return_msg  << std::endl;
+      if( item.IsValid() ) {
+	JiraProject jira(url, project, issue);
+	jira_return_msg = jira.CreateIssue(item);
+      }
+      else {
+	jira_return_msg = "SN and NAME are mandatory data, please scan them!";
+	std::cout << jira_return_msg << std::endl;
+      }
+	
     }
   else if ( epicsStrnCaseCmp(ju, aval, 2) == 0 ) /* Update */ 
     {

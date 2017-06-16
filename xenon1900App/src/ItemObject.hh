@@ -2,6 +2,7 @@
 #define INC_ItemObject_HH
 
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 #include <cstdio>
 #include <string>
@@ -15,7 +16,7 @@
 #include "aSubRecord.h"
 
 
-using namespace std;
+// using namespace std;
         
 #ifdef __cplusplus
 extern "C" {
@@ -29,7 +30,7 @@ typedef struct InvDataType {
   char *vendor;
   char *location;
   char *status;
-  char *model;
+  char *model_name;
 
 } InvDataType;
 
@@ -37,63 +38,88 @@ typedef struct InvDataType {
 
 class ItemObject
 {
+
+  
 public:
   ItemObject();
+  ItemObject(const ItemObject& iobj);
   ItemObject(InvDataType in);
-  ItemObject(epicsUInt32  hashID, string serial_num, string model_name);
+  ItemObject(epicsUInt32  hashID, std::string serial_num, std::string model_name);
   ItemObject(epicsUInt32  hashID, char* serial_num, char* model_name);
-  ItemObject(epicsUInt32  hashID, string serial_num, string model_name, string formfactor, string vendor_name, string ics_location, string status);
+  ItemObject(epicsUInt32  hashID, std::string serial_num, std::string model_name, std::string formfactor, std::string vendor_name, std::string ics_location, std::string status);
   ItemObject(epicsUInt32  hashID, char* serial_num, char* model_name, char* formfactor, char* vendor_name, char* ics_location,  char* status);
 	     
   virtual ~ItemObject();
 
+  void Init();
+  ItemObject & operator=(const ItemObject &iobj);
+  
+  // overloaded operator methods
 
+  friend std::ostream& operator<<(std::ostream& os, const ItemObject &itemobj);
+// std::ostream& operator<<(std::ostream& o, const SomeType& t);
   bool IsValid();
   
   bool HasParent() { return fHasParent; } ;
   bool HasChild()  { return fHasChild; } ;
 
   const epicsUInt32 GetParentID             () const { return fParentID; };
-  const vector<epicsUInt32> GetChildID () const { return fChildID; };
+  const std::vector<epicsUInt32> GetChildID () const { return fChildID; };
   const epicsUInt32 GetChildNumber          () const { return fChildNumber; };
 
   const epicsUInt32 GetLocationStructID()      const { return fLocationStructID; };
   const epicsUInt32 GetFacilityStructID()      const { return fFacilityStructID; };
   const epicsUInt32 GetInstallationStrcutID()  const { return fInstallationStructID; };
 
-  const epicsUInt32 GetHashID()                const { return fHashID; };
-  
-  string      GetSerialNumber()        { return fSerialNumber; };
-  string      GetName()                { return fName; };
-  string      GetFormfactor()          { return fFormfactor; };
-  string      GetVendor()              { return fVendor; };
-  string      GetLocation()            { return fLocation; };
-  string      GetStatus()              { return fStatus; };
-  string      GetModel()               { return fName; };
+  epicsUInt32 GetHashID()                 { return fHashID; };
 
+  bool HasFormfactor() const {
+    if ( fFormfactor.empty() || fFormfactor == "") return false;
+    else                                           return true;
+  };
+  
+  bool HasVendor() const {
+    if ( fVendor.empty() || fVendor == "" ) return false;
+    else                                    return true;
+  };
+  
+  bool              HasLocation()      const      {
+    if ( fLocation.empty() || fLocation == "" ) return false;
+    else                     return true;
+  };
+  
+  bool              HasStatus()       const       {
+    if ( fStatus.empty() || fStatus == "" ) return false;
+    else                   return true;
+  };
+  
+  const char*       GetCharHashID()          { return fHashIdStream.str().c_str();};
   const char*       GetSerialNumber()        { return fSerialNumber.c_str(); };
-  char*       GetName()                { return fName.c_str(); };
-  char*       GetFormfactor()          { return fFormfactor.c_str(); };
-  char*       GetVendor()              { return fVendor.c_str(); };
-  char*       GetLocation()            { return fLocation.c_str(); };
-  char*       GetStatus()              { return fStatus.c_str(); };
-  char*       GetModel()               { return fName.c_str(); };
+  const char*       GetName()                { return fName.c_str(); };
+  const char*       GetFormfactor()          { return fFormfactor.c_str(); };
+  const char*       GetVendor()              { return fVendor.c_str(); };
+  const char*       GetLocation()            { return fLocation.c_str(); };
+  const char*       GetStatus()              { return fStatus.c_str(); };
+  const char*       GetModel()               { return fName.c_str(); };
   
   const epicsUInt32 GetJiraIssueNumber()       const { return fJiraIssueNumber; };
 
 
   
-  void SetHashID       (const epicsUInt32 hash) {fHashID       = hash;};
-  void SetSerialNumber (const char* sn)         {string s(sn);   fSerialNumber = s;};
-  void SetName         (const char* name)       {string n(name); fName = n;};
-  void SetFormfactor   (const char* ff)         {string f(ff);   fFormfactor = f;};
-  void SetVendor       (const char* vd)         {string v(vd);   fVendor = v;};
-  void SetLocation     (const char* lo)         {string l(lo);   fLocation = l;};
-  void SetStatus       (const char* st)         {string sta(st); fStatus = sta;};
+  void SetHashID       (const epicsUInt32 hash) {
+    fHashID       = hash;
+    fHashIdStream << hash;
+  };
+  void SetSerialNumber (const char* sn)         {std::string s(sn);   fSerialNumber = Split(s);};
+  void SetName         (const char* name)       {std::string n(name); fName = Split(n);};
+  void SetFormfactor   (const char* ff)         {std::string f(ff);   fFormfactor = Split(f);};
+  void SetVendor       (const char* vd)         {std::string v(vd);   fVendor = Split(v);};
+  void SetLocation     (const char* lo)         {std::string l(lo);   fLocation = Split(l);};
+  void SetStatus       (const char* st)         {std::string sta(st); fStatus = Split(sta);};
   void SetModel        (const char* mo)         { SetName(mo); };
 
 
-  void SetJIRAInfo (const string& project, const string& issuetype, const string& desc) {
+  void SetJIRAInfo (const std::string& project, const std::string& issuetype, const std::string& desc) {
     fJiraProjectName = project;
     fJiraIssueName   = issuetype;
     fJiraDesc        = desc;
@@ -122,9 +148,9 @@ public:
     if ( fChildNumber == 0 ) fHasChild = false;
   };
 
-  // maybe we will move the following functions to private 
-  const string GetJiraJSON();
-  const string GetJiraCSV();
+  // // maybe we will move the following functions to private 
+  // const std::string GetJiraJSON();
+  const std::string GetJiraCSV();
 
   
 
@@ -135,7 +161,8 @@ private:
   bool         fHasParent;
   bool         fHasChild;
   epicsUInt32  fParentID;
-  vector<epicsUInt32> fChildID;
+  
+  std::vector<epicsUInt32> fChildID;
 
   epicsUInt32  fChildNumber;
 
@@ -145,21 +172,24 @@ private:
 
   epicsUInt32  fHashID;   // Used for the ICS Label 
 
-  string       fSerialNumber;
-  string       fName;
-  string       fFormfactor;
-  string       fVendor;
-  string       fLocation;
-  string       fStatus;
+  std::ostringstream fHashIdStream;
+  
+  std::string       fSerialNumber;
+  std::string       fName;
+  
+  std::string       fFormfactor;
+  std::string       fVendor;
+  std::string       fLocation;
+  std::string       fStatus;
 
-  string       fJiraProjectName;
-  string       fJiraIssueName;
-  string       fJiraDesc;
+  std::string       fJiraProjectName;
+  std::string       fJiraIssueName;
+  std::string       fJiraDesc;
 
   // Return value after curl command from JIRA
   epicsUInt32  fJiraIssueNumber; // Used for the ICS Label 
   
-  const string Split (const string& str) {
+  const std::string Split (const std::string str) {
     size_t found = str.find_last_of(",\\");
     //    cout << " prefix: " << str.substr(0,found) << '\n';
     return str.substr(found+1);

@@ -3,47 +3,20 @@
 
 ItemObject::ItemObject()
 {
-  fHasParent = false;
-  fHasChild  = false;
-  fParentID  = 0;
-
+  Init();
   
-  fChildNumber          = 0;
-  fLocationStructID     = 0;
-  fFacilityStructID     = 0;
-  fInstallationStructID = 0;
-
-  fHashID       = 0;
-  fSerialNumber = "";
-  fName         = "";
-  fFormfactor   = "";
-  fVendor       = "";
-  fLocation     = "";
-  fStatus       = "";
 };
 
 
 
 ItemObject::ItemObject(epicsUInt32  hashID,
-		       string serial_num,
-		       string model_name)
+		       std::string serial_num,
+		       std::string model_name)
 {
-  fHasParent = false;
-  fHasChild  = false;
-  fParentID  = 0;
-
-  fChildNumber          = 0;
-  fLocationStructID     = 0;
-  fFacilityStructID     = 0;
-  fInstallationStructID = 0;
-
-  fHashID       = hashID;
+  Init();
+  SetHashID(hashID);
   fSerialNumber = serial_num;
   fName         = model_name;
-  fFormfactor   = "";
-  fVendor       = "";
-  fLocation     = "";
-  fStatus       = "";
 };
 
 
@@ -53,46 +26,25 @@ ItemObject::ItemObject(epicsUInt32  hashID,
 		       char* serial_num,
 		       char* model_name)
 {
-  fHasParent = false;
-  fHasChild  = false;
-  fParentID  = 0;
-
-  fChildNumber          = 0;
-  fLocationStructID     = 0;
-  fFacilityStructID     = 0;
-  fInstallationStructID = 0;
-
-  fHashID       = hashID;
+  Init();
+  SetHashID(hashID);
   SetSerialNumber(serial_num);
   SetName(model_name);
-  fFormfactor   = "";
-  fVendor       = "";
-  fLocation     = "";
-  fStatus       = "";
-  
 };
 
 
 
 
 ItemObject::ItemObject(epicsUInt32  hashID,
-		       string serial_num,
-		       string model_name,
-		       string formfactor,
-		       string vendor_name,
-		       string ics_location,
-		       string status)
+		       std::string serial_num,
+		       std::string model_name,
+		       std::string formfactor,
+		       std::string vendor_name,
+		       std::string ics_location,
+		       std::string status)
 {
-  fHasParent = false;
-  fHasChild  = false;
-  fParentID  = 0;
-
-  fChildNumber          = 0;
-  fLocationStructID     = 0;
-  fFacilityStructID     = 0;
-  fInstallationStructID = 0;
-
-  fHashID       = hashID;
+  Init();
+  SetHashID(hashID);
   fSerialNumber = serial_num;
   fName         = model_name;
   fFormfactor   = formfactor;
@@ -112,16 +64,8 @@ ItemObject::ItemObject(epicsUInt32  hashID,
 		       char* ics_location,
 		       char* status)
 {
-  fHasParent = false;
-  fHasChild  = false;
-  fParentID  = 0;
-
-  fChildNumber          = 0;
-  fLocationStructID     = 0;
-  fFacilityStructID     = 0;
-  fInstallationStructID = 0;
-
-  fHashID       = hashID;
+  Init();
+  SetHashID(hashID);
   SetSerialNumber(serial_num);
   SetName(model_name);
   SetFormfactor(formfactor);
@@ -136,24 +80,43 @@ ItemObject::ItemObject(epicsUInt32  hashID,
 
 ItemObject::ItemObject(InvDataType in)
 {
-  fHasParent = false;
-  fHasChild  = false;
-  fParentID  = 0;
-
-  fChildNumber          = 0;
-  fLocationStructID     = 0;
-  fFacilityStructID     = 0;
-  fInstallationStructID = 0;
-
-  fHashID       = in.hash;
+  Init();
+  
+  SetHashID(in.hash);
   SetSerialNumber(in.serialnumber);
-  SetName(in.model);
+  SetName(in.model_name);
   SetFormfactor(in.formfactor);
   SetVendor(in.vendor);
   SetLocation(in.location);
   SetStatus(in.status);
 };
 
+ItemObject::ItemObject(const ItemObject &iobj)
+{
+  fHasParent            = iobj.fHasParent;
+  fHasChild             = iobj.fHasChild;
+  fParentID             = iobj.fParentID;
+  fChildID              = iobj.fChildID;
+  
+  fChildNumber          = iobj.fChildNumber;
+  fLocationStructID     = iobj.fLocationStructID;
+  fFacilityStructID     = iobj.fFacilityStructID;
+  fInstallationStructID = iobj.fInstallationStructID;
+
+  fHashID               = iobj.fHashID;
+  fHashIdStream         << iobj.fHashIdStream.str();
+
+  fSerialNumber         = iobj.fSerialNumber;
+  fName                 = iobj.fName;
+  fVendor               = iobj.fVendor;
+  fLocation             = iobj.fLocation;
+  fStatus               = iobj.fStatus;
+
+  fJiraProjectName      = iobj.fJiraProjectName;
+  fJiraIssueName        = iobj.fJiraIssueName;
+  fJiraDesc             = iobj.fJiraDesc;
+
+};
 
 
 ItemObject::~ItemObject()
@@ -161,16 +124,79 @@ ItemObject::~ItemObject()
 };
 
 
+void 
+ItemObject::Init()
+{
+  fHasParent = false;
+  fHasChild  = false;
+  fParentID  = 0;
+  fChildID.clear();
+
+  
+  fChildNumber          = 0;
+  fLocationStructID     = 0;
+  fFacilityStructID     = 0;
+  fInstallationStructID = 0;
+
+  fHashID       = 0;
+  fHashIdStream.clear();
+  
+  fSerialNumber.clear();
+  fName.clear();
+  fFormfactor.clear();
+  fVendor.clear();
+  fLocation.clear();
+  fStatus.clear();
+
+  fJiraProjectName.clear();
+  fJiraIssueName.clear();
+  fJiraDesc.clear();
+};
+
+
+
+ItemObject & ItemObject::operator=(const ItemObject &iobj)
+{
+  if (this == &iobj)
+    return *this;
+
+  fHasParent            = iobj.fHasParent;
+  fHasChild             = iobj.fHasChild;
+  fParentID             = iobj.fParentID;
+  fChildID              = iobj.fChildID;
+  
+  fChildNumber          = iobj.fChildNumber;
+  fLocationStructID     = iobj.fLocationStructID;
+  fFacilityStructID     = iobj.fFacilityStructID;
+  fInstallationStructID = iobj.fInstallationStructID;
+
+  fHashID               = iobj.fHashID;
+  fHashIdStream         << iobj.fHashIdStream.str();
+
+  fSerialNumber         = iobj.fSerialNumber;
+  fName                 = iobj.fName;
+  fVendor               = iobj.fVendor;
+  fLocation             = iobj.fLocation;
+  fStatus               = iobj.fStatus;
+
+  fJiraProjectName      = iobj.fJiraProjectName;
+  fJiraIssueName        = iobj.fJiraIssueName;
+  fJiraDesc             = iobj.fJiraDesc;
+  
+  return *this;
+  
+};
+
 void
 ItemObject::Print()
 {
-  // string out;
-  // string hash; 
+  // std::string out;
+  // std::string hash; 
 
   // out = "Object Name " + this->GetName();
   // out += "\n";
   // out += "Hash ID ";
-  // out += to_string(this-> GetHashID()) ;   
+  // out += to_std::string(this-> GetHashID()) ;   
   // out += " ";
 
   // cout << out << endl;
@@ -194,55 +220,55 @@ ItemObject::IsValid()
 }
 
 
-const string
+const std::string
 ItemObject::GetJiraCSV()
 {
-  stringstream out;
-  out << Split(fName)
+  std::stringstream out;
+  out << fName
       << ","
       << fSerialNumber
       << ","
       << fHashID
       << ","
-      << Split(fFormfactor)
+      << fFormfactor
       << ","
-      << Split(fVendor)
+      << fVendor
       << ","
-      << Split(fLocation)
+      << fLocation
       << "\n";
   return out.str();
 };
 
-const string
-ItemObject::GetJiraJSON()
+
+std::ostream& operator<<(std::ostream& os, const ItemObject &itemobj)
 {
-  stringstream out;
-  out << "{\n"
-      << "  \"fields\": { \n"
-      << "       \"project\": { \"key\": \"" << fJiraProjectName << "\" } \n"
-      << "     , \"issuetype\": { \"name\": \"" << fJiraIssueName << "\" } \n"
-      << "     , \"summary\": \""<< Split(fName) << "\"\n"
-      << "     , \"customfield_10502\": { \"value\": \"" << Split(fLocation) << "\" } \n"
-      << "     , \"customfield_10500\": \""<< fSerialNumber << "\"\n"
-      << "     , \"customfield_11002\": \""<< fHashID << "\"\n"
-      << "     , \"labels\" : [ \"" <<  Split(fFormfactor) << "\"]\n"
-    //      << ", \"assignee\" : {\"name\" : \"" >> potential_username << "\"}"
-      << "     , \"description\": \"" << fJiraDesc << "\"\n"
-      << "  }\n"
-      << "}\n";
+  int width = 20;
+  os << std::setiosflags(std::ios::right);
+  os << "Jira Project : ";
+  os << std::setw(width) << itemobj.fJiraProjectName;
+  os << "\n Hash ID       : ";
+  os << std::setw(width) << itemobj.fHashID;
+  os << "\n Serial Number : ";
+  os << std::setw(width) << itemobj.fSerialNumber;
+  os << "\n Model Name    : ";
+  os << std::setw(width) << itemobj.fName;
+  if ( itemobj.HasFormfactor() ) {
+    os << "\n Formfactor    : ";
+    os << std::setw(width) << itemobj.fFormfactor;
+  }
+  if ( itemobj.HasVendor() ) {
+    os << "\n Vendor        : ";
+    os << std::setw(width) << itemobj.fVendor;
+  }
+  if ( itemobj.HasLocation() ) {
+    os << "\n Location      : ";
+    os << std::setw(width) << itemobj.fLocation;
+  }
+  if ( itemobj.HasStatus() ) {
+    os << "\n Status        : ";
+    os << std::setw(width) << itemobj.fStatus;
+  }
+
+  return os;
   
-  return out.str();
-
-   //  "fields": {
-   //     "project": { "key": "TAG" }
-   //     , "issuetype": { "name": "Hardware"}	
-   //     , "summary": "MO, Model"
-   //     , "customfield_10502" : {"value": "ICS Lab"}
-   //     , "customfield_10500" : "SN,SERIALNUMBER"
-   //     , "customfield_11002" : "HASH ID"
-   //     , "labels" : [ "FORMFACTOR"]
-   //     , "assignee" : {"name" : "hanlee"}
-   //     , "description": "Description.... Creating of an issue using ids for projects and issue types using the REST API"
-   // }
-};
-
+}
