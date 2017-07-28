@@ -10,9 +10,6 @@
 \usepackage{essdocs}
 \usepackage[numbers]{natbib}
 \usepackage[autostyle]{csquotes}
-\usepackage{float}
-\floatstyle{boxed} 
-\restylefloat{figure}
 
 \setsecnumdepth{subsection}
 
@@ -83,6 +80,54 @@
 
 \section{Target Audience}
 This document is targeted to ICS engineers and technical stakeholders of the ICS inventory system. 
+
+\newpage
+\chapter{Honeywell Xenon Scanners 1900 and 1902g}
+Note that there are different procedure to setup Xenon 1900 corded scanner and Xenon 1902g cordless scanner. Please consult each manual in detail.
+
+
+\section{Basic Configuration}
+\begin{figure}[!htb]
+%  \centering
+  \includegraphics[width=0.3\textwidth]{./pictures/scanner_settings_default.eps}
+  \caption{
+            Default Settings.
+          }
+  \label{fig:default}   
+\end{figure}
+
+\begin{figure}[!htb]
+%  \centering
+  \includegraphics[width=0.3\textwidth]{./pictures/scanner_settings_usbserial.eps}
+  \caption{
+            USB Serial Setting.
+          }
+  \label{fig:usb-serial}   
+\end{figure}
+
+
+\begin{figure}[!htb]
+%  \centering
+  \includegraphics[width=0.3\textwidth]{./pictures/scanner_settings_silent_corded.eps}
+  \caption{
+            Silent Mode for Corded Scanner.
+          }
+  \label{fig:silent-corded}   
+\end{figure}
+
+
+
+\begin{figure}[!htb]
+%  \centering
+  \includegraphics[width=0.3\textwidth]{./pictures/scanner_settings_silent_cordless.eps}
+  \caption{
+            Silent Mode for Cordless Scanner.
+          }
+  \label{fig:silent-cordless}   
+\end{figure}
+
+
+\newpage
 
 \chapter{Frequently Usage Case}
 \section{MTCA}
