@@ -1,0 +1,11 @@
+
+
+record(stringout, "$(SYSDEV)Kam")
+{
+    field(DESC, "Kam Simulator")
+    field(DTYP, "stream")
+    field( OUT, "@xenon1900.proto set_raw $(PORT)")
+    field(SCAN, "Passive")
+}
+
+

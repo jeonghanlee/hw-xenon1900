@@ -12,6 +12,7 @@ include $(TOP)/configure/CONFIG
 # databases, templates, substitutions like this
 #DB += xxx.db
 DB += xenon1900.db
+DB += xenon1900kam.db
 DB_INSTALLS += $(TOP)/xenon1900App/Db/xenon1900.proto
 DB_INSTALLS += $(devIocStats)/db/iocAdminSoft.db
 

@@ -52,6 +52,7 @@ record(stringin, "$(SYSDEV)Model")
 }
 
 
+
 record(stringin, "$(SYSDEV)RawData")
 {
     field(DESC, "RAW Scanned data")

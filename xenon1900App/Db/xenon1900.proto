@@ -28,3 +28,8 @@ read_raw
     extrainput = ignore;
     in "%#s";
 }
+
+
+set_raw {
+  out "%s";
+}
