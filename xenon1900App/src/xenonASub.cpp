@@ -369,11 +369,16 @@ static long DistXenonASub(aSubRecord *pRecord)
   else if ( epicsStrnCaseCmp(jc, aval, 2) == 0 )  /* Create */
     {
       jira_return_msg.clear();
+      
       fillInvDataType(prec);
       ItemObject item (outData);
       if( item.IsValid() ) {
-	JiraProject jira(url, project, issue);
-	jira_return_msg = jira.CreateIssue(item);
+
+       	JiraProject jira(url, project, issue);
+ 	jira_return_msg = jira.CreateIssue(item);
+	std::cout << "Key    : " << jira.GetKey() << std::endl;
+       	std::cout << "Self   : " << jira.GetSelf() << std::endl;
+       	std::cout << "HashID : " << jira.GetHash() << std::endl;
       }
       else {
 	jira_return_msg = "SN and NAME are mandatory data, please scan them!";

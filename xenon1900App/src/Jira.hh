@@ -4,6 +4,9 @@
 #include <iostream>
 #include <sstream>
 #include <cstdio>
+#include <stdint.h>
+#include <stdlib.h>
+#include <cstring>
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -76,9 +79,14 @@ public:
   
   void SetProjectUrl(const std::string& url);
   void SetIssueIdOrKey(const std::string& id)   {fIssueIdOrKey = id;} ;
-  void ClearIssueIdOrKey()                 {fIssueIdOrKey.clear();};
+  void ClearIssueIdOrKey()                      {fIssueIdOrKey.clear();};
+
+  const std::string GetKey()  const { return jKey;  };
+  const std::string GetSelf() const { return jSelf; };
+  const std::string GetHash() const { return jHash; };
 
   ItemObject  fItemObject;
+
   
 private:
   
@@ -88,17 +96,18 @@ private:
   std::string       fBulkCreateUrl;
   std::string       fSearchUrl;
 
+
+  
   // Dynamically change according to Issue ID or Issue Key
   std::string       fUpdateDeleteUrl;
   std::string       fAttachmentsUrl;
 
   std::string       fProjectName;
   std::string       fIssueName;
-  std::string       fIssueIdOrKey;
 
+  std::string       fIssueIdOrKey;
   std::string       fUserName;
   std::string       fDescription;
-
 
   
   Json::StyledWriter jStyledWriter;
@@ -111,6 +120,20 @@ private:
   struct curl_slist  *curl_headers;
   std::string        fCurlResponse;
 
+  Json::Value        jResponse;
+  bool               jParsingSuccess;
+  Json::Value        jIssues;
+  Json::Value        jErrors;
+  bool               jErrorsStatus;
+
+  std::string        jKey;
+  std::string        jSelf;
+  std::string        jHash;
+  
+
+  //  std::vector<std::string> jKeyList;
+  //  std::vector<std::string> jSelfList;
+  
   void AddItem(ItemObject &in) { fItemObject = in; }; 
 
   void SetupCurlHeaders();
@@ -118,9 +141,12 @@ private:
   void SetUpdateJsonData();
   void SetSearchJsonData();
 
-  void SetCreateCurlData();
+  bool SetCreateCurlData();
+  bool GetCurlResponse();
   void SetUpdateCurlData();
   void SetSearchCurlData();
+
+  void CreateBarcodes();
 
   static size_t CurlWriteToString(void *ptr, size_t size, size_t count, void *stream)
   {

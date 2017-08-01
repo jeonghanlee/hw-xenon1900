@@ -21,6 +21,10 @@ JiraProject::JiraProject()
   fItemObject.Init();
   
   curl_headers = NULL;
+
+  jRoot.clear();
+  jResponse.clear();
+  
 };
 
 JiraProject::~JiraProject()
@@ -43,6 +47,10 @@ JiraProject::JiraProject(std::string projectUrl, std::string projectName, std::s
   fItemObject.Init();
 
   curl_headers = NULL;
+
+  jRoot.clear();
+  jResponse.clear();
+  
 };
 
 
@@ -65,15 +73,18 @@ JiraProject::CreateIssue(ItemObject& obj)
 {
   std::string jira_return_message;
 
-  // Currently, we only consider one obj per a jira submit 
+  // Currently, we only consider one obj per a jira submit
+  //
   int obj_count = 0;
   
   this->AddItem(obj);
   this->SetCreateJsonData(obj_count, true);
-  
   this->SetCreateCurlData();
-  std::cout << jRootJsonData << std::endl;
-  std::cout << obj << std::endl;
+  this->GetCurlResponse();
+  this->CreateBarcodes();
+  
+  // std::cout << jRootJsonData << std::endl;
+  // std::cout << obj << std::endl;
   obj.Init();
   return jira_return_message;
   
@@ -183,11 +194,14 @@ JiraProject::SetupCurlHeaders()
 }
 
 
+// true  : jira returns through curl jira returns issues and errors 
+// false : curl cannot be executed due to init fail or curl_easy_perform
 
-void
+bool 
 JiraProject::SetCreateCurlData()
 {
   curl_obj = curl_easy_init();
+  
   if(curl_obj) {
     SetupCurlHeaders();
 
@@ -203,30 +217,69 @@ JiraProject::SetCreateCurlData()
     curl_easy_setopt(curl_obj, CURLOPT_WRITEDATA, &fCurlResponse);
     
     curl_res = curl_easy_perform(curl_obj); 
-    if(curl_res != CURLE_OK)  fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(curl_res));
+    if(curl_res != CURLE_OK) {
+      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(curl_res));
+    }
     
     curl_easy_cleanup(curl_obj);
     curl_slist_free_all(curl_headers);
+    if(curl_res != CURLE_OK) return false;
+    
+  }
+  else {
+    return false;
   }
 
-    
-  Json::Value jsonFromString;
-  Json::Reader reader;
-  bool parsingSuccessful = reader.parse(fCurlResponse, jsonFromString);
+  return true;
+}
 
-  if (parsingSuccessful)
-    {
-      std::cout << jStyledWriter.write(jsonFromString) << std::endl;
-      
-      // for (int i = 0; i < count; i++)
-      // 	{
-      // 	  std::cout << "----" << std::endl;
-      // 	  std::cout << jsonFromString["issues"][i]["id"]   << jsonFromString["issues"][i]["id"].asString() << std::endl;
-      // 	  std::cout << jsonFromString["issues"][i]["key"]  << jsonFromString["issues"][i]["key"].asString() << std::endl;
-      // 	  std::cout << jsonFromString["issues"][i]["self"] << jsonFromString["issues"][i]["self"].asString() << std::endl;
-      // 	}
-    }
-  return;
+// bool
+// JiraProject::GetCurlResponse()
+// {
+//   Json::Reader reader;
+//   unsigned int i;
+  
+//   jParsingSuccess = reader.parse(fCurlResponse, jResponse);
+//   // it returns an empty array, so default value never show up
+//   jErrors = jResponse.get("errors", "no show");
+//   jIssues = jResponse.get("issues", "no show");
+  
+//   if (jErrors.size() == 0 ) jErrorsStatus = true;
+//   else                      jErrorsStatus = false;
+
+//   if (! jErrorsStatus) {
+//     for(i=0; i < jIssues.size(); i++) {
+//       jKeyList.push_back(jIssues[i].get("key", "").asString());
+//       jSelfList.push_back(jIssues[i].get("self", "").asString());
+//     }
+//   }
+  
+//   return jParsingSuccess;
+// }
+
+// Currently, we only consider one obj per a jira submit
+//
+
+bool
+JiraProject::GetCurlResponse()
+{
+  Json::Reader reader;
+  
+  jParsingSuccess = reader.parse(fCurlResponse, jResponse);
+  // it returns an empty array, so default value never show up
+  jErrors = jResponse.get("errors", "no show");
+  jIssues = jResponse.get("issues", "no show");
+  
+  if (jErrors.size() == 0 ) jErrorsStatus = false;
+  else                      jErrorsStatus = true;
+
+  if (! jErrorsStatus) {
+    jKey  = jIssues[0].get("key", "").asString();
+    jSelf = jIssues[0].get("self", "").asString();
+    jHash = fItemObject.GetCharHashID();
+  
+  }
+  return jParsingSuccess;
 }
 
 
@@ -253,6 +306,54 @@ JiraProject::SetSearchCurlData()
   }
     
   curl_easy_cleanup(curl_obj);
+  
+  return;
+}
+
+
+void
+JiraProject::CreateBarcodes()
+{
+  struct zint_symbol *qr_symbol;
+  struct zint_symbol *dm_symbol;
+
+  std::string keyWithoutTAG = jKey;  
+  keyWithoutTAG.erase(jKey.find("TAG-"), 4);
+
+  const char* hash = jHash.c_str();
+  const char* key  = keyWithoutTAG.c_str();
+
+  // Overwrite files
+
+  char qr_filename[FILENAME_MAX] = "qr_symbol.png";
+  char dm_filename[FILENAME_MAX] = "dm_symbol.png";
+
+  
+  // QR Code
+  qr_symbol = ZBarcode_Create();
+  qr_symbol -> symbology        = BARCODE_QRCODE;
+  qr_symbol -> height           = 48;
+  qr_symbol -> whitespace_width = 6;
+  qr_symbol -> border_width     = 2;
+  qr_symbol -> input_mode = DATA_MODE;
+  memcpy(qr_symbol->outfile, qr_filename, sizeof(qr_filename));
+  memcpy(qr_symbol->text,    (uint8_t*) key, sizeof(key));
+  ZBarcode_Encode_and_Print(qr_symbol, (uint8_t *) hash, 0 , 0);
+  ZBarcode_Delete(qr_symbol);
+
+  // DataMatrix 
+  dm_symbol = ZBarcode_Create();
+  dm_symbol -> symbology        = BARCODE_DATAMATRIX; 
+  //  dm_symbol -> height           = 48;
+  dm_symbol -> whitespace_width = 6;
+  dm_symbol -> border_width     = 0;
+  dm_symbol -> input_mode       = DATA_MODE;
+  // can handle only 7 length char  1234567
+  dm_symbol -> option_3         = DM_SQUARE;
+  memcpy(dm_symbol->outfile, dm_filename, sizeof(dm_filename));
+  memcpy(dm_symbol->text, (uint8_t*) key, sizeof(key));
+  ZBarcode_Encode_and_Print(dm_symbol, (uint8_t *) hash, 0 , 0);
+  ZBarcode_Delete(dm_symbol);
   
   return;
 }
