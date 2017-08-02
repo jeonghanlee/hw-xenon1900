@@ -38,7 +38,7 @@ public:
   std::string UpdateIssue(ItemObject& obj);
   std::string DeleteIssue(ItemObject& obj);
   std::string SearchIssue(ItemObject& obj);
-
+  
   //  void DefineChild();
   //  void DefineParent();
   
@@ -54,27 +54,12 @@ public:
     return fUpdateDeleteUrl;
   };
 
-  const std::string GetAttachmentsUrl() {
-    fAttachmentsUrl.append(fIssueUrl);
-    fAttachmentsUrl.append("/");
-    fAttachmentsUrl.append(fIssueIdOrKey);
-    fAttachmentsUrl.append("/attachements");
-    return fAttachmentsUrl;
-  };
-  
+
   const std::string GetUpdateDeleteUrl(const std::string& issueIdOrKey) {
     fUpdateDeleteUrl.append(fIssueUrl);
     fUpdateDeleteUrl.append("/");
     fUpdateDeleteUrl.append(issueIdOrKey);
     return fUpdateDeleteUrl;
-  };
-
-  const std::string GetAttachmentsUrl(const std::string& issueIdOrKey) {
-    fAttachmentsUrl.append(fIssueUrl);
-    fAttachmentsUrl.append("/");
-    fAttachmentsUrl.append(issueIdOrKey);
-    fAttachmentsUrl.append("/attachements");
-    return fAttachmentsUrl;
   };
   
   void SetProjectUrl(const std::string& url);
@@ -130,13 +115,24 @@ private:
   std::string        jSelf;
   std::string        jHash;
   
+  // Overwrite files
+
+
+   
+  std::string qr_name;
+  std::string dm_name;
+  std::string file_suffix;
+
+  std::string qr_file; 
+  std::string dm_file;
 
   //  std::vector<std::string> jKeyList;
   //  std::vector<std::string> jSelfList;
   
   void AddItem(ItemObject &in) { fItemObject = in; }; 
 
-  void SetupCurlHeaders();
+  void SetupDefaultHeaders();
+  
   void SetCreateJsonData(int no, bool json_style);
   void SetUpdateJsonData();
   void SetSearchJsonData();
@@ -147,7 +143,37 @@ private:
   void SetSearchCurlData();
 
   void CreateBarcodes();
+  bool AddBarcodesJira();
 
+  
+  // const std::string AttachmentsUrl() {
+  //   if (jParsingSuccess) {
+  //     fAttachmentsUrl = jSelf;
+  //   }
+  //   else {
+  //     fAttachmentsUrl.append(fIssueUrl);
+  //     fAttachmentsUrl.append("/");
+  //     fAttachmentsUrl.append(fIssueIdOrKey);
+  //   }
+  //   fAttachmentsUrl.append("/attachements");
+  //   return fAttachmentsUrl;
+  // };
+  
+  
+  // const std::string AttachmentsUrl(const std::string& issueIdOrKey) {
+  //   if (jParsingSuccess) {
+  //     fAttachmentsUrl = jSelf;
+  //   }
+  //   else {
+  //     fAttachmentsUrl.append(fIssueUrl);
+  //     fAttachmentsUrl.append("/");
+  //     fAttachmentsUrl.append(issueIdOrKey);
+  //   }
+  //   fAttachmentsUrl.append("/attachements");
+  //   return fAttachmentsUrl;
+  // };
+
+  
   static size_t CurlWriteToString(void *ptr, size_t size, size_t count, void *stream)
   {
     ((std::string*)stream)->append((char*)ptr, 0, size*count);

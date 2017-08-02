@@ -24,6 +24,17 @@ JiraProject::JiraProject()
 
   jRoot.clear();
   jResponse.clear();
+
+
+  jKey.clear();
+  jSelf.clear();
+  jHash.clear();
+  qr_name = "qr_symbol";
+  dm_name = "dm_symbol";
+  file_suffix = ".png";
+  qr_file = qr_name + file_suffix;
+  dm_file = dm_name + file_suffix;
+   
   
 };
 
@@ -50,6 +61,16 @@ JiraProject::JiraProject(std::string projectUrl, std::string projectName, std::s
 
   jRoot.clear();
   jResponse.clear();
+  
+  jKey.clear();
+  jSelf.clear();
+  jHash.clear();
+  qr_name = "qr_symbol";
+  dm_name = "dm_symbol";
+  file_suffix = ".png";
+  qr_file = qr_name + file_suffix;
+  dm_file = dm_name + file_suffix;
+  
   
 };
 
@@ -82,6 +103,7 @@ JiraProject::CreateIssue(ItemObject& obj)
   this->SetCreateCurlData();
   this->GetCurlResponse();
   this->CreateBarcodes();
+  this->AddBarcodesJira();
   
   // std::cout << jRootJsonData << std::endl;
   // std::cout << obj << std::endl;
@@ -153,6 +175,9 @@ JiraProject::SetCreateJsonData(int no, bool json_style)
    * from code, in csv to jira inventory list...
    * So, I disable it temporary now.
    */
+  /* Jira Location should be redefined in order to match the Barcode
+   * which we will use for..
+   */
   
   // if ( fItemObject.HasLocation() )
   //   fields["customfield_10502"]["value"] = fItemObject.GetLocation();
@@ -184,7 +209,7 @@ JiraProject::SetCreateJsonData(int no, bool json_style)
 }
 
 void
-JiraProject::SetupCurlHeaders()
+JiraProject::SetupDefaultHeaders()
 {
   curl_headers = curl_slist_append(curl_headers, "Accept: application/json");
   curl_headers = curl_slist_append(curl_headers, "Content-Type:application/json");
@@ -200,10 +225,12 @@ JiraProject::SetupCurlHeaders()
 bool 
 JiraProject::SetCreateCurlData()
 {
+  //  curl_global_init(CURL_GLOBAL_ALL);
+  
   curl_obj = curl_easy_init();
   
   if(curl_obj) {
-    SetupCurlHeaders();
+    SetupDefaultHeaders();
 
     curl_easy_setopt(curl_obj, CURLOPT_URL, fBulkCreateUrl.c_str());
     
@@ -211,7 +238,7 @@ JiraProject::SetCreateCurlData()
     curl_easy_setopt(curl_obj, CURLOPT_HTTPHEADER, curl_headers);
     curl_easy_setopt(curl_obj, CURLOPT_POSTFIELDS, jRootJsonData.c_str());
     
-    curl_easy_setopt(curl_obj, CURLOPT_VERBOSE, 1L);
+    //    curl_easy_setopt(curl_obj, CURLOPT_VERBOSE, 1L);
 
     curl_easy_setopt(curl_obj, CURLOPT_WRITEFUNCTION, CurlWriteToString);
     curl_easy_setopt(curl_obj, CURLOPT_WRITEDATA, &fCurlResponse);
@@ -277,7 +304,6 @@ JiraProject::GetCurlResponse()
     jKey  = jIssues[0].get("key", "").asString();
     jSelf = jIssues[0].get("self", "").asString();
     jHash = fItemObject.GetCharHashID();
-  
   }
   return jParsingSuccess;
 }
@@ -323,11 +349,11 @@ JiraProject::CreateBarcodes()
   const char* hash = jHash.c_str();
   const char* key  = keyWithoutTAG.c_str();
 
-  // Overwrite files
+  char qr_filename[FILENAME_MAX];
+  char dm_filename[FILENAME_MAX];
 
-  char qr_filename[FILENAME_MAX] = "qr_symbol.png";
-  char dm_filename[FILENAME_MAX] = "dm_symbol.png";
-
+  sprintf(qr_filename, "%s", qr_file.c_str());
+  sprintf(dm_filename, "%s", dm_file.c_str());
   
   // QR Code
   qr_symbol = ZBarcode_Create();
@@ -357,3 +383,76 @@ JiraProject::CreateBarcodes()
   
   return;
 }
+
+
+bool
+JiraProject::AddBarcodesJira()
+{
+
+  std::cout << "\nAddBarcodesJira : \n" << std::endl;
+
+
+  fAttachmentsUrl = jSelf + "/attachments";
+
+  std::cout << fAttachmentsUrl << std::endl;
+  
+  struct curl_httppost* post = NULL;
+  struct curl_httppost* last = NULL;
+
+
+  //  curl_global_init(CURL_GLOBAL_ALL);
+
+  curl_formadd(&post, &last,
+	       CURLFORM_COPYNAME, "file",
+	       CURLFORM_FILE, qr_file.c_str(),
+	       CURLFORM_FILE, dm_file.c_str(),
+	       CURLFORM_END);
+  curl_formadd(&post, &last, 
+	       CURLFORM_COPYNAME, "name",
+	       CURLFORM_COPYCONTENTS, qr_name.c_str(),
+	       CURLFORM_COPYCONTENTS, dm_name.c_str(),
+	       CURLFORM_END);
+  
+  curl_obj = curl_easy_init();
+  
+  if(curl_obj) {
+
+    curl_headers = NULL;
+    
+    curl_headers = curl_slist_append(curl_headers, "X-Atlassian-Token: no-check");
+    curl_headers = curl_slist_append(curl_headers, auth_headers.c_str());
+    
+    curl_easy_setopt(curl_obj, CURLOPT_URL, fAttachmentsUrl.c_str());
+    curl_easy_setopt(curl_obj, CURLOPT_CUSTOMREQUEST, "POST");
+    curl_easy_setopt(curl_obj, CURLOPT_HTTPHEADER, curl_headers);
+        
+    curl_easy_setopt(curl_obj, CURLOPT_HTTPPOST, post);
+
+    curl_easy_setopt(curl_obj, CURLOPT_VERBOSE, 1L);
+    curl_easy_setopt(curl_obj, CURLOPT_WRITEFUNCTION, CurlWriteToString);
+    //
+    // save the returned json file in fCurlResponse, however, don't process it
+    curl_easy_setopt(curl_obj, CURLOPT_WRITEDATA, &fCurlResponse);
+
+
+       
+    curl_res = curl_easy_perform(curl_obj); 
+    if(curl_res != CURLE_OK) {
+      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(curl_res));
+    }
+    
+
+    // Clean up all curl objects 
+    curl_easy_cleanup(curl_obj);
+    curl_formfree(post);
+    curl_slist_free_all(curl_headers);
+    
+    if(curl_res != CURLE_OK) return false;
+  }
+  else {
+    return false;
+  }
+  
+  return true;
+  
+};
