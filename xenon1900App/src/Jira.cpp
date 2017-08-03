@@ -355,27 +355,31 @@ JiraProject::CreateBarcodes()
   sprintf(qr_filename, "%s", qr_file.c_str());
   sprintf(dm_filename, "%s", dm_file.c_str());
   
-  // QR Code
+  /* QR Code */
   qr_symbol = ZBarcode_Create();
   qr_symbol -> symbology        = BARCODE_QRCODE;
   qr_symbol -> height           = 48;
   qr_symbol -> whitespace_width = 6;
   qr_symbol -> border_width     = 2;
-  qr_symbol -> input_mode = DATA_MODE;
+  qr_symbol -> input_mode       = DATA_MODE;
+  qr_symbol -> option_1         = 3;            /* ECC Level L1/M2/Q3/H4 */
   memcpy(qr_symbol->outfile, qr_filename, sizeof(qr_filename));
   memcpy(qr_symbol->text,    (uint8_t*) key, sizeof(key));
   ZBarcode_Encode_and_Print(qr_symbol, (uint8_t *) hash, 0 , 0);
   ZBarcode_Delete(qr_symbol);
 
-  // DataMatrix 
+  /* DataMatrix Code */
   dm_symbol = ZBarcode_Create();
   dm_symbol -> symbology        = BARCODE_DATAMATRIX; 
-  //  dm_symbol -> height           = 48;
+  dm_symbol -> height           = 48;
   dm_symbol -> whitespace_width = 6;
   dm_symbol -> border_width     = 0;
   dm_symbol -> input_mode       = DATA_MODE;
-  // can handle only 7 length char  1234567
-  dm_symbol -> option_3         = DM_SQUARE;
+  /* 
+   * Disable SQUARE, becasue of the DYMO LaberWriter 450 Due Tape resolution. 
+   * DM Symbol is used for the small equipment, e.g., MTCA EVR 300
+   */
+  /* dm_symbol -> option_3         = DM_SQUARE; */
   memcpy(dm_symbol->outfile, dm_filename, sizeof(dm_filename));
   memcpy(dm_symbol->text, (uint8_t*) key, sizeof(key));
   ZBarcode_Encode_and_Print(dm_symbol, (uint8_t *) hash, 0 , 0);

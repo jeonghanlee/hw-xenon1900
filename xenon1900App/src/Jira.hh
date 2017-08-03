@@ -15,6 +15,10 @@
 #include <jsoncpp/json/json.h>
 #include <zint.h>
 
+#include <cups/cups.h>
+#include <cups/ppd.h>
+
+
 #include "ItemObject.hh"
 #include "Jira_ess.hh"
 
