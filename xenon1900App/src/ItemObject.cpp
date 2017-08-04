@@ -89,6 +89,7 @@ ItemObject::ItemObject(InvDataType in)
   SetVendor(in.vendor);
   SetLocation(in.location);
   SetStatus(in.status);
+  fLabel = in.label;
 };
 
 ItemObject::ItemObject(const ItemObject &iobj)
@@ -116,6 +117,7 @@ ItemObject::ItemObject(const ItemObject &iobj)
   fJiraIssueName        = iobj.fJiraIssueName;
   fJiraDesc             = iobj.fJiraDesc;
 
+  fLabel                = iobj.fLabel;
 };
 
 
@@ -151,6 +153,8 @@ ItemObject::Init()
   fJiraProjectName.clear();
   fJiraIssueName.clear();
   fJiraDesc.clear();
+
+  fLabel = true;
 };
 
 
@@ -182,7 +186,8 @@ ItemObject & ItemObject::operator=(const ItemObject &iobj)
   fJiraProjectName      = iobj.fJiraProjectName;
   fJiraIssueName        = iobj.fJiraIssueName;
   fJiraDesc             = iobj.fJiraDesc;
-  
+
+  fLabel                = iobj.fLabel;
   return *this;
   
 };
@@ -272,3 +277,7 @@ std::ostream& operator<<(std::ostream& os, const ItemObject &itemobj)
   return os;
   
 }
+
+
+
+

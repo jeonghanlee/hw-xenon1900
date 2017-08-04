@@ -19,6 +19,18 @@
 #include <cups/ppd.h>
 
 
+#include "dbDefs.h"
+#include "dbAccess.h"
+#include "dbFldTypes.h"
+#include "link.h"
+#include "dbAddr.h"
+#include "registryFunction.h"
+#include "aSubRecord.h"
+#include "epicsExport.h"
+#include "epicsString.h"
+#include "epicsTime.h"
+#include "stringinRecord.h"
+
 #include "ItemObject.hh"
 #include "Jira_ess.hh"
 
@@ -36,6 +48,7 @@ class JiraProject
 public:
   JiraProject();
   JiraProject(std::string projectUrl, std::string projectName, std::string issueName);
+  JiraProject(std::string projectUrl, std::string projectName, std::string issueName, aSubRecord *pRecord);
   virtual ~JiraProject();
 
   std::string CreateIssue(ItemObject& obj);
@@ -78,6 +91,8 @@ public:
 
   
 private:
+
+  aSubRecord       *prec;
   
   std::string       fUrl;
   std::string       fIssueUrl;
@@ -130,6 +145,7 @@ private:
   std::string qr_file; 
   std::string dm_file;
 
+
   //  std::vector<std::string> jKeyList;
   //  std::vector<std::string> jSelfList;
   
@@ -148,35 +164,11 @@ private:
 
   void CreateBarcodes();
   bool AddBarcodesJira();
-
+  void PrintBarcodes();
   
-  // const std::string AttachmentsUrl() {
-  //   if (jParsingSuccess) {
-  //     fAttachmentsUrl = jSelf;
-  //   }
-  //   else {
-  //     fAttachmentsUrl.append(fIssueUrl);
-  //     fAttachmentsUrl.append("/");
-  //     fAttachmentsUrl.append(fIssueIdOrKey);
-  //   }
-  //   fAttachmentsUrl.append("/attachements");
-  //   return fAttachmentsUrl;
-  // };
+  void cups_jobs_status(const char* printer_name, int job_id);
+  bool cups_printer_status(const char* printer_name);
   
-  
-  // const std::string AttachmentsUrl(const std::string& issueIdOrKey) {
-  //   if (jParsingSuccess) {
-  //     fAttachmentsUrl = jSelf;
-  //   }
-  //   else {
-  //     fAttachmentsUrl.append(fIssueUrl);
-  //     fAttachmentsUrl.append("/");
-  //     fAttachmentsUrl.append(issueIdOrKey);
-  //   }
-  //   fAttachmentsUrl.append("/attachements");
-  //   return fAttachmentsUrl;
-  // };
-
   
   static size_t CurlWriteToString(void *ptr, size_t size, size_t count, void *stream)
   {

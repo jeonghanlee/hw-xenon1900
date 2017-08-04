@@ -36,6 +36,7 @@
 #include "epicsString.h"
 #include "epicsTime.h"
 #include "stringinRecord.h"
+#include "biRecord.h"
 
 #include "ItemObject.hh"
 #include "Jira.hh"
@@ -99,6 +100,8 @@ static char *timeStringSecond(aSubRecord *pRecord);
    : ( ( (struct dbAddr *)( (PLNK)->value.pv_link.pvt) ) ) )
 */
 
+
+/* We get all values as string */
 static char *getLinkStrVal(DBLINK *dbLink)
 {
   if   (dbLink->type != DB_LINK) {
@@ -111,6 +114,19 @@ static char *getLinkStrVal(DBLINK *dbLink)
 }
 
 
+static epicsEnum16 getLinkVal(DBLINK *dbLink)
+{
+  if   (dbLink->type != DB_LINK) {
+    return disabled;
+  } else {
+    DBADDR *pdbAddr = (DBADDR*) dbLink->value.pv_link.pvt;
+    biRecord * pRec = (biRecord*) pdbAddr->precord;
+    return pRec -> val;
+  }
+}
+
+
+
 static void InitInvDataType()
 {
   outData.hash         = 0;
@@ -120,18 +136,26 @@ static void InitInvDataType()
   outData.location     = epicsStrDup("");
   outData.status       = epicsStrDup("");
   outData.model_name   = epicsStrDup("");
+  outData.label        = enabled;
   return ;
 } 
 
 static int fillInvDataType(aSubRecord *pRecord)
 {
+
+  std::string tmp_str;
+  
   outData.serialnumber = getLinkStrVal(&pRecord->outa);
   outData.formfactor   = getLinkStrVal(&pRecord->outb);
   outData.vendor       = getLinkStrVal(&pRecord->outc);
   outData.location     = getLinkStrVal(&pRecord->outd);
   outData.status       = getLinkStrVal(&pRecord->oute);
   outData.model_name   = getLinkStrVal(&pRecord->outf);
-  outData.hash         = epicsStrHash(outData.serialnumber,0);
+  /* Likely have the chance to have the same serial number */
+  tmp_str = outData.serialnumber;
+  tmp_str += outData.model_name;
+  outData.hash         = epicsStrHash(tmp_str.c_str(),0);
+  outData.label        = getLinkVal(&pRecord->outu);
   
   // printInvDataType(outData);
     
@@ -254,6 +278,7 @@ static long DistXenonASub(aSubRecord *pRecord)
     }
   else if ( epicsStrnCaseCmp(sv, aval, 2) == 0 )
     {
+      jira_return_msg.clear();
       fillInvDataType(prec);
 
       ItemObject item (outData);
@@ -290,12 +315,14 @@ static long DistXenonASub(aSubRecord *pRecord)
 	  fclose(ofp);
 	}
       } else {
-	printf("SN is mandatory data, please scan SN!\n");
+	jira_return_msg = "SN and NAME are mandatory data!";
+	prec->valg = (void*)jira_return_msg.c_str();
       }
       
     }
   else if ( epicsStrnCaseCmp(pj, aval, 2) == 0 )
     {
+      jira_return_msg.clear();
       fillInvDataType(prec);
       ItemObject item (outData);
       if (xenonDebug) item.Print();
@@ -343,12 +370,14 @@ static long DistXenonASub(aSubRecord *pRecord)
 	}
 	
       } else {
-	printf("SN and MO are mandatory data, please scan them!\n");
+	jira_return_msg = "SN and NAME are mandatory data!";
+	prec->valg = (void*)jira_return_msg.c_str();
       }
       
     }
   else if ( epicsStrnCaseCmp(sj, aval, 2) == 0 )
     {
+      jira_return_msg.clear();
       fillInvDataType(prec);
       ItemObject item (outData);
       std::string desc="";
@@ -363,7 +392,8 @@ static long DistXenonASub(aSubRecord *pRecord)
 	printf("is valid\n");
       }
       else {
-	printf("SN and MO are mandatory data, please scan them!\n");
+	jira_return_msg = "SN and NAME are mandatory data!";
+	prec->valg = (void*)jira_return_msg.c_str();
       }
     }
   else if ( epicsStrnCaseCmp(jc, aval, 2) == 0 )  /* Create */
@@ -373,16 +403,12 @@ static long DistXenonASub(aSubRecord *pRecord)
       fillInvDataType(prec);
       ItemObject item (outData);
       if( item.IsValid() ) {
-
-       	JiraProject jira(url, project, issue);
- 	jira_return_msg = jira.CreateIssue(item);
-	std::cout << "Key    : " << jira.GetKey() << std::endl;
-       	std::cout << "Self   : " << jira.GetSelf() << std::endl;
-       	std::cout << "HashID : " << jira.GetHash() << std::endl;
+       	JiraProject jira(url, project, issue, prec);
+	jira_return_msg = jira.CreateIssue(item);
       }
       else {
-	jira_return_msg = "SN and NAME are mandatory data, please scan them!";
-	std::cout << jira_return_msg << std::endl;
+	jira_return_msg = "SN and NAME are mandatory data!";
+	prec->valg = (void*)jira_return_msg.c_str();
       }
 	
     }

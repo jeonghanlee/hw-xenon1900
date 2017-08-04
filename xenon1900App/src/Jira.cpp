@@ -35,7 +35,9 @@ JiraProject::JiraProject()
   qr_file = qr_name + file_suffix;
   dm_file = dm_name + file_suffix;
    
-  
+  prec = NULL;
+
+    
 };
 
 JiraProject::~JiraProject()
@@ -70,9 +72,46 @@ JiraProject::JiraProject(std::string projectUrl, std::string projectName, std::s
   file_suffix = ".png";
   qr_file = qr_name + file_suffix;
   dm_file = dm_name + file_suffix;
-  
+
+  prec = NULL;
+
   
 };
+
+
+JiraProject::JiraProject(std::string projectUrl, std::string projectName, std::string issueName, aSubRecord *pRecord)
+{
+
+  SetProjectUrl(projectUrl);
+  fProjectName     = projectName;
+  fIssueName       = issueName;
+  fIssueIdOrKey.clear();
+
+  fUserName.clear();
+  fDescription.clear();
+    
+  fItemObject.Init();
+
+  curl_headers = NULL;
+
+  jRoot.clear();
+  jResponse.clear();
+  
+  jKey.clear();
+  jSelf.clear();
+  jHash.clear();
+  qr_name = "qr_symbol";
+  dm_name = "dm_symbol";
+  file_suffix = ".png";
+  qr_file = qr_name + file_suffix;
+  dm_file = dm_name + file_suffix;
+
+  prec = pRecord;
+
+  
+};
+
+
 
 
 void
@@ -94,8 +133,8 @@ JiraProject::CreateIssue(ItemObject& obj)
 {
   std::string jira_return_message;
 
-  // Currently, we only consider one obj per a jira submit
-  //
+  // // Currently, we only consider one obj per a jira submit
+  // //
   int obj_count = 0;
   
   this->AddItem(obj);
@@ -104,7 +143,7 @@ JiraProject::CreateIssue(ItemObject& obj)
   this->GetCurlResponse();
   this->CreateBarcodes();
   this->AddBarcodesJira();
-  
+  if( obj.IsLabel())  PrintBarcodes();
   // std::cout << jRootJsonData << std::endl;
   // std::cout << obj << std::endl;
   obj.Init();
@@ -375,11 +414,11 @@ JiraProject::CreateBarcodes()
   dm_symbol -> whitespace_width = 6;
   dm_symbol -> border_width     = 0;
   dm_symbol -> input_mode       = DATA_MODE;
-  /* 
-   * Disable SQUARE, becasue of the DYMO LaberWriter 450 Due Tape resolution. 
+  /* The fixed size symbol is selected for  6mm Dyno Tape 
    * DM Symbol is used for the small equipment, e.g., MTCA EVR 300
-   */
-  /* dm_symbol -> option_3         = DM_SQUARE; */
+   */ 
+  dm_symbol -> option_2         = 26; /* Symbol Size 8x32 */
+
   memcpy(dm_symbol->outfile, dm_filename, sizeof(dm_filename));
   memcpy(dm_symbol->text, (uint8_t*) key, sizeof(key));
   ZBarcode_Encode_and_Print(dm_symbol, (uint8_t *) hash, 0 , 0);
@@ -460,3 +499,152 @@ JiraProject::AddBarcodesJira()
   return true;
   
 };
+
+void
+JiraProject::cups_jobs_status(const char* printer_name, int job_id)
+{
+  int             i;
+  int             num_jobs;
+  cups_job_t      *jobs;
+  ipp_jstate_t    job_state = IPP_JOB_PENDING;
+
+  std::ostringstream oss;
+
+  oss << printer_name << " : Job " << job_id << " is ";
+  
+  while (job_state < IPP_JOB_STOPPED) {
+    /* Get my jobs (1) with any state (-1) */
+    num_jobs = cupsGetJobs(&jobs, printer_name, 1, -1);
+    
+    /* Loop to find my job */
+    job_state = IPP_JOB_COMPLETED;
+    
+    for (i = 0; i < num_jobs; i ++)
+      if (jobs[i].id == job_id)
+	{
+	  job_state = jobs[i].state;
+	  break;
+	}
+    
+    /* Free the job array */
+    cupsFreeJobs(num_jobs, jobs);
+
+    
+    /* Show the current state */
+    switch (job_state)
+      {
+      case IPP_JOB_PENDING :
+	oss << "pending. ";
+	std::cout << oss.str().c_str() << std::endl;
+	//	prec->valg = oss.str().c_str();
+	break;
+      case IPP_JOB_HELD :
+	oss << "held. ";
+	std::cout << oss.str().c_str() << std::endl;
+	//	prec->valg = oss.str().c_str();
+	break;
+      case IPP_JOB_PROCESSING :
+	oss << "processing. ";
+	std::cout << oss.str().c_str() << std::endl;
+	// prec->valg = epicsStrDup("processing");
+	break;
+      case IPP_JOB_STOPPED :
+	oss << "stopped. ";
+	std::cout << oss.str().c_str() << std::endl;
+	//	prec->valg = oss.str().c_str();
+	break;
+      case IPP_JOB_CANCELED :
+	oss << "canceled. ";
+	std::cout << oss.str().c_str() << std::endl;
+	//	prec->valg = oss.str().c_str();
+	break;
+      case IPP_JOB_ABORTED :
+	oss << "aborted. ";
+	std::cout << oss.str().c_str() << std::endl;
+	//	prec->valg = (void*) oss.str().c_str();
+	break;
+      case IPP_JOB_COMPLETED :
+	oss << "completed. ";
+	std::cout << oss.str().c_str() << std::endl;
+	//	prec->valg = oss.str().c_str();
+	break;
+      }
+    
+    /* Sleep if the job is not finished */
+    if (job_state < IPP_JOB_STOPPED)
+      sleep(5);
+  }
+
+  return;
+}
+
+
+bool
+JiraProject::cups_printer_status(const char* printer_name)
+{
+
+  int         i;
+  cups_dest_t *dests;
+  cups_dest_t *dest;
+  int         num_dests = cupsGetDests(&dests);
+  bool        printer_exist = false;
+  
+  for (i = num_dests, dest = dests; i > 0; i --, dest ++) {
+    if (dest->instance == NULL) {
+      //	value = cupsGetOption("printer-info", dest->num_options, dest->options);
+      
+      if (strcmp(printer_name, dest->name) != 0) printer_exist = true;
+      else                                       printer_exist = false;
+    }
+  }
+
+  cupsFreeDests(num_dests, dests);
+  return printer_exist;
+  
+}
+
+
+void
+JiraProject::PrintBarcodes()
+{
+
+  const char* label_printer_name = "DYMO_LabelWriter_450_DUO_Label";
+  const char* tape_printer_name  = "DYMO_LabelWriter_450_DUO_Tape";
+
+  int             num_options;
+  cups_option_t*  options;
+  int             job_id;
+  
+  if ( this-> cups_printer_status ( label_printer_name) ) {
+    num_options = 0;
+    options = NULL;
+    job_id = -1;
+    num_options = cupsAddOption("PageSize",              "w72h72.1", num_options, &options);
+    num_options = cupsAddOption("scaling",               "100",      num_options, &options);
+    num_options = cupsAddOption("orientation-requested", "3",        num_options, &options);
+    num_options = cupsAddOption("DymoHalftoning",        "Default",  num_options, &options);
+    job_id = cupsPrintFile(label_printer_name, qr_file.c_str(), "print qr code", num_options, options);
+    this->cups_jobs_status(label_printer_name, job_id);
+    cupsFreeOptions(num_options, options);
+  }
+
+
+  if ( this->cups_printer_status(tape_printer_name) ) {
+    num_options = 0;
+    options = NULL;
+    job_id = -1;
+    
+    num_options = cupsAddOption("MediaType",             "6mm",     num_options, &options);
+    num_options = cupsAddOption("PageSize",              "w18h252", num_options, &options);
+    num_options = cupsAddOption("orientation-requested", "4",       num_options, &options);
+    num_options = cupsAddOption("DymoCutOptions",        "Cut",     num_options, &options);
+    num_options = cupsAddOption("DymoContinuousPaper",   "0",       num_options, &options);
+    num_options = cupsAddOption("DymoHalftoning",        "Default", num_options, &options);
+    
+    job_id = cupsPrintFile(tape_printer_name, dm_file.c_str(), "print dm code", num_options, options);
+    this->cups_jobs_status(tape_printer_name, job_id);
+    cupsFreeOptions(num_options, options);
+  }
+    
+  return;
+}

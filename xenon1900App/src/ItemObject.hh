@@ -31,6 +31,7 @@ typedef struct InvDataType {
   char *location;
   char *status;
   char *model_name;
+  unsigned int label;
 
 } InvDataType;
 
@@ -101,10 +102,8 @@ public:
   const char*       GetLocation()            { return fLocation.c_str(); };
   const char*       GetStatus()              { return fStatus.c_str(); };
   const char*       GetModel()               { return fName.c_str(); };
-  
   const epicsUInt32 GetJiraIssueNumber()       const { return fJiraIssueNumber; };
-
-
+  
   
   void SetHashID       (const epicsUInt32 hash) {
     fHashID       = hash;
@@ -153,7 +152,8 @@ public:
   const std::string GetJiraCSV();
 
   
-
+  bool IsLabel() {  return fLabel;}
+  
   void Print ();
     
 private:
@@ -181,11 +181,12 @@ private:
   std::string       fVendor;
   std::string       fLocation;
   std::string       fStatus;
-
+ 
   std::string       fJiraProjectName;
   std::string       fJiraIssueName;
   std::string       fJiraDesc;
 
+  bool              fLabel;
   // Return value after curl command from JIRA
   epicsUInt32  fJiraIssueNumber; // Used for the ICS Label 
   

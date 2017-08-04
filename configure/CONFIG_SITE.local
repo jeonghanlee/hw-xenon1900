@@ -14,7 +14,11 @@ PROD_LDLIBS += `pkg-config --libs   jsoncpp`
 #PROD_LDLIBS += -L/usr/local/lib/
 
 ## ZINT : Deb packages
-# don't need,
 USR_CFLAGS  += -I/usr/include/
 USR_LDFLAGS += -lzint
 PROD_LDLIBS += -lzint
+## CUPS
+
+USR_CFLAGS  += -I/usr/include/
+USR_LDFLAGS += -lcups
+PROD_LDLIBS += -lcups
