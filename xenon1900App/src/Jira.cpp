@@ -112,7 +112,26 @@ JiraProject::JiraProject(std::string projectUrl, std::string projectName, std::s
 };
 
 
+void
+JiraProject::ClearActionResults()
+{
+  curl_headers = NULL;
+  fCurlResponse.clear();
 
+  fUpdateDeleteUrl.clear();
+  fAttachmentsUrl.clear();
+  
+  jRoot.clear();
+  jResponse.clear();
+  jIssues.clear();
+  jErrors.clear();
+  jParsingSuccess = false;
+  jErrorsStatus   = false;  
+  jKey.clear();
+  jSelf.clear();
+  jHash.clear();
+  
+};
 
 void
 JiraProject::SetProjectUrl(const std::string& url)
@@ -133,10 +152,9 @@ JiraProject::CreateIssue(ItemObject& obj)
 {
   std::string jira_return_message;
 
-  // // Currently, we only consider one obj per a jira submit
-  // //
+  // Currently, we only consider one obj per a jira submit
+
   int obj_count = 0;
-  
   this->AddItem(obj);
   this->SetCreateJsonData(obj_count, true);
   this->SetCreateCurlData();
@@ -144,11 +162,11 @@ JiraProject::CreateIssue(ItemObject& obj)
   this->CreateBarcodes();
   this->AddBarcodesJira();
   if( obj.IsLabel())  PrintBarcodes();
-  // std::cout << jRootJsonData << std::endl;
-  // std::cout << obj << std::endl;
+  this->ClearActionResults();
+
   obj.Init();
-  return jira_return_message;
   
+  return jira_return_message;
 };
 
 
@@ -160,6 +178,7 @@ JiraProject::UpdateIssue(ItemObject& obj)
   
   //  this->AddItem(obj);
 
+  
   return jira_return_message;
   
 };

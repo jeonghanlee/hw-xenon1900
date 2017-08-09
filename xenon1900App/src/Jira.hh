@@ -119,15 +119,15 @@ private:
   Json::Value        jRoot;
   std::string        jRootJsonData;
 
-  CURL               *curl_obj;
-  CURLcode           curl_res;
-  struct curl_slist  *curl_headers;
-  std::string        fCurlResponse;
+  CURL               *curl_obj;      // Cleanup after executing curl in any function
+  CURLcode           curl_res;        
+  struct curl_slist  *curl_headers;  // free it after executing curl in any function
+  std::string        fCurlResponse;  // Clear it after the main action. 
 
   Json::Value        jResponse;
-  bool               jParsingSuccess;
   Json::Value        jIssues;
   Json::Value        jErrors;
+  bool               jParsingSuccess;
   bool               jErrorsStatus;
 
   std::string        jKey;
@@ -148,6 +148,8 @@ private:
 
   //  std::vector<std::string> jKeyList;
   //  std::vector<std::string> jSelfList;
+
+  void ClearActionResults();
   
   void AddItem(ItemObject &in) { fItemObject = in; }; 
 
