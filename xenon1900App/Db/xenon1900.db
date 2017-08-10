@@ -75,6 +75,13 @@ record(stringin, "$(SYSDEV)JiraMessage")
     field(DTYP, "Soft Channel")
 }
 
+record(stringin, "$(SYSDEV)IssueNumber")
+{
+    field(DESC, "Issue Number")
+    field(DYTP, "Soft Channel")
+}
+
+
 
 ## A quick and dirty way to work around this issue is to set enabled in
 ## INAM of aSub record. And please look at comment in DisXenonASub
@@ -97,8 +104,11 @@ record(aSub,"$(SYSDEV)Dist_aSub")
     field(SNAM, "DistXenonASub")
     field(SCAN, "Passive")
     field(INPA, "$(SYSDEV)RawData.VAL")
+    field(INPB, "$(SYSDEV)IssueNumber  NPP NMS")
     field( FTA, "STRING")
+    field( FTB, "STRING")
     field( NOA, "1")
+    field( NOB, "1")
     field(OUTA, "$(SYSDEV)SN PP")
     field(OUTB, "$(SYSDEV)Formfactor PP" )
     field(OUTC, "$(SYSDEV)Vendor PP")

@@ -176,9 +176,17 @@ JiraProject::UpdateIssue(ItemObject& obj)
 {
   std::string jira_return_message;
   
-  //  this->AddItem(obj);
+  this->AddItem(obj);
+  this->SetUpdateJsonData(true);
+  std::cout << jRootJsonData << std::endl;
+  //  this->SetCreateCurlData();
+  //  this->GetCurlResponse();
+  this->CreateUpdateBarcodes(fIssueIdOrKey, obj.GetStrHashID());
+  //  this->AddBarcodesJira();
+  if( obj.IsLabel())  PrintBarcodes();
+  this->ClearActionResults();
 
-  
+  obj.Init();
   return jira_return_message;
   
 };
@@ -318,6 +326,63 @@ JiraProject::SetCreateCurlData()
   return true;
 }
 
+
+void
+JiraProject::SetUpdateJsonData(bool json_style)
+{
+
+  int no = 0;
+  // 01 
+  Json::Value j01_update;
+  // 012
+  Json::Value j012_summary;
+  Json::Value j012_cfield10500;
+  Json::Value j012_cfield11002;
+  Json::Value j012_desc;
+
+  // 012
+  Json::Value j012_cfield10502;
+  Json::Value j012_assignee;
+  
+  // 0123
+  Json::Value j0123_name;
+  Json::Value j0123_value;
+  
+  jRoot.clear();
+
+  // Data > 0123
+  j0123_name             ["name"] = "ics_inventory";
+  if ( fItemObject.HasLocation() ) 
+    j0123_value          ["value"] = fItemObject.GetLocation();
+
+  // 0123 > 012
+  j012_assignee       [no]["set"] = j0123_name;
+  j012_cfield10502    [no]["set"] = j0123_value;
+  // Data > 012
+  j012_summary        [no]["set"] = fItemObject.GetName();
+  j012_cfield10500    [no]["set"] = fItemObject.GetSerialNumber();
+  j012_cfield11002    [no]["set"] = fItemObject.GetCharHashID();
+  j012_desc           [no]["set"] = fDescription.c_str();
+  
+  // 012 > 01
+  j01_update["summary"]           = j012_summary;
+  j01_update["description"]       = j012_desc;
+  j01_update["assignee"]          = j012_assignee;
+  j01_update["customfield_10500"] = j012_cfield10500;
+  j01_update["customfield_10502"] = j012_cfield10502;
+  j01_update["customfield_11002"] = j012_cfield11002;
+  
+  // 01 > ROOT
+  jRoot["update"] = j01_update;
+
+  if (json_style) jRootJsonData = jStyledWriter.write(jRoot);
+  else            jRootJsonData = jFasterWriter.write(jRoot);
+  
+  return;
+}
+
+
+
 // bool
 // JiraProject::GetCurlResponse()
 // {
@@ -405,6 +470,59 @@ JiraProject::CreateBarcodes()
   keyWithoutTAG.erase(jKey.find("TAG-"), 4);
 
   const char* hash = jHash.c_str();
+  const char* key  = keyWithoutTAG.c_str();
+
+  char qr_filename[FILENAME_MAX];
+  char dm_filename[FILENAME_MAX];
+
+  sprintf(qr_filename, "%s", qr_file.c_str());
+  sprintf(dm_filename, "%s", dm_file.c_str());
+  
+  /* QR Code */
+  qr_symbol = ZBarcode_Create();
+  qr_symbol -> symbology        = BARCODE_QRCODE;
+  qr_symbol -> height           = 48;
+  qr_symbol -> whitespace_width = 6;
+  qr_symbol -> border_width     = 2;
+  qr_symbol -> input_mode       = DATA_MODE;
+  qr_symbol -> option_1         = 3;            /* ECC Level L1/M2/Q3/H4 */
+  memcpy(qr_symbol->outfile, qr_filename, sizeof(qr_filename));
+  memcpy(qr_symbol->text,    (uint8_t*) key, sizeof(key));
+  ZBarcode_Encode_and_Print(qr_symbol, (uint8_t *) hash, 0 , 0);
+  ZBarcode_Delete(qr_symbol);
+
+  /* DataMatrix Code */
+  dm_symbol = ZBarcode_Create();
+  dm_symbol -> symbology        = BARCODE_DATAMATRIX; 
+  dm_symbol -> height           = 48;
+  dm_symbol -> whitespace_width = 6;
+  dm_symbol -> border_width     = 0;
+  dm_symbol -> input_mode       = DATA_MODE;
+  /* The fixed size symbol is selected for  6mm Dyno Tape 
+   * DM Symbol is used for the small equipment, e.g., MTCA EVR 300
+   */ 
+  dm_symbol -> option_2         = 26; /* Symbol Size 8x32 */
+
+  memcpy(dm_symbol->outfile, dm_filename, sizeof(dm_filename));
+  memcpy(dm_symbol->text, (uint8_t*) key, sizeof(key));
+  ZBarcode_Encode_and_Print(dm_symbol, (uint8_t *) hash, 0 , 0);
+  ZBarcode_Delete(dm_symbol);
+  
+  return;
+}
+
+
+
+void
+JiraProject::CreateUpdateBarcodes(std::string issue_id, std::string hash_id)
+{
+  struct zint_symbol *qr_symbol;
+  struct zint_symbol *dm_symbol;
+
+  std::string keyWithoutTAG = issue_id;  
+  keyWithoutTAG.erase(jKey.find("TAG-"), 4);
+
+  const char* hash = hash_id.c_str();
   const char* key  = keyWithoutTAG.c_str();
 
   char qr_filename[FILENAME_MAX];

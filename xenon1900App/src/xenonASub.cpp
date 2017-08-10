@@ -232,16 +232,21 @@ static long InitXenonASub(aSubRecord *pRecord)
 static long DistXenonASub(aSubRecord *pRecord)
 {
 
+  bool issue_id_status = false;
+  
   aSubRecord* prec = (aSubRecord*) pRecord;
     
-  char *aval = (char*) prec->a;
+  char *aval     = (char*) prec->a;
+  char *issue_id = (char*) prec->b;
+
+  if ( issue_id && issue_id[0] ) issue_id_status = true;
+    
   char id[3];
   strncpy(id, aval, 2);
   id[2] = '\0';
 
-  epicsUInt32 id_hash = epicsStrHash(id,0);
-  char      * fwd_val = epicsStrDup(aval);
-  
+  epicsUInt32 id_hash      = epicsStrHash(id,0);
+  char      * fwd_val      = epicsStrDup(aval);
 
   
   /*
@@ -331,7 +336,7 @@ static long DistXenonASub(aSubRecord *pRecord)
       fileName.length=80;
       fileName.pString=epicsStrDup("");
 
-      /* To make the system work quicly and dirty, I decided to create the csv file, which
+      /* To make the system work quickly and dirty, I decided to create the csv file, which
        * can be imported within the existent ICS Inventory system. Since I am not the admin
        * on this jira, I cannot update them. However, to create them through csv file
        * is the simple way to save time.... 
@@ -415,13 +420,21 @@ static long DistXenonASub(aSubRecord *pRecord)
   else if ( epicsStrnCaseCmp(ju, aval, 2) == 0 ) /* Update */ 
     {
       jira_return_msg.clear();
-      fillInvDataType(prec);
-      ItemObject item (outData);
-      JiraProject jira(url, project, issue);
-      jira.SetIssueIdOrKey("TAG-333");
-      jira_return_msg = jira.UpdateIssue(item);
-      std::cout << jira.GetUpdateDeleteUrl() << std::endl;
-      std::cout << jira_return_msg  << std::endl;
+
+      if( issue_id_status ) {
+	fillInvDataType(prec);
+	ItemObject item (outData);
+	JiraProject jira(url, project, issue);
+	jira.SetIssueIdOrKey(issue_id);
+	std::cout << jira.GetIssueIdOrKey() << std::endl;
+	jira_return_msg = jira.UpdateIssue(item);
+	std::cout << jira.GetUpdateDeleteUrl() << std::endl;
+	//      std::cout << jira_return_msg  << std::endl;
+      }
+      else {
+	jira_return_msg = "Define Issue Number for Update!";
+	prec->valg = (void*)jira_return_msg.c_str();
+      }
 
     }
   else if ( epicsStrnCaseCmp(jd, aval, 2) == 0 ) /* Delete */
@@ -442,7 +455,7 @@ static long DistXenonASub(aSubRecord *pRecord)
       ItemObject item (outData);
       JiraProject jira(url, project, issue);
       jira_return_msg = jira.SearchIssue(item);
-      std::cout << jira.GetSearchUrl() << std::endl;
+            std::cout << jira.GetSearchUrl() << std::endl;
       std::cout << jira_return_msg  << std::endl;
 	    
     }

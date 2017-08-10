@@ -80,7 +80,8 @@ public:
   };
   
   void SetProjectUrl(const std::string& url);
-  void SetIssueIdOrKey(const std::string& id)   {fIssueIdOrKey = id;} ;
+  void SetIssueIdOrKey(const std::string& id)   {fIssueIdOrKey = id; jKey = id;} ;
+  const std::string GetIssueIdOrKey() { return fIssueIdOrKey;};
   void ClearIssueIdOrKey()                      {fIssueIdOrKey.clear();};
 
   const std::string GetKey()  const { return jKey;  };
@@ -156,7 +157,7 @@ private:
   void SetupDefaultHeaders();
   
   void SetCreateJsonData(int no, bool json_style);
-  void SetUpdateJsonData();
+  void SetUpdateJsonData(bool json_style);
   void SetSearchJsonData();
 
   bool SetCreateCurlData();
@@ -165,6 +166,7 @@ private:
   void SetSearchCurlData();
 
   void CreateBarcodes();
+  void CreateUpdateBarcodes(std::string issue_id, std::string hash_id);
   bool AddBarcodesJira();
   void PrintBarcodes();
   

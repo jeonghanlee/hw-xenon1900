@@ -73,7 +73,7 @@ public:
   const epicsUInt32 GetInstallationStrcutID()  const { return fInstallationStructID; };
 
   epicsUInt32 GetHashID()                 { return fHashID; };
-
+  std::string GetStrHashID()           { return fHashIdStream.str();};
   bool HasFormfactor() const {
     if ( fFormfactor.empty() || fFormfactor == "") return false;
     else                                           return true;
