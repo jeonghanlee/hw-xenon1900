@@ -74,17 +74,14 @@ static const char * const dj="DJ"; /* Push the saved PVs to RDB and JIRA        
 static const char * const pd="PD"; /* Push the saved PVs to RDB                  */
 
 
-static const char * const sv="SV"; /* Save and overwrite each scanned PV in each csv file (per second)   */
-static const char * const sj="SJ"; /* Save and overwrite each scanned PV in each json file (per second)  */
-
 static std::string jira_return_msg;
 
 static char * getLinkStrVal(DBLINK *dbLink);
 static void InitInvDataType();
 static int fillInvDataType(aSubRecord *pRecord);
-//static void printInvDataType(InvDataType iDtype);
+// static void printInvDataType(InvDataType iDtype);
 static char *timeString(aSubRecord *pRecord, const char *pFormat);
-static char *timeStringDay(aSubRecord *pRecord);
+// static char *timeStringDay(aSubRecord *pRecord);
 static char *timeStringSecond(aSubRecord *pRecord);
 
 
@@ -193,11 +190,11 @@ static char *timeString(aSubRecord *pRecord, const char *pFormat)
   return epicsStrDup(buf);
 }	
 
-static char *timeStringDay(aSubRecord *pRecord)
-{
-  const char * pFormat = "%Y%m%d";
-  return timeString(pRecord, pFormat);
-}	
+// static char *timeStringDay(aSubRecord *pRecord)
+// {
+//   const char * pFormat = "%Y%m%d";
+//   return timeString(pRecord, pFormat);
+// }	
 
 
 static char *timeStringSecond(aSubRecord *pRecord)
@@ -208,15 +205,15 @@ static char *timeStringSecond(aSubRecord *pRecord)
 
 
 
-static char *checkStr(char *in)
-{
-  if ( epicsStrCaseCmp("", in) ) {
-    return in;
-  }
-  else {
-    return epicsStrDup(",,");
-  }
-}
+// static char *checkStr(char *in)
+// {
+//   if ( epicsStrCaseCmp("", in) ) {
+//     return in;
+//   }
+//   else {
+//     return epicsStrDup(",,");
+//   }
+// }
 
 
 
@@ -280,126 +277,6 @@ static long DistXenonASub(aSubRecord *pRecord)
       prec->vald = fwd_val; prec->vale = fwd_val;
       prec->valf = fwd_val; prec->vala = fwd_val;
       prec->valu = &disabled;
-    }
-  else if ( epicsStrnCaseCmp(sv, aval, 2) == 0 )
-    {
-      jira_return_msg.clear();
-      fillInvDataType(prec);
-
-      ItemObject item (outData);
-      if (xenonDebug) item.Print();
-      item.GetJiraCSV();
-      
-      epicsString fileName;
-      fileName.length=80;
-      fileName.pString=epicsStrDup("");
-
-      if( item.IsValid() ) {
-	sprintf(fileName.pString, "inv_data_at_%s.csv", timeStringSecond(prec));
-	if (xenonDebug) printf ("printf %s\n", fileName.pString);
-	
-	//	printf("%s\n", epicsMemHash(outData.serialnumber,10,0));
-	
-	FILE *ofp;
-	ofp = fopen(fileName.pString, "w");
-	if (ofp == NULL) {
-	  printf("Error opening file!\n");
-	} else {
-	  /* Since each data have own prefix,number,string
-	   * so, I introduce an additional seperatation as 
-	   * ,-, in order to distingush them
-	   */
-	  const char * pHolder = ",--";
-	  fprintf(ofp, "%s,0,%u",    hs, outData.hash);
-	  fprintf(ofp, "%s,SN,0,%s", pHolder, outData.serialnumber);
-	  fprintf(ofp, "%s,%s",      pHolder, checkStr(outData.formfactor));
-	  fprintf(ofp, "%s,%s",      pHolder, checkStr(outData.vendor));
-	  fprintf(ofp, "%s,%s",      pHolder, checkStr(outData.location));
-	  fprintf(ofp, "%s,%s",      pHolder, checkStr(outData.status));
-	  fprintf(ofp, "%s,%s\n",    pHolder, checkStr(outData.model_name));
-	  fclose(ofp);
-	}
-      } else {
-	jira_return_msg = "SN and NAME are mandatory data!";
-	prec->valg = (void*)jira_return_msg.c_str();
-      }
-      
-    }
-  else if ( epicsStrnCaseCmp(pj, aval, 2) == 0 )
-    {
-      jira_return_msg.clear();
-      fillInvDataType(prec);
-      ItemObject item (outData);
-      if (xenonDebug) item.Print();
-      
-      epicsString fileName;
-      fileName.length=80;
-      fileName.pString=epicsStrDup("");
-
-      /* To make the system work quickly and dirty, I decided to create the csv file, which
-       * can be imported within the existent ICS Inventory system. Since I am not the admin
-       * on this jira, I cannot update them. However, to create them through csv file
-       * is the simple way to save time.... 
-       * jhlee, Monday, May 29 18:02:20 CEST 2017
-       */
-      if( item.IsValid() ) {
-	sprintf(fileName.pString, "create_issue_at_TAG_%s.csv", timeStringDay(prec));
-
-	
-	int file_exist = 0;
-
-	
-	if (fopen(fileName.pString, "r") == NULL) {
-	  file_exist = 0;
-	  if (xenonDebug) printf ("creating the non-existent %s\n", fileName.pString);
-	}
-	else {
-	  file_exist = 1;
-	  if (xenonDebug) printf ("opening the existent %s\n", fileName.pString);
-	}
-
-	FILE *ofp;
-
-	const char * header = "Summary,Serial Number,Label ID,Labels,Supplier,Where";
-	
-	if(file_exist) {
-	  ofp = fopen(fileName.pString, "a+");
-	  fprintf(ofp, "%s", item.GetJiraCSV().c_str());
-	  fclose(ofp);
-	}
-	else {
-	  ofp = fopen(fileName.pString, "w");
-	  fprintf(ofp, "%s\n", header);
-	  fprintf(ofp, "%s", item.GetJiraCSV().c_str());
-	  fclose(ofp);
-	}
-	
-      } else {
-	jira_return_msg = "SN and NAME are mandatory data!";
-	prec->valg = (void*)jira_return_msg.c_str();
-      }
-      
-    }
-  else if ( epicsStrnCaseCmp(sj, aval, 2) == 0 )
-    {
-      jira_return_msg.clear();
-      fillInvDataType(prec);
-      ItemObject item (outData);
-      std::string desc="";
-      
-      desc = "Created at ";
-      desc += timeStringSecond(prec);
-      desc += " using EPICS Xenon IOC";
-      
-      item.SetJIRAInfo(project, issue, desc);
- 
-      if( item.IsValid() ) {
-	printf("is valid\n");
-      }
-      else {
-	jira_return_msg = "SN and NAME are mandatory data!";
-	prec->valg = (void*)jira_return_msg.c_str();
-      }
     }
   else if ( epicsStrnCaseCmp(jc, aval, 2) == 0 )  /* Create */
     {
