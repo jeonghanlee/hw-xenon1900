@@ -181,7 +181,7 @@ JiraProject::UpdateIssue(ItemObject& obj)
   std::cout << jRootJsonData << std::endl;
   //  this->SetCreateCurlData();
   //  this->GetCurlResponse();
-  this->CreateUpdateBarcodes(fIssueIdOrKey, obj.GetStrHashID());
+  this->CreateUpdateBarcodes(fIssueIdOrKey, obj.GetHashID());
   //  this->AddBarcodesJira();
   if( obj.IsLabel())  PrintBarcodes();
   this->ClearActionResults();

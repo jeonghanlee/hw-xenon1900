@@ -40,124 +40,68 @@
 
 #include "ItemObject.hh"
 #include "Jira.hh"
+#include "BcodeDefine.h"
 
-static InvDataType outData;
+//static InvDataType outData;
 static int       xenonDebug;
 //typedef enum { ENABLED, DISABLED} PrintStatus;
-typedef enum { DISABLED, ENABLED} PrintStatus;
+
+
+
+typedef enum {DISABLED, ENABLED} PrintStatus;
+
 static PrintStatus enabled = ENABLED;
 static PrintStatus disabled = DISABLED;
-/* Predefined PREFIX for Barcode */
-static const char * const ff="FF"; /* Formfactor */
-static const char * const vd="VD"; /* Vendor     */
-static const char * const lo="LO"; /* Location   */
-static const char * const st="ST"; /* Status     */
-static const char * const mo="MO"; /* Model      */
-static const char * const oo="00"; /* Place holder */
 
-static const char * const hs="HS"; /* Hash number per each SN                    */
-static const char * const cl="CL"; /* Clear all scanned PVs                         */
 
-static const char * const le="LE"; /* Enable  Label Printing after JIRA action (JC) */
-static const char * const ld="LD"; /* Disable Label Printing after JIRA action (JC) */
-
-static const char * const jc="JC"; /* Create an JIRA issue                          */
-static const char * const ju="JU"; /* Update an JIRA issue (Scan Hash ID and other fields first) */
-static const char * const jd="JD"; /* Delete an JIRA issue (Scan Hash ID and other fields first) */
-static const char * const js="JS"; /* Search an JIRA issue (Scan Hash ID and other fields first) */
-
-static const char * const ji="JI"; /* Define the Child (Scan Hash ID later)         */
-static const char * const jp="JP"; /* Define the Parent (Scan Hash ID later)        */
-
-static const char * const pj="PJ"; /*Save and append each scanned PV to CSV file which JIRA can import  (per day) */
-static const char * const dj="DJ"; /* Push the saved PVs to RDB and JIRA         */
-static const char * const pd="PD"; /* Push the saved PVs to RDB                  */
 
 
 static std::string jira_return_msg;
 
-static char * getLinkStrVal(DBLINK *dbLink);
-static void InitInvDataType();
-static int fillInvDataType(aSubRecord *pRecord);
-// static void printInvDataType(InvDataType iDtype);
+// //static void InitInvDataType();
+// //static int fillInvDataType(aSubRecord *pRecord);
+// // static void printInvDataType(InvDataType iDtype);
 static char *timeString(aSubRecord *pRecord, const char *pFormat);
-// static char *timeStringDay(aSubRecord *pRecord);
+// // static char *timeStringDay(aSubRecord *pRecord);
 static char *timeStringSecond(aSubRecord *pRecord);
 
 
-/* 
-   The following macro was removed from 3.15. 
-   Until I find the proper way to do this,
-   I will use the macro locally
- 
-
-   #define dbGetPdbAddrFromLink(PLNK) \
-   ( ( (PLNK)->type != DB_LINK ) \
-   ? 0 \
-   : ( ( (struct dbAddr *)( (PLNK)->value.pv_link.pvt) ) ) )
-*/
 
 
-/* We get all values as string */
-static char *getLinkStrVal(DBLINK *dbLink)
-{
-  if   (dbLink->type != DB_LINK) {
-    return epicsStrDup("NO DB_LINK type");
-  } else {
-    DBADDR *pdbAddr       = (DBADDR*) dbLink->value.pv_link.pvt;
-    stringinRecord * pRec = (stringinRecord*) pdbAddr->precord;
-    return epicsStrDup(pRec -> val);
-  }
-}
+// static void InitInvDataType()
+// {
+//   outData.hash         = 0;
+//   outData.serialnumber = epicsStrDup("");
+//   outData.formfactor   = epicsStrDup("");
+//   outData.vendor       = epicsStrDup("");
+//   outData.location     = epicsStrDup("");
+//   outData.status       = epicsStrDup("");
+//   outData.model_name   = epicsStrDup("");
+//   outData.label        = enabled;
+//   return ;
+// } 
 
+// static int fillInvDataType(aSubRecord *pRecord)
+// {
 
-static epicsEnum16 getLinkVal(DBLINK *dbLink)
-{
-  if   (dbLink->type != DB_LINK) {
-    return disabled;
-  } else {
-    DBADDR *pdbAddr = (DBADDR*) dbLink->value.pv_link.pvt;
-    biRecord * pRec = (biRecord*) pdbAddr->precord;
-    return pRec -> val;
-  }
-}
-
-
-
-static void InitInvDataType()
-{
-  outData.hash         = 0;
-  outData.serialnumber = epicsStrDup("");
-  outData.formfactor   = epicsStrDup("");
-  outData.vendor       = epicsStrDup("");
-  outData.location     = epicsStrDup("");
-  outData.status       = epicsStrDup("");
-  outData.model_name   = epicsStrDup("");
-  outData.label        = enabled;
-  return ;
-} 
-
-static int fillInvDataType(aSubRecord *pRecord)
-{
-
-  std::string tmp_str;
+//   std::string tmp_str;
   
-  outData.serialnumber = getLinkStrVal(&pRecord->outa);
-  outData.formfactor   = getLinkStrVal(&pRecord->outb);
-  outData.vendor       = getLinkStrVal(&pRecord->outc);
-  outData.location     = getLinkStrVal(&pRecord->outd);
-  outData.status       = getLinkStrVal(&pRecord->oute);
-  outData.model_name   = getLinkStrVal(&pRecord->outf);
-  /* Likely have the chance to have the same serial number */
-  tmp_str = outData.serialnumber;
-  tmp_str += outData.model_name;
-  outData.hash         = epicsStrHash(tmp_str.c_str(),0);
-  outData.label        = getLinkVal(&pRecord->outu);
+//   outData.serialnumber = getLinkStrVal(&pRecord->outa);
+//   outData.formfactor   = getLinkStrVal(&pRecord->outb);
+//   outData.vendor       = getLinkStrVal(&pRecord->outc);
+//   outData.location     = getLinkStrVal(&pRecord->outd);
+//   outData.status       = getLinkStrVal(&pRecord->oute);
+//   outData.model_name   = getLinkStrVal(&pRecord->outf);
+//   /* Likely have the chance to have the same serial number */
+//   tmp_str = outData.serialnumber;
+//   tmp_str += outData.model_name;
+//   outData.hash         = epicsStrHash(tmp_str.c_str(),0);
+//   outData.label        = getLinkVal(&pRecord->outu);
   
-  // printInvDataType(outData);
+//   // printInvDataType(outData);
     
-  return 0;
-}
+//   return 0;
+// }
 
 // static void printInvDataType(InvDataType iDtype)
 // {
@@ -220,7 +164,7 @@ static char *timeStringSecond(aSubRecord *pRecord)
 
 static long InitXenonASub(aSubRecord *pRecord)
 {
-  InitInvDataType();
+  //  InitInvDataType();
   aSubRecord* prec = (aSubRecord*) pRecord;
   prec->valu = &enabled;
   return 0;
@@ -282,8 +226,8 @@ static long DistXenonASub(aSubRecord *pRecord)
     {
       jira_return_msg.clear();
       
-      fillInvDataType(prec);
-      ItemObject item (outData);
+      //      fillInvDataType(prec);
+      ItemObject item (prec);
       if( item.IsValid() ) {
        	JiraProject jira(url, project, issue, prec);
 	jira_return_msg = jira.CreateIssue(item);
@@ -299,8 +243,8 @@ static long DistXenonASub(aSubRecord *pRecord)
       jira_return_msg.clear();
 
       if( issue_id_status ) {
-	fillInvDataType(prec);
-	ItemObject item (outData);
+	//	fillInvDataType(prec);
+	ItemObject item(prec);
 	JiraProject jira(url, project, issue);
 	jira.SetIssueIdOrKey(issue_id);
 	std::cout << jira.GetIssueIdOrKey() << std::endl;
@@ -317,22 +261,12 @@ static long DistXenonASub(aSubRecord *pRecord)
   else if ( epicsStrnCaseCmp(jd, aval, 2) == 0 ) /* Delete */
     {
       jira_return_msg.clear();
-      fillInvDataType(prec);
-      ItemObject item (outData);
-      JiraProject jira(url, project, issue);
-      jira_return_msg = jira.DeleteIssue(item);
-      std::cout << jira.GetUpdateDeleteUrl("TAG-334") << std::endl;
       std::cout << jira_return_msg  << std::endl;
 
     }
   else if ( epicsStrnCaseCmp(js, aval, 2) == 0 ) /* Search */ 
     {
       jira_return_msg.clear();
-      fillInvDataType(prec);
-      ItemObject item (outData);
-      JiraProject jira(url, project, issue);
-      jira_return_msg = jira.SearchIssue(item);
-            std::cout << jira.GetSearchUrl() << std::endl;
       std::cout << jira_return_msg  << std::endl;
 	    
     }

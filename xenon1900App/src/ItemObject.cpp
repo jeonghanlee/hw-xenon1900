@@ -1,96 +1,83 @@
 #include "ItemObject.hh"
 
 
+/* 
+   The following macro was removed from 3.15. 
+   Until I find the proper way to do this,
+   I will use the macro locally
+ 
+
+   #define dbGetPdbAddrFromLink(PLNK) \
+   ( ( (PLNK)->type != DB_LINK ) \
+   ? 0 \
+   : ( ( (struct dbAddr *)( (PLNK)->value.pv_link.pvt) ) ) )
+*/
+
+
+/* We get all values as string */
+static char *getLinkStrVal(DBLINK *dbLink)
+{
+  if   (dbLink->type != DB_LINK) {
+    return epicsStrDup("NO DB_LINK type");
+  } else {
+    DBADDR *pdbAddr       = (DBADDR*) dbLink->value.pv_link.pvt;
+    stringinRecord * pRec = (stringinRecord*) pdbAddr->precord;
+    return epicsStrDup(pRec -> val);
+  }
+}
+
+
+static epicsEnum16 getLinkVal(DBLINK *dbLink)
+{
+  if   (dbLink->type != DB_LINK) {
+    return 0;
+  } else {
+    DBADDR *pdbAddr = (DBADDR*) dbLink->value.pv_link.pvt;
+    biRecord * pRec = (biRecord*) pdbAddr->precord;
+    return pRec -> val;
+  }
+}
+
+  // void SetSerialNumber (const char* sn)         {std::string s(sn);   fSerialNumber = Split(s);};
+  // void SetName         (const char* name)       {std::string n(name); fName = Split(n);};
+  // void SetFormfactor   (const char* ff)         {std::string f(ff);   fFormfactor = Split(f);};
+  // void SetVendor       (const char* vd)         {std::string v(vd);   fVendor = Split(v);};
+  // void SetLocation     (const char* lo)         {std::string l(lo);   fLocation = Split(l);};
+  // void SetStatus       (const char* st)         {std::string sta(st); fStatus = Split(sta);};
+  // void SetModel        (const char* mo)         { SetName(mo); };
+
+
+
 ItemObject::ItemObject()
 {
   Init();
   
 };
 
-
-
-ItemObject::ItemObject(epicsUInt32  hashID,
-		       std::string serial_num,
-		       std::string model_name)
+ItemObject::ItemObject(aSubRecord *pRec)
 {
+
   Init();
-  SetHashID(hashID);
-  fSerialNumber = serial_num;
-  fName         = model_name;
-};
 
-
-
-
-ItemObject::ItemObject(epicsUInt32  hashID,
-		       char* serial_num,
-		       char* model_name)
-{
-  Init();
-  SetHashID(hashID);
-  SetSerialNumber(serial_num);
-  SetName(model_name);
-};
-
-
-
-
-ItemObject::ItemObject(epicsUInt32  hashID,
-		       std::string serial_num,
-		       std::string model_name,
-		       std::string formfactor,
-		       std::string vendor_name,
-		       std::string ics_location,
-		       std::string status)
-{
-  Init();
-  SetHashID(hashID);
-  fSerialNumber = serial_num;
-  fName         = model_name;
-  fFormfactor   = formfactor;
-  fVendor       = vendor_name;
-  fLocation     = ics_location;
-  fStatus       = status;
-};
-
-
-
-
-ItemObject::ItemObject(epicsUInt32  hashID,
-		       char* serial_num,
-		       char* model_name,
-		       char* formfactor,
-		       char* vendor_name,
-		       char* ics_location,
-		       char* status)
-{
-  Init();
-  SetHashID(hashID);
-  SetSerialNumber(serial_num);
-  SetName(model_name);
-  SetFormfactor(formfactor);
-  SetVendor(vendor_name);
-  SetLocation(ics_location);
-  SetStatus(status);
-};
-
-
-
-
-
-ItemObject::ItemObject(InvDataType in)
-{
-  Init();
+  std::string tmp_str;
   
-  SetHashID(in.hash);
-  SetSerialNumber(in.serialnumber);
-  SetName(in.model_name);
-  SetFormfactor(in.formfactor);
-  SetVendor(in.vendor);
-  SetLocation(in.location);
-  SetStatus(in.status);
-  fLabel = in.label;
-};
+  fSerialNumber = RemovePrefix( getLinkStrVal(&pRec->outa) );
+  fFormfactor   = RemovePrefix( getLinkStrVal(&pRec->outb) );
+  fVendor       = RemovePrefix( getLinkStrVal(&pRec->outc) );
+  fLocation     = RemovePrefix( getLinkStrVal(&pRec->outd) );
+  fStatus       = RemovePrefix( getLinkStrVal(&pRec->oute) );
+  fName         = RemovePrefix( getLinkStrVal(&pRec->outf) );
+
+  /* Likely have the chance to have the same serial number in the different product */
+  tmp_str = fSerialNumber + fName;
+  fHashIdStream << hs;
+  fHashIdStream << ",";
+  fHashIdStream << epicsStrHash(tmp_str.c_str(),0);
+
+  fLabel = getLinkVal(&pRec->outu);
+
+}
+
 
 ItemObject::ItemObject(const ItemObject &iobj)
 {
@@ -100,15 +87,18 @@ ItemObject::ItemObject(const ItemObject &iobj)
   fChildID              = iobj.fChildID;
   
   fChildNumber          = iobj.fChildNumber;
+  
   fLocationStructID     = iobj.fLocationStructID;
   fFacilityStructID     = iobj.fFacilityStructID;
   fInstallationStructID = iobj.fInstallationStructID;
 
-  fHashID               = iobj.fHashID;
+  //  fHashID               = iobj.fHashID;
   fHashIdStream         << iobj.fHashIdStream.str();
 
   fSerialNumber         = iobj.fSerialNumber;
   fName                 = iobj.fName;
+  
+  fFormfactor           = iobj.fFormfactor;
   fVendor               = iobj.fVendor;
   fLocation             = iobj.fLocation;
   fStatus               = iobj.fStatus;
@@ -131,20 +121,22 @@ ItemObject::Init()
 {
   fHasParent = false;
   fHasChild  = false;
-  fParentID  = 0;
-  fChildID.clear();
-
   
+  fParentID.clear();
+  fChildID.clear();
+ 
   fChildNumber          = 0;
-  fLocationStructID     = 0;
-  fFacilityStructID     = 0;
-  fInstallationStructID = 0;
+  
+  fLocationStructID.clear();
+  fFacilityStructID.clear();
+  fInstallationStructID.clear();
 
-  fHashID       = 0;
+  //  fHashID.clear();
   fHashIdStream.clear();
   
   fSerialNumber.clear();
   fName.clear();
+  
   fFormfactor.clear();
   fVendor.clear();
   fLocation.clear();
@@ -155,6 +147,8 @@ ItemObject::Init()
   fJiraDesc.clear();
 
   fLabel = true;
+
+  fJiraIssueNumber.clear();
 };
 
 
@@ -174,11 +168,13 @@ ItemObject & ItemObject::operator=(const ItemObject &iobj)
   fFacilityStructID     = iobj.fFacilityStructID;
   fInstallationStructID = iobj.fInstallationStructID;
 
-  fHashID               = iobj.fHashID;
+  //  fHashID               = iobj.fHashID;
   fHashIdStream         << iobj.fHashIdStream.str();
 
   fSerialNumber         = iobj.fSerialNumber;
   fName                 = iobj.fName;
+
+  fFormfactor           = iobj.fFormfactor;
   fVendor               = iobj.fVendor;
   fLocation             = iobj.fLocation;
   fStatus               = iobj.fStatus;
@@ -188,6 +184,7 @@ ItemObject & ItemObject::operator=(const ItemObject &iobj)
   fJiraDesc             = iobj.fJiraDesc;
 
   fLabel                = iobj.fLabel;
+  fJiraIssueNumber      = iobj.fJiraIssueNumber;
   return *this;
   
 };
@@ -207,7 +204,7 @@ ItemObject::Print()
   // cout << out << endl;
   
   printf("Object Name   %s\n", fName.c_str());
-  printf("Hash ID       %u\n", fHashID);
+  printf("Hash ID       %s\n", fHashIdStream.str().c_str());
   printf("Serial Number %s\n", fSerialNumber.c_str());
   printf("Formfactor    %s\n", fFormfactor.c_str());
   printf("Vendor        %s\n", fVendor.c_str());
@@ -220,29 +217,9 @@ ItemObject::Print()
 bool
 ItemObject::IsValid()
 {
-  if (fName != "" && fSerialNumber != "" ) return true;
-  else                                     return false;
+  if ( !fName.empty() && !fSerialNumber.empty() ) return true;
+  else                                            return false;
 }
-
-
-const std::string
-ItemObject::GetJiraCSV()
-{
-  std::stringstream out;
-  out << fName
-      << ","
-      << fSerialNumber
-      << ","
-      << fHashID
-      << ","
-      << fFormfactor
-      << ","
-      << fVendor
-      << ","
-      << fLocation
-      << "\n";
-  return out.str();
-};
 
 
 std::ostream& operator<<(std::ostream& os, const ItemObject &itemobj)
@@ -252,7 +229,7 @@ std::ostream& operator<<(std::ostream& os, const ItemObject &itemobj)
   os << "Jira Project : ";
   os << std::setw(width) << itemobj.fJiraProjectName;
   os << "\n Hash ID       : ";
-  os << std::setw(width) << itemobj.fHashID;
+  os << std::setw(width) << itemobj.fHashIdStream.str();
   os << "\n Serial Number : ";
   os << std::setw(width) << itemobj.fSerialNumber;
   os << "\n Model Name    : ";
