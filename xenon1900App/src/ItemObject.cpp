@@ -38,15 +38,6 @@ static epicsEnum16 getLinkVal(DBLINK *dbLink)
   }
 }
 
-  // void SetSerialNumber (const char* sn)         {std::string s(sn);   fSerialNumber = Split(s);};
-  // void SetName         (const char* name)       {std::string n(name); fName = Split(n);};
-  // void SetFormfactor   (const char* ff)         {std::string f(ff);   fFormfactor = Split(f);};
-  // void SetVendor       (const char* vd)         {std::string v(vd);   fVendor = Split(v);};
-  // void SetLocation     (const char* lo)         {std::string l(lo);   fLocation = Split(l);};
-  // void SetStatus       (const char* st)         {std::string sta(st); fStatus = Split(sta);};
-  // void SetModel        (const char* mo)         { SetName(mo); };
-
-
 
 ItemObject::ItemObject()
 {
@@ -54,7 +45,7 @@ ItemObject::ItemObject()
   
 };
 
-ItemObject::ItemObject(aSubRecord *pRec)
+ItemObject::ItemObject(aSubRecord *pRec, const std::string& url, const std::string& project, const std::string& issuetype)
 {
 
   Init();
@@ -76,6 +67,9 @@ ItemObject::ItemObject(aSubRecord *pRec)
 
   fLabel = getLinkVal(&pRec->outu);
 
+  this->SetJIRAInfo(url, project, issuetype);
+		    
+  
 }
 
 
@@ -105,7 +99,7 @@ ItemObject::ItemObject(const ItemObject &iobj)
 
   fJiraProjectName      = iobj.fJiraProjectName;
   fJiraIssueName        = iobj.fJiraIssueName;
-  fJiraDesc             = iobj.fJiraDesc;
+  fJiraUrl              = iobj.fJiraUrl;
 
   fLabel                = iobj.fLabel;
 };
@@ -144,7 +138,7 @@ ItemObject::Init()
 
   fJiraProjectName.clear();
   fJiraIssueName.clear();
-  fJiraDesc.clear();
+  fJiraUrl.clear();
 
   fLabel = true;
 
@@ -181,7 +175,7 @@ ItemObject & ItemObject::operator=(const ItemObject &iobj)
 
   fJiraProjectName      = iobj.fJiraProjectName;
   fJiraIssueName        = iobj.fJiraIssueName;
-  fJiraDesc             = iobj.fJiraDesc;
+  fJiraUrl              = iobj.fJiraUrl;
 
   fLabel                = iobj.fLabel;
   fJiraIssueNumber      = iobj.fJiraIssueNumber;
@@ -224,10 +218,14 @@ ItemObject::IsValid()
 
 std::ostream& operator<<(std::ostream& os, const ItemObject &itemobj)
 {
-  int width = 20;
+  int width = 30;
   os << std::setiosflags(std::ios::right);
-  os << "Jira Project : ";
+  os << "\n Jira Project  : ";
   os << std::setw(width) << itemobj.fJiraProjectName;
+  os << "\n Jira Issue    : ";
+  os << std::setw(width) << itemobj.fJiraIssueName;
+  os << "\n Jira Url      : ";
+  os << std::setw(width) << itemobj.fJiraUrl;
   os << "\n Hash ID       : ";
   os << std::setw(width) << itemobj.fHashIdStream.str();
   os << "\n Serial Number : ";

@@ -65,57 +65,6 @@ static char *timeString(aSubRecord *pRecord, const char *pFormat);
 // // static char *timeStringDay(aSubRecord *pRecord);
 static char *timeStringSecond(aSubRecord *pRecord);
 
-
-
-
-// static void InitInvDataType()
-// {
-//   outData.hash         = 0;
-//   outData.serialnumber = epicsStrDup("");
-//   outData.formfactor   = epicsStrDup("");
-//   outData.vendor       = epicsStrDup("");
-//   outData.location     = epicsStrDup("");
-//   outData.status       = epicsStrDup("");
-//   outData.model_name   = epicsStrDup("");
-//   outData.label        = enabled;
-//   return ;
-// } 
-
-// static int fillInvDataType(aSubRecord *pRecord)
-// {
-
-//   std::string tmp_str;
-  
-//   outData.serialnumber = getLinkStrVal(&pRecord->outa);
-//   outData.formfactor   = getLinkStrVal(&pRecord->outb);
-//   outData.vendor       = getLinkStrVal(&pRecord->outc);
-//   outData.location     = getLinkStrVal(&pRecord->outd);
-//   outData.status       = getLinkStrVal(&pRecord->oute);
-//   outData.model_name   = getLinkStrVal(&pRecord->outf);
-//   /* Likely have the chance to have the same serial number */
-//   tmp_str = outData.serialnumber;
-//   tmp_str += outData.model_name;
-//   outData.hash         = epicsStrHash(tmp_str.c_str(),0);
-//   outData.label        = getLinkVal(&pRecord->outu);
-  
-//   // printInvDataType(outData);
-    
-//   return 0;
-// }
-
-// static void printInvDataType(InvDataType iDtype)
-// {
-//   printf("Hash       is %u\n", iDtype.hash);
-//   printf("SN         is %s\n", iDtype.serialnumber);
-//   printf("Formfactor is %s\n", iDtype.formfactor);
-//   printf("Vendor     is %s\n", iDtype.vendor);
-//   printf("Location   is %s\n", iDtype.location);
-//   printf("Status     is %s\n", iDtype.status);
-//   printf("Model      is %s\n", iDtype.model_name);
-
-//   return;
-// }
-
 /* 
  * TimeStamp has no accurate meaning, we only use this info
  * to create the csv file as the part of its filename. 
@@ -149,22 +98,8 @@ static char *timeStringSecond(aSubRecord *pRecord)
 
 
 
-// static char *checkStr(char *in)
-// {
-//   if ( epicsStrCaseCmp("", in) ) {
-//     return in;
-//   }
-//   else {
-//     return epicsStrDup(",,");
-//   }
-// }
-
-
-
-
 static long InitXenonASub(aSubRecord *pRecord)
 {
-  //  InitInvDataType();
   aSubRecord* prec = (aSubRecord*) pRecord;
   prec->valu = &enabled;
   return 0;
@@ -226,11 +161,11 @@ static long DistXenonASub(aSubRecord *pRecord)
     {
       jira_return_msg.clear();
       
-      //      fillInvDataType(prec);
-      ItemObject item (prec);
+      ItemObject item(prec, url, project, issue);
+      std::cout << item <<std::endl;
       if( item.IsValid() ) {
-       	JiraProject jira(url, project, issue, prec);
-	jira_return_msg = jira.CreateIssue(item);
+	//       	JiraProject jira(url, project, issue, prec);
+	//	jira_return_msg = jira.CreateIssue(item);
       }
       else {
 	jira_return_msg = "SN and NAME are mandatory data!";
@@ -243,13 +178,13 @@ static long DistXenonASub(aSubRecord *pRecord)
       jira_return_msg.clear();
 
       if( issue_id_status ) {
-	//	fillInvDataType(prec);
-	ItemObject item(prec);
-	JiraProject jira(url, project, issue);
-	jira.SetIssueIdOrKey(issue_id);
-	std::cout << jira.GetIssueIdOrKey() << std::endl;
-	jira_return_msg = jira.UpdateIssue(item);
-	std::cout << jira.GetUpdateDeleteUrl() << std::endl;
+	ItemObject item(prec, url, project, issue);
+	std::cout << item <<std::endl;
+	// //JiraProject jira(url, project, issue);
+	// jira.SetIssueIdOrKey(issue_id);
+	// std::cout << jira.GetIssueIdOrKey() << std::endl;
+	// jira_return_msg = jira.UpdateIssue(item);
+	// std::cout << jira.GetUpdateDeleteUrl() << std::endl;
 	//      std::cout << jira_return_msg  << std::endl;
       }
       else {

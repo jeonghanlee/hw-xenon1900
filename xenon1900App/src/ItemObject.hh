@@ -26,20 +26,6 @@
 
 #include "BcodeDefine.h"
 
-// typedef struct InvDataType {
-//   unsigned int hash;
-//   char *serialnumber;
-//   char *formfactor;
-//   char *vendor;
-//   char *location;
-//   char *status;
-//   char *model_name;
-//   unsigned int label;
-
-// } InvDataType;
-
-
-
 // using namespace std;
         
 #ifdef __cplusplus
@@ -54,8 +40,7 @@ class ItemObject
 public:
   ItemObject();
   ItemObject(const ItemObject& iobj);
-  // ItemObject(InvDataType in);
-  ItemObject(aSubRecord *pRec);
+  ItemObject(aSubRecord *pRec, const std::string& url, const std::string& project, const std::string& issuetype);
   
   virtual ~ItemObject();
 
@@ -111,25 +96,10 @@ public:
   const std::string GetModel()               { return fName; };
   const std::string GetJiraIssueNumber()     { return fJiraIssueNumber; };
   
+  const std::string GetJiraProject()         { return fJiraProjectName; };
+  const std::string GetJiraIssue()           { return fJiraIssueName; };
+  const std::string GetJiraUrl()             { return fJiraUrl; };
   
-  // void SetHashID       (const epicsUInt32 hash) {
-  //   fHashID       = hash;
-  //   fHashIdStream << hash;
-  // };
-  // void SetSerialNumber (const char* sn)         {std::string s(sn);   fSerialNumber = Split(s);};
-  // void SetName         (const char* name)       {std::string n(name); fName = Split(n);};
-  // void SetFormfactor   (const char* ff)         {std::string f(ff);   fFormfactor = Split(f);};
-  // void SetVendor       (const char* vd)         {std::string v(vd);   fVendor = Split(v);};
-  // void SetLocation     (const char* lo)         {std::string l(lo);   fLocation = Split(l);};
-  // void SetStatus       (const char* st)         {std::string sta(st); fStatus = Split(sta);};
-  // void SetModel        (const char* mo)         { SetName(mo); };
-
-
-  // void SetJIRAInfo (const std::string& project, const std::string& issuetype, const std::string& desc) {
-  //   fJiraProjectName = project;
-  //   fJiraIssueName   = issuetype;
-  //   fJiraDesc        = desc;
-  // }
   
   // void AddParent(ItemObject *parent)    {
   //   fParentID = parent->GetHashID(); 
@@ -187,7 +157,7 @@ private:
  
   std::string       fJiraProjectName;
   std::string       fJiraIssueName;
-  std::string       fJiraDesc;
+  std::string       fJiraUrl;
 
   bool              fLabel;
   // Return value after curl command from JIRA
@@ -201,6 +171,11 @@ private:
   }
   
 
+  void SetJIRAInfo (const std::string& url, const std::string& project, const std::string& issuetype) {
+    fJiraProjectName = project;
+    fJiraIssueName   = issuetype;
+    fJiraUrl         = url;
+  }
   
 };
 
