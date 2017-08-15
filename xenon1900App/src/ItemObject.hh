@@ -84,7 +84,6 @@ public:
   };
   
   const std::string GetHashID()              { return fHashIdStream.str();};
-  const char*       GetCharHashID()          { return fHashIdStream.str().c_str();};
   const std::string GetSerialNumber()        { return fSerialNumber; };
   const std::string GetName()                { return fName; };
   const std::string GetFormfactor()          { return fFormfactor; };
@@ -93,6 +92,17 @@ public:
   const std::string GetStatus()              { return fStatus; };
   const std::string GetModel()               { return fName; };
   const std::string GetJiraIssueNumber()     { return fJiraIssueNumber; };
+
+  const char*       GetCharHashID()          { return fHashIdStream.str().c_str();};
+  const char*       GetCharSerialNumber()    { return fSerialNumber.c_str(); };
+  const char*       GetCharName()            { return fName.c_str(); };
+  const char*       GetCharFormfactor()      { return fFormfactor.c_str(); };
+  const char*       GetCharVendor()          { return fVendor.c_str(); };
+  const char*       GetCharLocation()        { return fLocation.c_str(); };
+  const char*       GetCharStatus()          { return fStatus.c_str(); };
+  const char*       GetCharModel()           { return fName.c_str(); };
+  const char*       GetCharJiraIssueNumber() { return fJiraIssueNumber.c_str(); };
+  
   
   const std::string GetJiraProject()         { return fJiraProjectName; };
   const std::string GetJiraIssue()           { return fJiraIssueName; };

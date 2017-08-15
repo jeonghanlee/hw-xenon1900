@@ -166,8 +166,8 @@ static long DistXenonASub(aSubRecord *pRecord)
 	JiraProject jira;
 	jira.AddObj(item);
 	jira.Print();
+	jira_return_msg = jira.CreateIssue();
 	
-	//	jira_return_msg = jira.CreateIssue(item);
       }
       else {
 	jira_return_msg = "SN and NAME are mandatory data!";

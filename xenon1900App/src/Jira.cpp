@@ -96,22 +96,25 @@ JiraProject::SetProjectUrl(const std::string& url)
 
 
 std::string 
-JiraProject::CreateIssue(ItemObject& obj)
+JiraProject::CreateIssue()
 {
   std::string jira_return_message;
 
   // Currently, we only consider one obj per a jira submit
 
-  // int obj_count = 0;
-  // this->SetCreateJsonData(obj_count, true);
-  // this->SetCreateCurlData();
-  // this->GetCurlResponse();
-  // this->CreateBarcodes();
-  // this->AddBarcodesJira();
-  // if( obj.IsLabel())  PrintBarcodes();
-  // this->ClearActionResults();
+  int obj_count = 0;
+  this->SetCreateJsonData(obj_count, true);
 
-  // obj.Init();
+  std::cout << jRootJsonData << std::endl;
+
+  this->SetCreateCurlData();
+  this->GetCurlResponse();
+  this->CreateBarcodes();
+  this->AddBarcodesJira();
+  if( fItemObject.IsLabel())  PrintBarcodes();
+  this->ClearActionResults();
+
+  fItemObject.Init();
   
   return jira_return_message;
 };
@@ -119,7 +122,7 @@ JiraProject::CreateIssue(ItemObject& obj)
 
 
 std::string 
-JiraProject::UpdateIssue(ItemObject& obj)
+JiraProject::UpdateIssue()
 {
   std::string jira_return_message;
   
@@ -140,7 +143,7 @@ JiraProject::UpdateIssue(ItemObject& obj)
 
 
 std::string 
-JiraProject::DeleteIssue(ItemObject& obj)
+JiraProject::DeleteIssue()
 {
   std::string jira_return_message;
   
@@ -154,7 +157,7 @@ JiraProject::DeleteIssue(ItemObject& obj)
 
 
 std::string 
-JiraProject::SearchIssue(ItemObject& obj)
+JiraProject::SearchIssue()
 {
   std::string jira_return_message;
   
@@ -180,7 +183,7 @@ JiraProject::SetCreateJsonData(int no, bool json_style)
   fields["project"]["key"]             = fProjectName.c_str();
   fields["issuetype"]["name"]          = fIssueName.c_str();
   
-  fields["summary"]                    = fItemObject.GetName();
+  fields["summary"]                    = fItemObject.GetCharName();
 
   /* Location could be empty, in that case, drop this field */
   /* Location also is needed to make a lookup table
@@ -192,13 +195,13 @@ JiraProject::SetCreateJsonData(int no, bool json_style)
    */
   
   // if ( fItemObject.HasLocation() )
-  //   fields["customfield_10502"]["value"] = fItemObject.GetLocation();
+  //   fields["customfield_10502"]["value"] = fItemObject.GetCharLocation();
   
-  fields["customfield_10500"]          = fItemObject.GetSerialNumber();
+  fields["customfield_10500"]          = fItemObject.GetCharSerialNumber();
   fields["customfield_11002"]          = fItemObject.GetCharHashID();
 
   if ( fItemObject.HasFormfactor() )  {
-    labels.append(fItemObject.GetFormfactor());
+    labels.append(fItemObject.GetCharFormfactor());
     fields["labels"]                     = labels;
   }
   
@@ -670,7 +673,7 @@ JiraProject::PrintBarcodes()
   cups_option_t*  options;
   int             job_id;
   
-  if ( this-> cups_printer_status ( label_printer_name) ) {
+  if ( this-> cups_printer_status(label_printer_name) ) {
     num_options = 0;
     options = NULL;
     job_id = -1;

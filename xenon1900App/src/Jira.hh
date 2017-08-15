@@ -51,10 +51,10 @@ public:
   virtual ~JiraProject();
 
 
-  std::string CreateIssue(ItemObject& obj);
-  std::string UpdateIssue(ItemObject& obj);
-  std::string DeleteIssue(ItemObject& obj);
-  std::string SearchIssue(ItemObject& obj);
+  std::string CreateIssue();
+  std::string UpdateIssue();
+  std::string DeleteIssue();
+  std::string SearchIssue();
   
   //  void DefineChild();
   //  void DefineParent();
