@@ -78,7 +78,7 @@ record(stringin, "$(SYSDEV)JiraMessage")
 record(stringin, "$(SYSDEV)IssueNumber")
 {
     field(DESC, "Issue Number")
-    field(DYTP, "Soft Channel")
+    field(DTYP, "Soft Channel")
 }
 
 

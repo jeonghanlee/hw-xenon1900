@@ -44,14 +44,12 @@ public:
   
   virtual ~ItemObject();
 
+  friend std::ostream& operator<<(std::ostream& os, const ItemObject &itemobj);
+    
   void Init();
   
   ItemObject & operator=(const ItemObject &iobj);
-  
-  // overloaded operator methods
 
-  friend std::ostream& operator<<(std::ostream& os, const ItemObject &itemobj);
-// std::ostream& operator<<(std::ostream& o, const SomeType& t);
   bool IsValid();
   
   bool HasParent() { return fHasParent; } ;
@@ -137,11 +135,11 @@ private:
   
   std::vector<std::string> fChildID;
 
-  epicsUInt32  fChildNumber;
+  epicsUInt32       fChildNumber;
 
-  std::string  fLocationStructID;
-  std::string  fFacilityStructID;
-  std::string  fInstallationStructID;
+  std::string       fLocationStructID;
+  std::string       fFacilityStructID;
+  std::string       fInstallationStructID;
 
   // std::string  fHashID;   // Used for the ICS Label 
 

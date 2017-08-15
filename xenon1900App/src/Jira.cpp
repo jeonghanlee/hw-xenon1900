@@ -35,81 +35,12 @@ JiraProject::JiraProject()
   qr_file = qr_name + file_suffix;
   dm_file = dm_name + file_suffix;
    
-  prec = NULL;
-
-    
 };
 
 JiraProject::~JiraProject()
 {
 };
 
-
-
-JiraProject::JiraProject(std::string projectUrl, std::string projectName, std::string issueName)
-{
-
-  SetProjectUrl(projectUrl);
-  fProjectName     = projectName;
-  fIssueName       = issueName;
-  fIssueIdOrKey.clear();
-
-  fUserName.clear();
-  fDescription.clear();
-    
-  fItemObject.Init();
-
-  curl_headers = NULL;
-
-  jRoot.clear();
-  jResponse.clear();
-  
-  jKey.clear();
-  jSelf.clear();
-  jHash.clear();
-  qr_name = "qr_symbol";
-  dm_name = "dm_symbol";
-  file_suffix = ".png";
-  qr_file = qr_name + file_suffix;
-  dm_file = dm_name + file_suffix;
-
-  prec = NULL;
-
-  
-};
-
-
-JiraProject::JiraProject(std::string projectUrl, std::string projectName, std::string issueName, aSubRecord *pRecord)
-{
-
-  SetProjectUrl(projectUrl);
-  fProjectName     = projectName;
-  fIssueName       = issueName;
-  fIssueIdOrKey.clear();
-
-  fUserName.clear();
-  fDescription.clear();
-    
-  fItemObject.Init();
-
-  curl_headers = NULL;
-
-  jRoot.clear();
-  jResponse.clear();
-  
-  jKey.clear();
-  jSelf.clear();
-  jHash.clear();
-  qr_name = "qr_symbol";
-  dm_name = "dm_symbol";
-  file_suffix = ".png";
-  qr_file = qr_name + file_suffix;
-  dm_file = dm_name + file_suffix;
-
-  prec = pRecord;
-
-  
-};
 
 
 void
@@ -133,6 +64,21 @@ JiraProject::ClearActionResults()
   
 };
 
+
+void
+JiraProject::AddObj(ItemObject &in)
+{
+  
+  fItemObject = in;
+
+  this->SetProjectUrl(fItemObject.GetJiraUrl());
+  this->SetProjectName(fItemObject.GetJiraProject());
+  this->SetIssueName(fItemObject.GetJiraIssue());
+
+  return;
+}
+
+
 void
 JiraProject::SetProjectUrl(const std::string& url)
 {
@@ -143,6 +89,8 @@ JiraProject::SetProjectUrl(const std::string& url)
   fUpdateDeleteUrl.clear();
   fAttachmentsUrl.clear();
   fSearchUrl       = url + "/search";
+
+  return;
 };
 
 
@@ -154,17 +102,16 @@ JiraProject::CreateIssue(ItemObject& obj)
 
   // Currently, we only consider one obj per a jira submit
 
-  int obj_count = 0;
-  this->AddItem(obj);
-  this->SetCreateJsonData(obj_count, true);
-  this->SetCreateCurlData();
-  this->GetCurlResponse();
-  this->CreateBarcodes();
-  this->AddBarcodesJira();
-  if( obj.IsLabel())  PrintBarcodes();
-  this->ClearActionResults();
+  // int obj_count = 0;
+  // this->SetCreateJsonData(obj_count, true);
+  // this->SetCreateCurlData();
+  // this->GetCurlResponse();
+  // this->CreateBarcodes();
+  // this->AddBarcodesJira();
+  // if( obj.IsLabel())  PrintBarcodes();
+  // this->ClearActionResults();
 
-  obj.Init();
+  // obj.Init();
   
   return jira_return_message;
 };
@@ -176,17 +123,16 @@ JiraProject::UpdateIssue(ItemObject& obj)
 {
   std::string jira_return_message;
   
-  this->AddItem(obj);
-  this->SetUpdateJsonData(true);
-  std::cout << jRootJsonData << std::endl;
-  //  this->SetCreateCurlData();
-  //  this->GetCurlResponse();
-  this->CreateUpdateBarcodes(fIssueIdOrKey, obj.GetHashID());
-  //  this->AddBarcodesJira();
-  if( obj.IsLabel())  PrintBarcodes();
-  this->ClearActionResults();
+  // this->SetUpdateJsonData(true);
+  // std::cout << jRootJsonData << std::endl;
+  // //  this->SetCreateCurlData();
+  // //  this->GetCurlResponse();
+  // this->CreateUpdateBarcodes(fIssueIdOrKey, obj.GetHashID());
+  // //  this->AddBarcodesJira();
+  // if( obj.IsLabel())  PrintBarcodes();
+  // this->ClearActionResults();
 
-  obj.Init();
+  // obj.Init();
   return jira_return_message;
   
 };
@@ -381,34 +327,6 @@ JiraProject::SetUpdateJsonData(bool json_style)
   return;
 }
 
-
-
-// bool
-// JiraProject::GetCurlResponse()
-// {
-//   Json::Reader reader;
-//   unsigned int i;
-  
-//   jParsingSuccess = reader.parse(fCurlResponse, jResponse);
-//   // it returns an empty array, so default value never show up
-//   jErrors = jResponse.get("errors", "no show");
-//   jIssues = jResponse.get("issues", "no show");
-  
-//   if (jErrors.size() == 0 ) jErrorsStatus = true;
-//   else                      jErrorsStatus = false;
-
-//   if (! jErrorsStatus) {
-//     for(i=0; i < jIssues.size(); i++) {
-//       jKeyList.push_back(jIssues[i].get("key", "").asString());
-//       jSelfList.push_back(jIssues[i].get("self", "").asString());
-//     }
-//   }
-  
-//   return jParsingSuccess;
-// }
-
-// Currently, we only consider one obj per a jira submit
-//
 
 bool
 JiraProject::GetCurlResponse()
@@ -785,3 +703,45 @@ JiraProject::PrintBarcodes()
     
   return;
 }
+
+
+
+void
+JiraProject::Print()
+{
+
+  int width = 30;
+  std::cout << std::setiosflags(std::ios::right);
+  std::cout << "\n Object  -----------  -------------------------------------- ";
+  std::cout << fItemObject;
+  std::cout << "\n -------------------  -------------------------------------- ";
+  std::cout << "\n Issue Url        : ";
+  std::cout << std::setw(width) << fIssueUrl;
+  std::cout << "\n Create Url       : ";
+  std::cout << std::setw(width) << fCreateUrl;
+  std::cout << "\n Bulk Create Url  : ";
+  std::cout << std::setw(width) << fBulkCreateUrl;
+  std::cout << "\n Search      Url  : ";
+  std::cout << std::setw(width) << fSearchUrl;
+  std::cout << "\n UpdateDelete Url : ";
+  std::cout << std::setw(width) << fUpdateDeleteUrl;
+  std::cout << "\n Attchement   Url : ";
+  std::cout << std::setw(width) << fAttachmentsUrl;
+  std::cout << "\n IssueIdOrKey     : ";
+  std::cout << std::setw(width) << fIssueIdOrKey;
+  std::cout << "\n User Name        : ";
+  std::cout << std::setw(width) << fUserName;
+  std::cout << "\n Description      : ";
+  std::cout << std::setw(width) << fDescription;
+  std::cout << "\n Json Root Data   : ";
+  std::cout << std::setw(width) << jRootJsonData;
+  std::cout << "\n JKey             : ";
+  std::cout << std::setw(width) << jKey;
+  std::cout << "\n JSelf            : ";
+  std::cout << std::setw(width) << jSelf;
+  std::cout << "\n JHash            : ";
+  std::cout << std::setw(width) << jHash;
+  std::cout << "\n";
+  return;
+}
+

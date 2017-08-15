@@ -61,8 +61,11 @@ ItemObject::ItemObject(aSubRecord *pRec, const std::string& url, const std::stri
 
   /* Likely have the chance to have the same serial number in the different product */
   tmp_str = fSerialNumber + fName;
+  /* Add the same prefix style to keep all data consistently. 
+   * HS,0, hash XXXX
+   */ 
   fHashIdStream << hs;
-  fHashIdStream << ",";
+  fHashIdStream << ",0,";
   fHashIdStream << epicsStrHash(tmp_str.c_str(),0);
 
   fLabel = getLinkVal(&pRec->outu);

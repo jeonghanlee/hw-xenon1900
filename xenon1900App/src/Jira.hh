@@ -47,9 +47,9 @@ class JiraProject
   
 public:
   JiraProject();
-  JiraProject(std::string projectUrl, std::string projectName, std::string issueName);
-  JiraProject(std::string projectUrl, std::string projectName, std::string issueName, aSubRecord *pRecord);
+  
   virtual ~JiraProject();
+
 
   std::string CreateIssue(ItemObject& obj);
   std::string UpdateIssue(ItemObject& obj);
@@ -58,7 +58,7 @@ public:
   
   //  void DefineChild();
   //  void DefineParent();
-  
+
   const std::string GetUrl()             const { return fUrl; };
   const std::string GetCreateUrl()       const { return fCreateUrl; };
   const std::string GetBulkCreateUrl()   const { return fBulkCreateUrl; };
@@ -79,7 +79,7 @@ public:
     return fUpdateDeleteUrl;
   };
   
-  void SetProjectUrl(const std::string& url);
+
   void SetIssueIdOrKey(const std::string& id)   {fIssueIdOrKey = id; jKey = id;} ;
   const std::string GetIssueIdOrKey() { return fIssueIdOrKey;};
   void ClearIssueIdOrKey()                      {fIssueIdOrKey.clear();};
@@ -88,20 +88,18 @@ public:
   const std::string GetSelf() const { return jSelf; };
   const std::string GetHash() const { return jHash; };
 
-  ItemObject  fItemObject;
-
+  void AddObj(ItemObject &in);
+  void Print();
   
 private:
 
-  aSubRecord       *prec;
-  
+  ItemObject        fItemObject;
+     
   std::string       fUrl;
   std::string       fIssueUrl;
   std::string       fCreateUrl;
   std::string       fBulkCreateUrl;
   std::string       fSearchUrl;
-
-
   
   // Dynamically change according to Issue ID or Issue Key
   std::string       fUpdateDeleteUrl;
@@ -147,13 +145,13 @@ private:
   std::string dm_file;
 
 
-  //  std::vector<std::string> jKeyList;
-  //  std::vector<std::string> jSelfList;
+  void SetProjectUrl  (const std::string& url);
+  void SetProjectName (const std::string& proj_name)   { fProjectName = proj_name; };
+  void SetIssueName   (const std::string& issue_name)  { fIssueName   = issue_name; };
 
+  
   void ClearActionResults();
   
-  void AddItem(ItemObject &in) { fItemObject = in; }; 
-
   void SetupDefaultHeaders();
   
   void SetCreateJsonData(int no, bool json_style);

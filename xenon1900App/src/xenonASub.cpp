@@ -38,7 +38,6 @@
 #include "stringinRecord.h"
 #include "biRecord.h"
 
-#include "ItemObject.hh"
 #include "Jira.hh"
 #include "BcodeDefine.h"
 
@@ -151,7 +150,7 @@ static long DistXenonASub(aSubRecord *pRecord)
   else if ( epicsStrnCaseCmp(cl, aval, 2) == 0 )
     {
       /* Send the empty string to all data PVs (ff,vd,lo,st,mo,sn) */
-      fwd_val = epicsStrDup("");
+      fwd_val    = epicsStrDup("");
       prec->valb = fwd_val; prec->valc = fwd_val;
       prec->vald = fwd_val; prec->vale = fwd_val;
       prec->valf = fwd_val; prec->vala = fwd_val;
@@ -162,9 +161,12 @@ static long DistXenonASub(aSubRecord *pRecord)
       jira_return_msg.clear();
       
       ItemObject item(prec, url, project, issue);
-      std::cout << item <<std::endl;
+ 
       if( item.IsValid() ) {
-	//       	JiraProject jira(url, project, issue, prec);
+	JiraProject jira;
+	jira.AddObj(item);
+	jira.Print();
+	
 	//	jira_return_msg = jira.CreateIssue(item);
       }
       else {
@@ -179,8 +181,9 @@ static long DistXenonASub(aSubRecord *pRecord)
 
       if( issue_id_status ) {
 	ItemObject item(prec, url, project, issue);
-	std::cout << item <<std::endl;
-	// //JiraProject jira(url, project, issue);
+	JiraProject jira;
+	jira.AddObj(item);
+	// std::cout << jira << std::endl;
 	// jira.SetIssueIdOrKey(issue_id);
 	// std::cout << jira.GetIssueIdOrKey() << std::endl;
 	// jira_return_msg = jira.UpdateIssue(item);
