@@ -165,8 +165,10 @@ private:
 
   
   bool SetCreateCurlData();
-  bool GetCurlResponse();
-  void SetUpdateCurlData();
+  bool SetUpdateCurlData();
+  bool GetCreateCurlResponse();
+  bool GetUpdateCurlResponse();
+
   void SetSearchCurlData();
   void SetIssueIdOrKeyUrl(std::string url) { fIssueIdOrKey_url = url;};
 

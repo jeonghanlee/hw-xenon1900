@@ -108,7 +108,7 @@ JiraProject::CreateIssue()
   // std::cout << jRootJsonData << std::endl;
 
   this->SetCreateCurlData();
-  this->GetCurlResponse();
+  this->GetCreateCurlResponse();
   this->CreateBarcodes();
   // jSelf is the returned url from curl action
   this->SetIssueIdOrKeyUrl(jSelf);
@@ -133,13 +133,14 @@ JiraProject::UpdateIssue()
   std::cout << jRootJsonData << std::endl;
 
   this->Print();
-  //  this->SetCreateCurlData();
-  // //  this->GetCurlResponse();
-  this->CreateUpdateBarcodes(fIssueIdOrKey, fItemObject.GetHashID());
+  this->SetUpdateCurlData();
+  this->GetUpdateCurlResponse();
 
-  this->AddBarcodesJira();
-  if( fItemObject.IsLabel())  PrintBarcodes();
-  this->ClearActionResults();
+  
+   this->CreateUpdateBarcodes(fIssueIdOrKey, fItemObject.GetHashID());
+   this->AddBarcodesJira();
+   if( fItemObject.IsLabel())  PrintBarcodes();
+   this->ClearActionResults();
 
   fItemObject.Init();
   return jira_return_message;
@@ -307,8 +308,20 @@ JiraProject::SetUpdateJsonData(bool json_style)
 
   // Data > 0123
   j0123_name             ["name"] = "ics_inventory";
-  if ( fItemObject.HasLocation() ) 
-    j0123_value          ["value"] = fItemObject.GetLocation();
+ 
+  
+  /* Location could be empty, in that case, drop this field */
+  /* Location also is needed to make a lookup table
+   * from code, in csv to jira inventory list...
+   * So, I disable it temporary now.
+   */
+  /* Jira Location should be redefined in order to match the Barcode
+   * which we will use for..
+   */
+
+  
+  // if ( fItemObject.HasLocation() ) 
+  //   j0123_value          ["value"] = fItemObject.GetLocation();
 
   // 0123 > 012
   j012_assignee       [no]["set"] = j0123_name;
@@ -338,15 +351,16 @@ JiraProject::SetUpdateJsonData(bool json_style)
 
 
 bool
-JiraProject::GetCurlResponse()
+JiraProject::GetCreateCurlResponse()
 {
   Json::Reader reader;
   
   jParsingSuccess = reader.parse(fCurlResponse, jResponse);
+
   // it returns an empty array, so default value never show up
   jErrors = jResponse.get("errors", "no show");
   jIssues = jResponse.get("issues", "no show");
-  
+
   if (jErrors.size() == 0 ) jErrorsStatus = false;
   else                      jErrorsStatus = true;
 
@@ -359,17 +373,71 @@ JiraProject::GetCurlResponse()
 }
 
 
-void
+
+bool
+JiraProject::GetUpdateCurlResponse()
+{
+  Json::Reader reader;
+  
+  jParsingSuccess = reader.parse(fCurlResponse, jResponse);
+
+
+  std::cout << jStyledWriter.write(jResponse) << std::endl;
+  
+  
+  // // it returns an empty array, so default value never show up
+  // jErrors = jResponse.get("errors", "no show");
+  // jIssues = jResponse.get("issues", "no show");
+
+  // if (jErrors.size() == 0 ) jErrorsStatus = false;
+  // else                      jErrorsStatus = true;
+
+  // if (! jErrorsStatus) {
+  //   jKey  = jIssues[0].get("key", "").asString();
+  //   jSelf = jIssues[0].get("self", "").asString();
+  //   jHash = fItemObject.GetCharHashID();
+  // }
+  return jParsingSuccess;
+}
+
+
+
+bool
 JiraProject::SetUpdateCurlData()
 {
   curl_obj = curl_easy_init();
+
+  
   if(curl_obj) {
+    SetupDefaultHeaders();
+
+    curl_easy_setopt(curl_obj, CURLOPT_URL, fUpdateDeleteUrl.c_str());
+    curl_easy_setopt(curl_obj, CURLOPT_CUSTOMREQUEST, "PUT");
+    curl_easy_setopt(curl_obj, CURLOPT_HTTPHEADER, curl_headers);
+    curl_easy_setopt(curl_obj, CURLOPT_POSTFIELDS, jRootJsonData.c_str());
+    
+    curl_easy_setopt(curl_obj, CURLOPT_VERBOSE, 1L);
+
+    curl_easy_setopt(curl_obj, CURLOPT_WRITEFUNCTION, CurlWriteToString);
+    curl_easy_setopt(curl_obj, CURLOPT_WRITEDATA, &fCurlResponse);
+    
+    curl_res = curl_easy_perform(curl_obj); 
+
+    if(curl_res != CURLE_OK) {
+      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(curl_res));
+    }
+    
+    curl_easy_cleanup(curl_obj);
+    curl_slist_free_all(curl_headers);
+    if(curl_res != CURLE_OK) return false;
     
   }
-    
-  curl_easy_cleanup(curl_obj);
+  else {
+    return false;
+  }
+
+  return true;
   
-  return;
 }
 
 
@@ -716,11 +784,13 @@ JiraProject::PrintBarcodes()
 void
 JiraProject::SetIssueIdOrKey(const std::string& id)
 {
-  fIssueIdOrKey = id;
-  jKey          = id;
-  fIssueIdOrKey_url = fIssueUrl;
+  fIssueIdOrKey      = id;
+  jKey               = id;
+  fIssueIdOrKey_url  = fIssueUrl;
   fIssueIdOrKey_url += "/";
   fIssueIdOrKey_url += id;
+  fUpdateDeleteUrl   = fIssueIdOrKey_url;
+  return;
 } 
 
 
