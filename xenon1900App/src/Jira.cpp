@@ -327,17 +327,17 @@ JiraProject::SetUpdateJsonData(bool json_style)
   j012_assignee       [no]["set"] = j0123_name;
   j012_cfield10502    [no]["set"] = j0123_value;
   // Data > 012
-  j012_summary        [no]["set"] = fItemObject.GetName();
+  // j012_summary        [no]["set"] = fItemObject.GetName();
   j012_cfield10500    [no]["set"] = fItemObject.GetSerialNumber();
   j012_cfield11002    [no]["set"] = fItemObject.GetCharHashID();
-  j012_desc           [no]["set"] = fDescription.c_str();
+  // j012_desc           [no]["set"] = fDescription.c_str();
   
   // 012 > 01
-  j01_update["summary"]           = j012_summary;
-  j01_update["description"]       = j012_desc;
+  // j01_update["summary"]           = j012_summary;
+  // j01_update["description"]       = j012_desc;
   j01_update["assignee"]          = j012_assignee;
   j01_update["customfield_10500"] = j012_cfield10500;
-  j01_update["customfield_10502"] = j012_cfield10502;
+  //  j01_update["customfield_10502"] = j012_cfield10502;
   j01_update["customfield_11002"] = j012_cfield11002;
   
   // 01 > ROOT
