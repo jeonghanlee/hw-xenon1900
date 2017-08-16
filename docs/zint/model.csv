@@ -1,9 +1,7 @@
 0,undefined
-1,vme-evm-300
-2,mtca-evr-300u
-3,pcie-evr-300dc
-4,Moxa-Nport-6650
-5,Dyno-LabelWriter-450-Duo
+2,MTCA EVR 300U
+3,Concurrent CPU
+4,MTCA 3U Crate
+5,NAT Power Module
 6,NAT-MCH-PHYS
-7,microSD-EVO-32G
-8,Scanner-Xenon-190x
+7,Barcode Scanner Xenon 190x
