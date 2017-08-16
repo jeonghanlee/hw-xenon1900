@@ -105,11 +105,13 @@ JiraProject::CreateIssue()
   int obj_count = 0;
   this->SetCreateJsonData(obj_count, true);
 
-  std::cout << jRootJsonData << std::endl;
+  // std::cout << jRootJsonData << std::endl;
 
   this->SetCreateCurlData();
   this->GetCurlResponse();
   this->CreateBarcodes();
+  // jSelf is the returned url from curl action
+  this->SetIssueIdOrKeyUrl(jSelf);
   this->AddBarcodesJira();
   if( fItemObject.IsLabel())  PrintBarcodes();
   this->ClearActionResults();
@@ -126,16 +128,20 @@ JiraProject::UpdateIssue()
 {
   std::string jira_return_message;
   
-  // this->SetUpdateJsonData(true);
-  // std::cout << jRootJsonData << std::endl;
-  // //  this->SetCreateCurlData();
-  // //  this->GetCurlResponse();
-  // this->CreateUpdateBarcodes(fIssueIdOrKey, obj.GetHashID());
-  // //  this->AddBarcodesJira();
-  // if( obj.IsLabel())  PrintBarcodes();
-  // this->ClearActionResults();
+  
+  this->SetUpdateJsonData(true);
+  std::cout << jRootJsonData << std::endl;
 
-  // obj.Init();
+  this->Print();
+  //  this->SetCreateCurlData();
+  // //  this->GetCurlResponse();
+  this->CreateUpdateBarcodes(fIssueIdOrKey, fItemObject.GetHashID());
+
+  this->AddBarcodesJira();
+  if( fItemObject.IsLabel())  PrintBarcodes();
+  this->ClearActionResults();
+
+  fItemObject.Init();
   return jira_return_message;
   
 };
@@ -493,7 +499,7 @@ JiraProject::AddBarcodesJira()
   std::cout << "\nAddBarcodesJira : \n" << std::endl;
 
 
-  fAttachmentsUrl = jSelf + "/attachments";
+  fAttachmentsUrl = fIssueIdOrKey_url + "/attachments";
 
   std::cout << fAttachmentsUrl << std::endl;
   
@@ -568,7 +574,7 @@ JiraProject::cups_jobs_status(const char* printer_name, int job_id)
 
   std::ostringstream oss;
 
-  oss << printer_name << " : Job " << job_id << " is ";
+  oss << printer_name << "  : Job " << job_id << " is ";
   
   while (job_state < IPP_JOB_STOPPED) {
     /* Get my jobs (1) with any state (-1) */
@@ -602,7 +608,7 @@ JiraProject::cups_jobs_status(const char* printer_name, int job_id)
 	//	prec->valg = oss.str().c_str();
 	break;
       case IPP_JOB_PROCESSING :
-	oss << "processing. ";
+	oss << "processing.. ";
 	std::cout << oss.str().c_str() << std::endl;
 	// prec->valg = epicsStrDup("processing");
 	break;
@@ -707,6 +713,15 @@ JiraProject::PrintBarcodes()
   return;
 }
 
+void
+JiraProject::SetIssueIdOrKey(const std::string& id)
+{
+  fIssueIdOrKey = id;
+  jKey          = id;
+  fIssueIdOrKey_url = fIssueUrl;
+  fIssueIdOrKey_url += "/";
+  fIssueIdOrKey_url += id;
+} 
 
 
 void

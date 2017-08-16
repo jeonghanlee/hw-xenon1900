@@ -183,12 +183,9 @@ static long DistXenonASub(aSubRecord *pRecord)
 	ItemObject item(prec, url, project, issue);
 	JiraProject jira;
 	jira.AddObj(item);
-	// std::cout << jira << std::endl;
-	// jira.SetIssueIdOrKey(issue_id);
-	// std::cout << jira.GetIssueIdOrKey() << std::endl;
-	// jira_return_msg = jira.UpdateIssue(item);
+	jira.SetIssueIdOrKey(issue_id);
+	jira_return_msg = jira.UpdateIssue();
 	// std::cout << jira.GetUpdateDeleteUrl() << std::endl;
-	//      std::cout << jira_return_msg  << std::endl;
       }
       else {
 	jira_return_msg = "Define Issue Number for Update!";

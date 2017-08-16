@@ -80,7 +80,7 @@ public:
   };
   
 
-  void SetIssueIdOrKey(const std::string& id)   {fIssueIdOrKey = id; jKey = id;} ;
+  void SetIssueIdOrKey(const std::string& id);   
   const std::string GetIssueIdOrKey() { return fIssueIdOrKey;};
   void ClearIssueIdOrKey()                      {fIssueIdOrKey.clear();};
 
@@ -102,9 +102,13 @@ private:
   std::string       fSearchUrl;
   
   // Dynamically change according to Issue ID or Issue Key
+
+  std::string       fIssueIdOrKey_url;
   std::string       fUpdateDeleteUrl;
   std::string       fAttachmentsUrl;
 
+
+  
   std::string       fProjectName;
   std::string       fIssueName;
 
@@ -157,12 +161,16 @@ private:
   void SetCreateJsonData(int no, bool json_style);
   void SetUpdateJsonData(bool json_style);
   void SetSearchJsonData();
+  
 
+  
   bool SetCreateCurlData();
   bool GetCurlResponse();
   void SetUpdateCurlData();
   void SetSearchCurlData();
+  void SetIssueIdOrKeyUrl(std::string url) { fIssueIdOrKey_url = url;};
 
+  
   void CreateBarcodes();
   void CreateUpdateBarcodes(std::string issue_id, std::string hash_id);
   bool AddBarcodesJira();
