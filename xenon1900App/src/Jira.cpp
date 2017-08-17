@@ -374,6 +374,16 @@ JiraProject::GetCreateCurlResponse()
 
 
 
+// GetUpdateCurlResponse does almost nothing, except priniting
+// "curl response". That is null if everything is OK.
+// With the current situation, I cannot work this sytem
+// anymore, so I stop to extend more reliable logic within
+// this.
+// However, this implement is only valid if one should use
+// JIRA platform.
+// 
+// Thursday, August 17 11:21:45 CEST 2017, jhlee
+
 bool
 JiraProject::GetUpdateCurlResponse()
 {
@@ -382,21 +392,9 @@ JiraProject::GetUpdateCurlResponse()
   jParsingSuccess = reader.parse(fCurlResponse, jResponse);
 
 
+  // if the everything is fine, it returns "null"
   std::cout << jStyledWriter.write(jResponse) << std::endl;
   
-  
-  // // it returns an empty array, so default value never show up
-  // jErrors = jResponse.get("errors", "no show");
-  // jIssues = jResponse.get("issues", "no show");
-
-  // if (jErrors.size() == 0 ) jErrorsStatus = false;
-  // else                      jErrorsStatus = true;
-
-  // if (! jErrorsStatus) {
-  //   jKey  = jIssues[0].get("key", "").asString();
-  //   jSelf = jIssues[0].get("self", "").asString();
-  //   jHash = fItemObject.GetCharHashID();
-  // }
   return jParsingSuccess;
 }
 

@@ -162,8 +162,6 @@ private:
   void SetUpdateJsonData(bool json_style);
   void SetSearchJsonData();
   
-
-  
   bool SetCreateCurlData();
   bool SetUpdateCurlData();
   bool GetCreateCurlResponse();
