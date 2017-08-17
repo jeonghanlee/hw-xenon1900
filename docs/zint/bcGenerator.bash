@@ -71,7 +71,7 @@ function build_barcodes_from_csv() {
 	safename="$(echo $name | sed 's/ /-/g')"
 	echo ${safename}
 	target_name=${out_path}/${safename}.${out_format}
-	target_data="${tgt_pre},${id},${name}"
+	target_data="${tgt_pre},${id},${safename}"
 
 	echo "${target_name}" "${target_data}"
 	

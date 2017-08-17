@@ -1,0 +1,18 @@
+CL,Clear all scanned PVs
+00,----------- place holder ----------
+LE,Enable Label Printing after JIRA action (JC)
+LD,Disable Label Printing after JIRA action (JC)
+00,----------- place holder ----------
+JC,Create an JIRA issue 
+JU,Update an JIRA issue (Scan Hash ID and other fields first)
+JD,Delete an JIRA issue (Scan Hash ID first)
+JS,Search an JIRA issue (Scan Hash ID first)
+JI,Define the Child (Scan Hash ID later)
+JP,Define the Parent (Scan Hash ID later)
+00,----------- place holder ----------
+PJ,Save and append each scanned PV to CSV file which JIRA can import  (per day)
+DJ,Push the scanned PVs to RDB and JIRA
+PD,Push the scanned PVs to RDB
+00,----------- place holder ----------
+SV,Save and overwrite each scanned PV in each csv file (per second)
+SJ,Save and overwrite each scanned PV in each json file (per second)

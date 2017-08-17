@@ -1,6 +1,4 @@
 0,undefined
-1,mtca
-2,pcie
-3,cpci
-4,pmc
-5,vme
+1,MTCA
+2,PCIE
+3,VME
