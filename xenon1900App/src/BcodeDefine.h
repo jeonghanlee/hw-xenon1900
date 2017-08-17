@@ -9,24 +9,15 @@ static const char * const st="ST"; /* Status     */
 static const char * const mo="MO"; /* Model      */
 static const char * const oo="00"; /* Place holder */
 
-static const char * const hs="HS"; /* Hash number per each SN                    */
+static const char * const hs="HS"; /* Hash number per each SN                       */
 static const char * const cl="CL"; /* Clear all scanned PVs                         */
 
 static const char * const le="LE"; /* Enable  Label Printing after JIRA action (JC) */
 static const char * const ld="LD"; /* Disable Label Printing after JIRA action (JC) */
 
 static const char * const jc="JC"; /* Create an JIRA issue                          */
-static const char * const ju="JU"; /* Update an JIRA issue (Scan Hash ID and other fields first) */
-static const char * const jd="JD"; /* Delete an JIRA issue (Scan Hash ID and other fields first) */
-static const char * const js="JS"; /* Search an JIRA issue (Scan Hash ID and other fields first) */
-
-static const char * const ji="JI"; /* Define the Child (Scan Hash ID later)         */
-static const char * const jp="JP"; /* Define the Parent (Scan Hash ID later)        */
-
-static const char * const dj="DJ"; /* Push the saved PVs to RDB and JIRA         */
-static const char * const pd="PD"; /* Push the saved PVs to RDB                  */
-
-
+static const char * const ju="JU"; /* Update an JIRA issue  */
+static const char * const jd="JD"; /* Delete an JIRA issue  */
 
 
 #endif

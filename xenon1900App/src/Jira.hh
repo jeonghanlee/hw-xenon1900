@@ -34,7 +34,6 @@
 #include "ItemObject.hh"
 #include "Jira_ess.hh"
 
-//using namespace std;
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,8 +53,7 @@ public:
   std::string CreateIssue();
   std::string UpdateIssue();
   std::string DeleteIssue();
-  std::string SearchIssue();
-  
+   
   //  void DefineChild();
   //  void DefineParent();
 
@@ -127,6 +125,7 @@ private:
   struct curl_slist  *curl_headers;  // free it after executing curl in any function
   std::string        fCurlResponse;  // Clear it after the main action. 
 
+
   Json::Value        jResponse;
   Json::Value        jIssues;
   Json::Value        jErrors;
@@ -136,6 +135,8 @@ private:
   std::string        jKey;
   std::string        jSelf;
   std::string        jHash;
+
+  std::string        jIssueDoesNotExist;
   
   // Overwrite files
 
@@ -158,18 +159,18 @@ private:
   
   void SetupDefaultHeaders();
   
-  void SetCreateJsonData(int no, bool json_style);
-  void SetUpdateJsonData(bool json_style);
-  void SetSearchJsonData();
-  
+  void SetCreateJsonData(bool json_style);
   bool SetCreateCurlData();
-  bool SetUpdateCurlData();
   bool GetCreateCurlResponse();
-  bool GetUpdateCurlResponse();
+  
+  void SetUpdateJsonData(bool json_style);
+  bool SetUpdateCurlData();
+  std::string GetUpdateCurlResponse();
 
-  void SetSearchCurlData();
+  bool SetDeleteCurlData();
+  std::string GetDeleteCurlResponse();
+
   void SetIssueIdOrKeyUrl(std::string url) { fIssueIdOrKey_url = url;};
-
   
   void CreateBarcodes();
   void CreateUpdateBarcodes(std::string issue_id, std::string hash_id);

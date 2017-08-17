@@ -11,6 +11,9 @@
    ( ( (PLNK)->type != DB_LINK ) \
    ? 0 \
    : ( ( (struct dbAddr *)( (PLNK)->value.pv_link.pvt) ) ) )
+
+   However, I should look at what EPICS community discussed this issue at  http://www.aps.anl.gov/epics/tech-talk/2017/msg01247.php
+  
 */
 
 
@@ -89,7 +92,6 @@ ItemObject::ItemObject(const ItemObject &iobj)
   fFacilityStructID     = iobj.fFacilityStructID;
   fInstallationStructID = iobj.fInstallationStructID;
 
-  //  fHashID               = iobj.fHashID;
   fHashIdStream         << iobj.fHashIdStream.str();
 
   fSerialNumber         = iobj.fSerialNumber;
@@ -128,7 +130,6 @@ ItemObject::Init()
   fFacilityStructID.clear();
   fInstallationStructID.clear();
 
-  //  fHashID.clear();
   fHashIdStream.clear();
   
   fSerialNumber.clear();
@@ -165,7 +166,6 @@ ItemObject & ItemObject::operator=(const ItemObject &iobj)
   fFacilityStructID     = iobj.fFacilityStructID;
   fInstallationStructID = iobj.fInstallationStructID;
 
-  //  fHashID               = iobj.fHashID;
   fHashIdStream         << iobj.fHashIdStream.str();
 
   fSerialNumber         = iobj.fSerialNumber;
@@ -189,17 +189,7 @@ ItemObject & ItemObject::operator=(const ItemObject &iobj)
 void
 ItemObject::Print()
 {
-  // std::string out;
-  // std::string hash; 
-
-  // out = "Object Name " + this->GetName();
-  // out += "\n";
-  // out += "Hash ID ";
-  // out += to_std::string(this-> GetHashID()) ;   
-  // out += " ";
-
-  // cout << out << endl;
-  
+ 
   printf("Object Name   %s\n", fName.c_str());
   printf("Hash ID       %s\n", fHashIdStream.str().c_str());
   printf("Serial Number %s\n", fSerialNumber.c_str());

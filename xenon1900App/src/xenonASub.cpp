@@ -43,8 +43,6 @@
 
 //static InvDataType outData;
 static int       xenonDebug;
-//typedef enum { ENABLED, DISABLED} PrintStatus;
-
 
 
 typedef enum {DISABLED, ENABLED} PrintStatus;
@@ -57,11 +55,7 @@ static PrintStatus disabled = DISABLED;
 
 static std::string jira_return_msg;
 
-// //static void InitInvDataType();
-// //static int fillInvDataType(aSubRecord *pRecord);
-// // static void printInvDataType(InvDataType iDtype);
 static char *timeString(aSubRecord *pRecord, const char *pFormat);
-// // static char *timeStringDay(aSubRecord *pRecord);
 static char *timeStringSecond(aSubRecord *pRecord);
 
 /* 
@@ -82,20 +76,11 @@ static char *timeString(aSubRecord *pRecord, const char *pFormat)
   return epicsStrDup(buf);
 }	
 
-// static char *timeStringDay(aSubRecord *pRecord)
-// {
-//   const char * pFormat = "%Y%m%d";
-//   return timeString(pRecord, pFormat);
-// }	
-
-
 static char *timeStringSecond(aSubRecord *pRecord)
 {
   const char * pFormat = "%Y%m%d_%H%M%S";
   return timeString(pRecord, pFormat);
 }	
-
-
 
 static long InitXenonASub(aSubRecord *pRecord)
 {
@@ -123,7 +108,6 @@ static long DistXenonASub(aSubRecord *pRecord)
   epicsUInt32 id_hash      = epicsStrHash(id,0);
   char      * fwd_val      = epicsStrDup(aval);
 
-  
   /*
    * The XENON 1900 Scanner triggers aSub record twice, still unclear why it is so, and how to fix it. 
    * So simply ignore the second trigger with no data. Return value is selected 0.
@@ -171,11 +155,31 @@ static long DistXenonASub(aSubRecord *pRecord)
       }
       else {
 	jira_return_msg = "SN and NAME are mandatory data!";
-	prec->valg = (void*)jira_return_msg.c_str();
       }
-	
+      prec->valg = (void*)jira_return_msg.c_str();
     }
   else if ( epicsStrnCaseCmp(ju, aval, 2) == 0 ) /* Update */ 
+    {
+      jira_return_msg.clear();
+
+      if( issue_id_status ) {
+	ItemObject item(prec, url, project, issue);
+	if( item.IsValid() ) {
+	  JiraProject jira;
+	  jira.AddObj(item);
+	  jira.SetIssueIdOrKey(issue_id);
+	  jira_return_msg = jira.UpdateIssue();
+	}
+	else{
+	  jira_return_msg = "SN and NAME are mandatory data!";
+	}
+      }
+      else {
+	jira_return_msg = "Define Issue Number for UPDATE!";
+      }
+      prec->valg = (void*)jira_return_msg.c_str();
+    }
+  else if ( epicsStrnCaseCmp(jd, aval, 2) == 0 ) /* Delete */
     {
       jira_return_msg.clear();
 
@@ -184,40 +188,12 @@ static long DistXenonASub(aSubRecord *pRecord)
 	JiraProject jira;
 	jira.AddObj(item);
 	jira.SetIssueIdOrKey(issue_id);
-	jira_return_msg = jira.UpdateIssue();
-	// std::cout << jira.GetUpdateDeleteUrl() << std::endl;
+	jira_return_msg = jira.DeleteIssue();
       }
       else {
-	jira_return_msg = "Define Issue Number for Update!";
-	prec->valg = (void*)jira_return_msg.c_str();
+	jira_return_msg = "Define Issue Number for DELETE!";
       }
-
-    }
-  else if ( epicsStrnCaseCmp(jd, aval, 2) == 0 ) /* Delete */
-    {
-      jira_return_msg.clear();
-      std::cout << jira_return_msg  << std::endl;
-
-    }
-  else if ( epicsStrnCaseCmp(js, aval, 2) == 0 ) /* Search */ 
-    {
-      jira_return_msg.clear();
-      std::cout << jira_return_msg  << std::endl;
-	    
-    }
-  else if ( epicsStrnCaseCmp(ji, aval, 2) == 0 )
-    {
-      //     fillInvDataType(prec);
-      //     // ItemObject item (outData);
-      //     JiraProject jira(url, project, issue);
-      //     std::cout << jira.GetCreateUrl() << std::endl;
-    }
-  else if ( epicsStrnCaseCmp(jp, aval, 2) == 0 )
-    {
-      //     fillInvDataType(prec);
-      //     // ItemObject item (outData);
-      //     JiraProject jira(url, project, issue);
-      //     std::cout << jira.GetCreateUrl() << std::endl;
+      prec->valg = (void*)jira_return_msg.c_str();
     }
   else
     {

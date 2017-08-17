@@ -34,6 +34,8 @@ JiraProject::JiraProject()
   file_suffix = ".png";
   qr_file = qr_name + file_suffix;
   dm_file = dm_name + file_suffix;
+
+  jIssueDoesNotExist = "Issue Does Not Exist";
    
 };
 
@@ -94,16 +96,24 @@ JiraProject::SetProjectUrl(const std::string& url)
 };
 
 
+void
+JiraProject::SetupDefaultHeaders()
+{
+  curl_headers = curl_slist_append(curl_headers, "Accept: application/json");
+  curl_headers = curl_slist_append(curl_headers, "Content-Type:application/json");
+  curl_headers = curl_slist_append(curl_headers, auth_headers.c_str());
+  
+  return;
+}
+
+
 
 std::string 
 JiraProject::CreateIssue()
 {
   std::string jira_return_message;
 
-  // Currently, we only consider one obj per a jira submit
-
-  int obj_count = 0;
-  this->SetCreateJsonData(obj_count, true);
+  this->SetCreateJsonData(true);
 
   // std::cout << jRootJsonData << std::endl;
 
@@ -113,7 +123,7 @@ JiraProject::CreateIssue()
   // jSelf is the returned url from curl action
   this->SetIssueIdOrKeyUrl(jSelf);
   this->AddBarcodesJira();
-  if( fItemObject.IsLabel())  PrintBarcodes();
+  if( fItemObject.IsLabel())  this->PrintBarcodes();
   this->ClearActionResults();
 
   fItemObject.Init();
@@ -122,63 +132,13 @@ JiraProject::CreateIssue()
 };
 
 
-
-std::string 
-JiraProject::UpdateIssue()
-{
-  std::string jira_return_message;
-  
-  
-  this->SetUpdateJsonData(true);
-  std::cout << jRootJsonData << std::endl;
-
-  this->Print();
-  this->SetUpdateCurlData();
-  this->GetUpdateCurlResponse();
-
-  
-   this->CreateUpdateBarcodes(fIssueIdOrKey, fItemObject.GetHashID());
-   this->AddBarcodesJira();
-   if( fItemObject.IsLabel())  PrintBarcodes();
-   this->ClearActionResults();
-
-  fItemObject.Init();
-  return jira_return_message;
-  
-};
-
-
-
-std::string 
-JiraProject::DeleteIssue()
-{
-  std::string jira_return_message;
-  
-  //  this->AddItem(obj);
-
-
-  return jira_return_message;
-  
-};
-
-
-
-std::string 
-JiraProject::SearchIssue()
-{
-  std::string jira_return_message;
-  
-  //  this->AddItem(obj);
-
-
-  return jira_return_message;
-  
-};
-
-
 void
-JiraProject::SetCreateJsonData(int no, bool json_style)
+JiraProject::SetCreateJsonData(bool json_style)
 {
+  
+  // Currently, we only consider one obj per a jira submit
+  int                 no = 0;
+  
   Json::Value       item;
   Json::Value       fields;
   Json::Value       labels;
@@ -230,16 +190,6 @@ JiraProject::SetCreateJsonData(int no, bool json_style)
   return;
 }
 
-void
-JiraProject::SetupDefaultHeaders()
-{
-  curl_headers = curl_slist_append(curl_headers, "Accept: application/json");
-  curl_headers = curl_slist_append(curl_headers, "Content-Type:application/json");
-  curl_headers = curl_slist_append(curl_headers, auth_headers.c_str());
-  
-  return;
-}
-
 
 // true  : jira returns through curl jira returns issues and errors 
 // false : curl cannot be executed due to init fail or curl_easy_perform
@@ -281,6 +231,71 @@ JiraProject::SetCreateCurlData()
 
   return true;
 }
+
+
+
+bool
+JiraProject::GetCreateCurlResponse()
+{
+  Json::Reader reader;
+  
+  jParsingSuccess = reader.parse(fCurlResponse, jResponse);
+
+  // it returns an empty array, so default value never show up
+  jErrors = jResponse.get("errors", "no show");
+  jIssues = jResponse.get("issues", "no show");
+
+  if (jErrors.size() == 0 ) jErrorsStatus = false;
+  else                      jErrorsStatus = true;
+
+  if (! jErrorsStatus) {
+    jKey  = jIssues[0].get("key", "").asString();
+    jSelf = jIssues[0].get("self", "").asString();
+    jHash = fItemObject.GetCharHashID();
+  }
+  return jParsingSuccess;
+}
+
+
+
+
+std::string 
+JiraProject::UpdateIssue()
+{
+  bool debug = false;
+  
+  std::string jira_return_message;
+
+
+  
+  this->SetUpdateJsonData(true);
+
+  if (debug) {
+    std::cout << jRootJsonData << std::endl;
+    this->Print();
+  }
+  
+  this->SetUpdateCurlData();
+  jira_return_message = this->GetUpdateCurlResponse();
+
+  if (jira_return_message.find(jIssueDoesNotExist) == std::string::npos) {
+
+    this->CreateUpdateBarcodes(fIssueIdOrKey, fItemObject.GetHashID());
+    this->AddBarcodesJira();
+
+    
+    if( fItemObject.IsLabel())  {
+      std::cout << "Printing Barcodes ... " << std::endl;
+      this->PrintBarcodes();
+    }
+  }
+
+  this->ClearActionResults();
+  fItemObject.Init();
+  
+  return jira_return_message;
+  
+};
 
 
 void
@@ -350,55 +365,6 @@ JiraProject::SetUpdateJsonData(bool json_style)
 }
 
 
-bool
-JiraProject::GetCreateCurlResponse()
-{
-  Json::Reader reader;
-  
-  jParsingSuccess = reader.parse(fCurlResponse, jResponse);
-
-  // it returns an empty array, so default value never show up
-  jErrors = jResponse.get("errors", "no show");
-  jIssues = jResponse.get("issues", "no show");
-
-  if (jErrors.size() == 0 ) jErrorsStatus = false;
-  else                      jErrorsStatus = true;
-
-  if (! jErrorsStatus) {
-    jKey  = jIssues[0].get("key", "").asString();
-    jSelf = jIssues[0].get("self", "").asString();
-    jHash = fItemObject.GetCharHashID();
-  }
-  return jParsingSuccess;
-}
-
-
-
-// GetUpdateCurlResponse does almost nothing, except priniting
-// "curl response". That is null if everything is OK.
-// With the current situation, I cannot work this sytem
-// anymore, so I stop to extend more reliable logic within
-// this.
-// However, this implement is only valid if one should use
-// JIRA platform.
-// 
-// Thursday, August 17 11:21:45 CEST 2017, jhlee
-
-bool
-JiraProject::GetUpdateCurlResponse()
-{
-  Json::Reader reader;
-  
-  jParsingSuccess = reader.parse(fCurlResponse, jResponse);
-
-
-  // if the everything is fine, it returns "null"
-  std::cout << jStyledWriter.write(jResponse) << std::endl;
-  
-  return jParsingSuccess;
-}
-
-
 
 bool
 JiraProject::SetUpdateCurlData()
@@ -414,7 +380,7 @@ JiraProject::SetUpdateCurlData()
     curl_easy_setopt(curl_obj, CURLOPT_HTTPHEADER, curl_headers);
     curl_easy_setopt(curl_obj, CURLOPT_POSTFIELDS, jRootJsonData.c_str());
     
-    curl_easy_setopt(curl_obj, CURLOPT_VERBOSE, 1L);
+    //   curl_easy_setopt(curl_obj, CURLOPT_VERBOSE, 1L);
 
     curl_easy_setopt(curl_obj, CURLOPT_WRITEFUNCTION, CurlWriteToString);
     curl_easy_setopt(curl_obj, CURLOPT_WRITEDATA, &fCurlResponse);
@@ -438,19 +404,102 @@ JiraProject::SetUpdateCurlData()
   
 }
 
+// GetUpdateCurlResponse does almost nothing, except priniting
+// "curl response". That is null if everything is OK.
+// With the current situation, I cannot work this sytem
+// anymore, so I stop to extend more reliable logic within
+// this.
+// However, this implement is only valid if one should use
+// JIRA platform.
+// 
+// Thursday, August 17 11:21:45 CEST 2017, jhlee
 
-void
-JiraProject::SetSearchCurlData()
+std::string
+JiraProject::GetUpdateCurlResponse()
+{
+  std::string error_msg;
+
+  error_msg.clear();
+  
+  if(fCurlResponse.size() != 0) {
+    
+    Json::Reader reader;
+    
+    jParsingSuccess = reader.parse(fCurlResponse, jResponse);
+    if (jParsingSuccess) {
+      std::cout << jStyledWriter.write(jResponse) << std::endl;
+      jErrors = jResponse.get("errorMessages", "no show");
+      //      std::cout << jStyledWriter.write(jErrors) << std::endl;
+      error_msg = jErrors[0].asString();
+      //      std::cout << error_msg <<std::endl;
+    }
+  }
+
+  return error_msg;
+}
+
+
+
+
+std::string 
+JiraProject::DeleteIssue()
+{
+  std::string jira_return_message;
+  
+  this->SetDeleteCurlData();
+  jira_return_message = this->GetDeleteCurlResponse();
+  this->ClearActionResults();
+
+  return jira_return_message;
+};
+
+
+
+bool
+JiraProject::SetDeleteCurlData()
 {
   curl_obj = curl_easy_init();
+
+  
   if(curl_obj) {
+
+    SetupDefaultHeaders();
+    curl_easy_setopt(curl_obj, CURLOPT_URL, fUpdateDeleteUrl.c_str());
+    curl_easy_setopt(curl_obj, CURLOPT_CUSTOMREQUEST, "DELETE");
+    curl_easy_setopt(curl_obj, CURLOPT_HTTPHEADER, curl_headers);
+    
+    //    curl_easy_setopt(curl_obj, CURLOPT_VERBOSE, 1L);
+    
+    curl_easy_setopt(curl_obj, CURLOPT_WRITEFUNCTION, CurlWriteToString);
+    curl_easy_setopt(curl_obj, CURLOPT_WRITEDATA, &fCurlResponse);
+    
+    curl_res = curl_easy_perform(curl_obj); 
+
+    
+    if(curl_res != CURLE_OK) {
+      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(curl_res));
+    }
+    
+    curl_easy_cleanup(curl_obj);
+    curl_slist_free_all(curl_headers);
+    if(curl_res != CURLE_OK) return false;
     
   }
-    
-  curl_easy_cleanup(curl_obj);
+  else {
+    return false;
+  }
+
+  return true;
   
-  return;
 }
+
+std::string
+JiraProject::GetDeleteCurlResponse()
+{
+  return this->GetUpdateCurlResponse();
+}
+
+
 
 
 void
@@ -562,18 +611,10 @@ bool
 JiraProject::AddBarcodesJira()
 {
 
-  std::cout << "\nAddBarcodesJira : \n" << std::endl;
-
-
   fAttachmentsUrl = fIssueIdOrKey_url + "/attachments";
-
-  std::cout << fAttachmentsUrl << std::endl;
   
   struct curl_httppost* post = NULL;
   struct curl_httppost* last = NULL;
-
-
-  //  curl_global_init(CURL_GLOBAL_ALL);
 
   curl_formadd(&post, &last,
 	       CURLFORM_COPYNAME, "file",
@@ -601,14 +642,12 @@ JiraProject::AddBarcodesJira()
         
     curl_easy_setopt(curl_obj, CURLOPT_HTTPPOST, post);
 
-    curl_easy_setopt(curl_obj, CURLOPT_VERBOSE, 1L);
+    // curl_easy_setopt(curl_obj, CURLOPT_VERBOSE, 1L);
     curl_easy_setopt(curl_obj, CURLOPT_WRITEFUNCTION, CurlWriteToString);
     //
     // save the returned json file in fCurlResponse, however, don't process it
     curl_easy_setopt(curl_obj, CURLOPT_WRITEDATA, &fCurlResponse);
 
-
-       
     curl_res = curl_easy_perform(curl_obj); 
     if(curl_res != CURLE_OK) {
       fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(curl_res));
@@ -640,7 +679,7 @@ JiraProject::cups_jobs_status(const char* printer_name, int job_id)
 
   std::ostringstream oss;
 
-  oss << printer_name << "  : Job " << job_id << " is ";
+  oss << std::left << std::setw(40) << printer_name << " : Job " << job_id << " is ";
   
   while (job_state < IPP_JOB_STOPPED) {
     /* Get my jobs (1) with any state (-1) */
@@ -674,7 +713,7 @@ JiraProject::cups_jobs_status(const char* printer_name, int job_id)
 	//	prec->valg = oss.str().c_str();
 	break;
       case IPP_JOB_PROCESSING :
-	oss << "processing.. ";
+	oss << "processing... ";
 	std::cout << oss.str().c_str() << std::endl;
 	// prec->valg = epicsStrDup("processing");
 	break;
@@ -694,7 +733,7 @@ JiraProject::cups_jobs_status(const char* printer_name, int job_id)
 	//	prec->valg = (void*) oss.str().c_str();
 	break;
       case IPP_JOB_COMPLETED :
-	oss << "completed. ";
+	oss << "completed! ";
 	std::cout << oss.str().c_str() << std::endl;
 	//	prec->valg = oss.str().c_str();
 	break;
