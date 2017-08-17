@@ -1,18 +1,21 @@
-# hw-xenon1900
-This repository will contain the EPICS IOC for the Honeywell Xenon 1900 bar code scanner. 
+# A Simple and Naive Inventory System with EPICS IOC, JIRA, and Dymo LabelWriter 450 Duo
 
+There are infinite ways to develop and maintain an inventory system. However, this inventory is the unique and **temporary** solution for the ICS Lab, especially, where the author works at. This inventory system is designed to minimize our time when we register an item to the existent JIRA ICS HW\&I group inventory task.  Therefore, it does **NOT** provide any fancy and beautiful ways to interact with users, **BUT** provide the minimal tool to monitor and track any equipment in ICS, ESS, and any IK partner. And the system only provide the following three features :
+
+* Do stock an item to existent JIRA structure, and do Add-and-Print its barcodes.
+* Do add-and-print the barcodes of the item, which was registered in JIRA before.
+* Delete an item from JIRA
 
 ## Requirements
 
-* libcurl, jsoncpp 
+* For Barcode generation : zint
+* For JIRA communication : libcurl, jsoncpp
+* For Dymo LabelWriter 450 Duo : cups 
 
 ```
-aptitude install  libcurl4-gnutls-dev libjsoncpp-dev 
+aptitude install  libcurl4-gnutls-dev libjsoncpp-dev libcups2-dev libcupsimage2-dev
 
 ```
-
-* zint
-Please look at docs/zint directory
 
 
 ## Working Environment or Requirements
@@ -20,49 +23,8 @@ Please look at docs/zint directory
 * EPICS BASE 
 * ASYN
 * STREAM
-* devIocStats
 
 ### Scan Bar Codes from User Guide
-
-Scan the bar codes in the Xenon User Guide books according to the following information :
-* USB Serial bar code (P19)
-* RS232 Serial Port bar code (P16)
-
-### Default RS232 configuration
-* Baud Rate 115200 bps
-* 8 Data bits
-* No Parity bit
-* 1 stop bit
-
-### Enable Symbologies (Select some..)
-[TT] : default ON  | current ON
-[FT] : default OFF | current ON
-[FF] :
-[TF] :
-
-* Codabar [TT]
-* Code 39 [TT]
-* Interleaved 2 of 5 [TT]
-* NEC 2 of 5 [TT]
-* Code 93 [TT]
-* Straight 2 of 5 Industrial (p189) [FF]
-* Matrix 2 of 5 [FF]
-* Code 11 [FF]
-* Code 128 [TT]
-* GS1-128 [TT]
-* Telepen [FF]
-* UPC-A   [TT]
-* UPC-E0  [TT]
-* EAN/JAN-13 [TT]
-* EAN/JAN-8 [TT]
-* MSI       [FF] (P209)
-* PDF417    [TT]
-* MacroPDF-417 [TT]
-* MicroPDF-417 [FT] (p216)
-* QR Code  [TT]
-* Data Matrix [TT]
-* MaxiCode [FT] (p222)
-* Aztec Code [TT] 
 
 ## Commands and Dir Structure
 
@@ -98,19 +60,15 @@ http://www.aps.anl.gov/epics/license/open.php
 * http://www.curlpp.org/
 * https://curl.haxx.se/libcurl/
 
+## jsoncpp
+
+* https://github.com/open-source-parsers/jsoncpp
+
+
 ## zint : Barcode Generator 
 * https://zint.github.io/
 
 ## CUPS
 * https://www.cups.org/doc/options.html
 
-
-## jsoncpp
-
-* https://github.com/open-source-parsers/jsoncpp
-```
-aptitude install  libjsoncpp-dev
-```
-
-# Acknowledgement
 
