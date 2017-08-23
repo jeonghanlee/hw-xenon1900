@@ -82,28 +82,65 @@ There are infinite ways to develop and maintain an inventory system. However, th
 
 \subsection{How to stock an item at the first time to JIRA}
 
+The mandatory steps are defined the following procedures :
+\begin{enumerate}
+\item Scan the Serial Number on the equipment  with the Xenon 190x barcode scanner.
+\item Scan  one of 3.3 Model Codes in the manual with the Xenon 190x scanner.
+\item Both case in below, the created labels are attached in the JIRA issue.
+  \begin{enumerate}
+  \item Scan Enable Label Printing after JIRA action if one wants to print labels (Default)
+  \item Scan Disable Label Printing after JIRA action if one wants not print labels
+  \end{enumerate}
+\item Scan Create an JIRA issue in the manual
+\item Attach two barcodes in the reserved box, an equipment, or both.
+\end{enumerate}
+
+
 \subsection{How to add and print barcodes for an Item which has registered in JIRA}
+
+\begin{enumerate}
+\item Define the TAG number which one wants to delete it via caput \newline
+  \texttt{caput ICSLAB:IssueNumber TAG-XXX}
+\item Scan the Serial Number on the equipment  with the Xenon 190x barcode scanner.
+\item Scan  Model Name in the manual with the Xenon 190x scanner.
+\item Both case in below, the updated labels are attached in the JIRA issue.
+  \begin{enumerate}
+  \item Scan Enable Label Printing after JIRA action if one wants to print the updated label (Default)
+  \item Scan Disable Label Printing after JIRA action if one wants not print the updated label
+  \end{enumerate}
+\item Scan Update an JIRA issue in the manual
+\end{enumerate}
+
+
+\subsection{How to delete the existent Item}
+
+\begin{enumerate}
+\item  Define the TAG number which one wants to delete it via caput \newline
+\texttt{caput ICSLAB:IssueNumber TAG-XXX}
+\item Scan Delete an JIRA issue Barcode in the manual with the Xenon 190x barcode scanner.
+\end{enumerate}
+
 
 \section{Components}
 \subsection{Hardware}
 \begin{itemize}
-\item Honeywell Xenon 1900g (Wire) Barcode scanner or Honeywell Xenon 1902g (Wireless) Barcode scanner
+\item Honeywell Xenon 1900g (Wire) or 1902g (Wireless) Barcode scanner
 \item DYMO LabelWriter 450 Duo
 \end{itemize}
 \subsection{Software}
 \begin{itemize}
 \item Linux OS
-\item EPICS IOC
-\item JIRA https://jira.esss.lu.se/projects/TAG/summary
-\item DYMO LabelWriter 450 Duo CUP Driver
-  http://www.dymo.com/en-US/dymo-label-sdk-and-cups-drivers-for-linux-dymo-label-sdk-cups-linux-p--1
+\item EPICS IOC  {\tiny \url{https://github.com/jeonghanlee/hw-xenon1900}}
+\item JIRA {\tiny \url{https://jira.esss.lu.se/projects/TAG/summary}}
+\item DYMO LabelWriter 450 Duo CUP Driver \newline
+  {\tiny
+  \url{http://www.dymo.com/en-US/dymo-label-sdk-and-cups-drivers-for-linux-dymo-label-sdk-cups-linux-p--1}}
 \end{itemize}
 
+\section{Troubleshooting}
 
 
-    
 \newpage
-
 \chapter{Honeywell Xenon Scanners 1900 and 1902g}
 Note that there are different procedure to setup Xenon 1900 corded scanner and Xenon 1902g cordless scanner. Please consult each manual in detail.
 
