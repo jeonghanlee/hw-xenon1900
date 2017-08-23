@@ -9,7 +9,7 @@
   <widget type="group" version="2.0.0">
     <name>IOC Status</name>
     <x>20</x>
-    <y>392</y>
+    <y>394</y>
     <width>760</width>
     <height>80</height>
     <style>2</style>
@@ -22,7 +22,7 @@
       </color>
     </background_color>
     <widget type="linear-meter" version="2.0.0">
-      <name>Linear Meter</name>
+      <name>CPU Load</name>
       <pv_name>ICSLab:IocStat:SYS_CPU_LOAD</pv_name>
       <x>514</x>
       <width>214</width>
@@ -31,6 +31,7 @@
       <show_low>false</show_low>
       <show_lolo>false</show_lolo>
       <title>CPU LOAD</title>
+      <tooltip>CPU Load per-cent of the host where the inventory IOC is running </tooltip>
       <highligh_zones>false</highligh_zones>
       <highligh_bar>false</highligh_bar>
       <lcd_design>0</lcd_design>
@@ -58,9 +59,10 @@
         <font family="Droid Sans" style="REGULAR" size="14.0">
         </font>
       </font>
+      <vertical_alignment>1</vertical_alignment>
     </widget>
     <widget type="textupdate" version="2.0.0">
-      <name>Text Update</name>
+      <name>IOC Uptime</name>
       <pv_name>ICSLab:IocStat:UPTIME</pv_name>
       <x>81</x>
       <y>44</y>
@@ -71,9 +73,11 @@
       </font>
       <horizontal_alignment>2</horizontal_alignment>
       <vertical_alignment>1</vertical_alignment>
+      <tooltip>Up, Up, and Uptime!</tooltip>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
     </widget>
     <widget type="led" version="2.0.0">
-      <name>LED</name>
+      <name>IOC heartbeat</name>
       <class>ON_OFF</class>
       <pv_name>ICSLab:IocStat:HEARTBEAT</pv_name>
       <bit>0</bit>
@@ -87,6 +91,7 @@
         <color name="On" red="0" green="255" blue="0">
         </color>
       </on_color>
+      <tooltip>IOC heartbeat</tooltip>
     </widget>
     <widget type="label" version="2.0.0">
       <name>Label_4</name>
@@ -100,7 +105,7 @@
       </font>
     </widget>
     <widget type="textupdate" version="2.0.0">
-      <name>Text Update_3</name>
+      <name>Hostname</name>
       <pv_name>ICSLab:IocStat:HOSTNAME</pv_name>
       <x>354</x>
       <y>14</y>
@@ -111,6 +116,7 @@
       </font>
       <horizontal_alignment>2</horizontal_alignment>
       <vertical_alignment>1</vertical_alignment>
+      <tooltip>Hostname, may not be defined correctly</tooltip>
     </widget>
     <widget type="label" version="2.0.0">
       <name>Label_5</name>
@@ -119,12 +125,13 @@
       <y>44</y>
       <width>44</width>
       <font>
-        <font family="Droid Sans" style="REGULAR" size="14.0">
+        <font family="Digital-7" style="REGULAR" size="16.0">
         </font>
       </font>
+      <vertical_alignment>1</vertical_alignment>
     </widget>
     <widget type="textupdate" version="2.0.0">
-      <name>Text Update_5</name>
+      <name>Started at</name>
       <pv_name>ICSLab:IocStat:STARTTOD</pv_name>
       <x>266</x>
       <y>44</y>
@@ -135,6 +142,8 @@
       </font>
       <horizontal_alignment>2</horizontal_alignment>
       <vertical_alignment>1</vertical_alignment>
+      <tooltip>When the IOC is started at</tooltip>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
     </widget>
   </widget>
   <widget type="led" version="2.0.0">
@@ -145,10 +154,10 @@
   </widget>
   <widget type="group" version="2.0.0">
     <name>Inventory Status</name>
-    <x>20</x>
-    <y>52</y>
-    <width>760</width>
-    <height>330</height>
+    <x>21</x>
+    <y>79</y>
+    <width>759</width>
+    <height>312</height>
     <style>2</style>
     <font>
       <font family="Droid Sans" style="REGULAR" size="14.0">
@@ -160,8 +169,8 @@
     </background_color>
     <widget type="label" version="2.0.0">
       <name>Label_6</name>
-      <text>Enable Print Label</text>
-      <x>29</x>
+      <text>Label Printer</text>
+      <x>24</x>
       <y>27</y>
       <width>220</width>
       <height>30</height>
@@ -172,10 +181,10 @@
     </widget>
     <widget type="label" version="2.0.0">
       <name>Label_10</name>
-      <text>SN :</text>
-      <x>29</x>
+      <text>Device SN :</text>
+      <x>24</x>
       <y>84</y>
-      <width>60</width>
+      <width>189</width>
       <height>30</height>
       <font>
         <font family="Droid Serif" style="REGULAR" size="22.0">
@@ -184,10 +193,10 @@
     </widget>
     <widget type="label" version="2.0.0">
       <name>Label_7</name>
-      <text>NAME : </text>
-      <x>29</x>
+      <text>Device Name :</text>
+      <x>24</x>
       <y>139</y>
-      <width>220</width>
+      <width>165</width>
       <height>30</height>
       <font>
         <font family="Droid Serif" style="REGULAR" size="22.0">
@@ -196,10 +205,10 @@
     </widget>
     <widget type="label" version="2.0.0">
       <name>Label_8</name>
-      <text>ISSUE NO :</text>
-      <x>29</x>
-      <y>197</y>
-      <width>220</width>
+      <text>JIRA Issue No :</text>
+      <x>24</x>
+      <y>194</y>
+      <width>165</width>
       <height>30</height>
       <font>
         <font family="Droid Serif" style="REGULAR" size="22.0">
@@ -208,10 +217,10 @@
     </widget>
     <widget type="label" version="2.0.0">
       <name>Label_9</name>
-      <text>Message :</text>
-      <x>29</x>
+      <text>Message</text>
+      <x>24</x>
       <y>250</y>
-      <width>220</width>
+      <width>165</width>
       <height>30</height>
       <font>
         <font family="Droid Serif" style="REGULAR" size="22.0">
@@ -219,9 +228,9 @@
       </font>
     </widget>
     <widget type="textupdate" version="2.0.0">
-      <name>Text Update_1</name>
+      <name>SN</name>
       <pv_name>ICSLab:Xenon:SN</pv_name>
-      <x>174</x>
+      <x>213</x>
       <y>84</y>
       <width>510</width>
       <height>30</height>
@@ -231,11 +240,12 @@
       </font>
       <horizontal_alignment>2</horizontal_alignment>
       <vertical_alignment>1</vertical_alignment>
+      <tooltip>Serial number, scanned by a barcode scanner</tooltip>
     </widget>
     <widget type="textupdate" version="2.0.0">
-      <name>Text Update_2</name>
+      <name>NAME</name>
       <pv_name>ICSLab:Xenon:Model</pv_name>
-      <x>174</x>
+      <x>213</x>
       <y>139</y>
       <width>510</width>
       <height>30</height>
@@ -245,11 +255,12 @@
       </font>
       <horizontal_alignment>2</horizontal_alignment>
       <vertical_alignment>1</vertical_alignment>
+      <tooltip>Device or model name, be scanned by the barcode scanner</tooltip>
     </widget>
     <widget type="textupdate" version="2.0.0">
-      <name>Text Update_4</name>
+      <name>Message</name>
       <pv_name>ICSLab:Xenon:JiraMessage</pv_name>
-      <x>174</x>
+      <x>213</x>
       <y>250</y>
       <width>510</width>
       <height>30</height>
@@ -259,25 +270,27 @@
       </font>
       <horizontal_alignment>2</horizontal_alignment>
       <vertical_alignment>1</vertical_alignment>
+      <tooltip>Returned string from IOC </tooltip>
     </widget>
     <widget type="textentry" version="3.0.0">
-      <name>Text Entry_2</name>
+      <name>Issue Number ST</name>
       <pv_name>ICSLab:Xenon:IssueNumber</pv_name>
-      <x>174</x>
-      <y>197</y>
+      <x>213</x>
+      <y>194</y>
       <width>230</width>
       <height>30</height>
       <font>
         <font family="Droid Sans" style="BOLD" size="14.0">
         </font>
       </font>
+      <tooltip>Define the JIRA issue number, if want to update or delete it. </tooltip>
       <border_alarm_sensitive>false</border_alarm_sensitive>
     </widget>
     <widget type="textupdate" version="2.0.0">
-      <name>Text Update_6</name>
+      <name>Issue number RD</name>
       <pv_name>ICSLab:Xenon:IssueNumber</pv_name>
-      <x>444</x>
-      <y>197</y>
+      <x>483</x>
+      <y>194</y>
       <width>240</width>
       <height>30</height>
       <font>
@@ -287,16 +300,18 @@
       <show_units>false</show_units>
       <horizontal_alignment>1</horizontal_alignment>
       <vertical_alignment>1</vertical_alignment>
+      <tooltip>Returned the JIRA issue number. </tooltip>
     </widget>
     <widget type="led" version="2.0.0">
-      <name>LED_2</name>
+      <name>Printer LED</name>
       <pv_name>ICSLab:Xenon:EnableLabel</pv_name>
-      <x>593</x>
-      <y>25</y>
+      <x>633</x>
+      <y>27</y>
       <width>90</width>
       <height>36</height>
       <square>true</square>
       <labels_from_pv>true</labels_from_pv>
+      <tooltip>Want to use the Label Printer? If so, please do Enabled!</tooltip>
     </widget>
     <widget type="radio" version="2.0.0">
       <name>Radio Button</name>
@@ -310,6 +325,7 @@
         </font>
       </font>
       <horizontal>false</horizontal>
+      <tooltip>One can scan the predefined barcodes, or toggle this.</tooltip>
       <items>
         <item>Item 1</item>
       </items>
@@ -317,15 +333,25 @@
   </widget>
   <widget type="label" version="2.0.0">
     <name>Label_15</name>
-    <text>Inventory System with JIRA and EPICS at ICS Lab </text>
-    <x>21</x>
-    <y>4</y>
-    <width>600</width>
-    <height>41</height>
+    <text>Inventory System with JIRA and EPICS at ICS Tuna Lab </text>
+    <x>24</x>
+    <width>616</width>
+    <height>70</height>
     <font>
-      <font family="Liberation Serif" style="BOLD" size="24.0">
+      <font family="Droid Serif" style="BOLD" size="22.0">
       </font>
     </font>
     <vertical_alignment>1</vertical_alignment>
+  </widget>
+  <widget type="digital_clock" version="2.0.0">
+    <name>Digital Clock_1</name>
+    <lcd_design>17</lcd_design>
+    <lcd_font>3</lcd_font>
+    <x>659</x>
+    <y>13</y>
+    <width>126</width>
+    <height>60</height>
+    <date_visible>true</date_visible>
+    <shadows_enabled>false</shadows_enabled>
   </widget>
 </display>
