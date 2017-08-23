@@ -138,7 +138,8 @@ static long DistXenonASub(aSubRecord *pRecord)
       prec->valb = fwd_val; prec->valc = fwd_val;
       prec->vald = fwd_val; prec->vale = fwd_val;
       prec->valf = fwd_val; prec->vala = fwd_val;
-      prec->valu = &disabled;
+      prec->valg = fwd_val; prec->valh = fwd_val;
+      prec->valu = &enabled;
     }
   else if ( epicsStrnCaseCmp(jc, aval, 2) == 0 )  /* Create */
     {
