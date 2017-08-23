@@ -291,13 +291,28 @@
     <widget type="led" version="2.0.0">
       <name>LED_2</name>
       <pv_name>ICSLab:Xenon:EnableLabel</pv_name>
-      <x>261</x>
-      <y>24</y>
+      <x>593</x>
+      <y>25</y>
       <width>90</width>
       <height>36</height>
-      <off_label>Disable</off_label>
-      <on_label>Enable</on_label>
       <square>true</square>
+      <labels_from_pv>true</labels_from_pv>
+    </widget>
+    <widget type="radio" version="2.0.0">
+      <name>Radio Button</name>
+      <pv_name>ICSLab:Xenon:EnableLabel</pv_name>
+      <x>282</x>
+      <y>33</y>
+      <width>265</width>
+      <height>23</height>
+      <font>
+        <font family="Droid Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal>false</horizontal>
+      <items>
+        <item>Item 1</item>
+      </items>
     </widget>
   </widget>
   <widget type="progressbar" version="2.0.0">
