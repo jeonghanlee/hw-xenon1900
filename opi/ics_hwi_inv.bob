@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<display version="2.0.0">
+  <name>Display</name>
+  <height>480</height>
+  <background_color>
+    <color name="BACKGROUND" red="220" green="225" blue="221">
+    </color>
+  </background_color>
+  <widget type="group" version="2.0.0">
+    <name>IOC Status</name>
+    <x>20</x>
+    <y>392</y>
+    <width>760</width>
+    <height>80</height>
+    <style>2</style>
+    <font>
+      <font family="Droid Sans" style="REGULAR" size="14.0">
+      </font>
+    </font>
+    <background_color>
+      <color name="GROUP-BACKGROUND" red="200" green="205" blue="201">
+      </color>
+    </background_color>
+    <widget type="linear-meter" version="2.0.0">
+      <name>Linear Meter</name>
+      <pv_name>ICSLab:IocStat:SYS_CPU_LOAD</pv_name>
+      <x>514</x>
+      <width>214</width>
+      <height>91</height>
+      <level_lolo></level_lolo>
+      <show_low>false</show_low>
+      <show_lolo>false</show_lolo>
+      <title>CPU LOAD</title>
+      <highligh_zones>false</highligh_zones>
+      <highligh_bar>false</highligh_bar>
+      <lcd_design>0</lcd_design>
+      <lcd_visible>false</lcd_visible>
+      <flat_bar>true</flat_bar>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>Label_1</name>
+      <text>Heart Beat</text>
+      <x>14</x>
+      <y>14</y>
+      <width>110</width>
+      <font>
+        <font family="Droid Sans" style="REGULAR" size="14.0">
+        </font>
+      </font>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>Label_3</name>
+      <text>Uptime </text>
+      <x>14</x>
+      <y>44</y>
+      <width>110</width>
+      <font>
+        <font family="Droid Sans" style="REGULAR" size="14.0">
+        </font>
+      </font>
+    </widget>
+    <widget type="textupdate" version="2.0.0">
+      <name>Text Update</name>
+      <pv_name>ICSLab:IocStat:UPTIME</pv_name>
+      <x>81</x>
+      <y>44</y>
+      <width>82</width>
+      <font>
+        <font family="Digital-7" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+      <vertical_alignment>1</vertical_alignment>
+    </widget>
+    <widget type="led" version="2.0.0">
+      <name>LED</name>
+      <class>ON_OFF</class>
+      <pv_name>ICSLab:IocStat:HEARTBEAT</pv_name>
+      <bit>0</bit>
+      <x>103</x>
+      <y>14</y>
+      <off_color use_class="true">
+        <color name="Off" red="60" green="100" blue="60">
+        </color>
+      </off_color>
+      <on_color use_class="true">
+        <color name="On" red="0" green="255" blue="0">
+        </color>
+      </on_color>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>Label_4</name>
+      <text>Hostname</text>
+      <x>264</x>
+      <y>14</y>
+      <width>110</width>
+      <font>
+        <font family="Droid Sans" style="REGULAR" size="14.0">
+        </font>
+      </font>
+    </widget>
+    <widget type="textupdate" version="2.0.0">
+      <name>Text Update_3</name>
+      <pv_name>ICSLab:IocStat:HOSTNAME</pv_name>
+      <x>354</x>
+      <y>14</y>
+      <width>82</width>
+      <font>
+        <font family="Droid Sans" style="REGULAR" size="14.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+      <vertical_alignment>1</vertical_alignment>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>Label_5</name>
+      <text>since </text>
+      <x>195</x>
+      <y>44</y>
+      <width>44</width>
+      <font>
+        <font family="Droid Sans" style="REGULAR" size="14.0">
+        </font>
+      </font>
+    </widget>
+    <widget type="textupdate" version="2.0.0">
+      <name>Text Update_5</name>
+      <pv_name>ICSLab:IocStat:STARTTOD</pv_name>
+      <x>266</x>
+      <y>44</y>
+      <width>170</width>
+      <font>
+        <font family="Digital-7" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+      <vertical_alignment>1</vertical_alignment>
+    </widget>
+  </widget>
+  <widget type="led" version="2.0.0">
+    <name>LED_1</name>
+    <y>150</y>
+    <width>1</width>
+    <height>1</height>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>Inventory Status</name>
+    <x>20</x>
+    <y>52</y>
+    <width>760</width>
+    <height>330</height>
+    <style>2</style>
+    <font>
+      <font family="Droid Sans" style="REGULAR" size="14.0">
+      </font>
+    </font>
+    <background_color>
+      <color name="GROUP-BACKGROUND" red="200" green="205" blue="201">
+      </color>
+    </background_color>
+    <widget type="label" version="2.0.0">
+      <name>Label_6</name>
+      <text>Enable Print Label</text>
+      <x>29</x>
+      <y>27</y>
+      <width>220</width>
+      <height>30</height>
+      <font>
+        <font family="Droid Serif" style="REGULAR" size="22.0">
+        </font>
+      </font>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>Label_10</name>
+      <text>SN :</text>
+      <x>29</x>
+      <y>84</y>
+      <width>60</width>
+      <height>30</height>
+      <font>
+        <font family="Droid Serif" style="REGULAR" size="22.0">
+        </font>
+      </font>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>Label_7</name>
+      <text>NAME : </text>
+      <x>29</x>
+      <y>139</y>
+      <width>220</width>
+      <height>30</height>
+      <font>
+        <font family="Droid Serif" style="REGULAR" size="22.0">
+        </font>
+      </font>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>Label_8</name>
+      <text>ISSUE NO :</text>
+      <x>29</x>
+      <y>197</y>
+      <width>220</width>
+      <height>30</height>
+      <font>
+        <font family="Droid Serif" style="REGULAR" size="22.0">
+        </font>
+      </font>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>Label_9</name>
+      <text>Message :</text>
+      <x>29</x>
+      <y>250</y>
+      <width>220</width>
+      <height>30</height>
+      <font>
+        <font family="Droid Serif" style="REGULAR" size="22.0">
+        </font>
+      </font>
+    </widget>
+    <widget type="textupdate" version="2.0.0">
+      <name>Text Update_1</name>
+      <pv_name>ICSLab:Xenon:SN</pv_name>
+      <x>174</x>
+      <y>84</y>
+      <width>510</width>
+      <height>30</height>
+      <font>
+        <font family="Droid Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+      <vertical_alignment>1</vertical_alignment>
+    </widget>
+    <widget type="textupdate" version="2.0.0">
+      <name>Text Update_2</name>
+      <pv_name>ICSLab:Xenon:Model</pv_name>
+      <x>174</x>
+      <y>139</y>
+      <width>510</width>
+      <height>30</height>
+      <font>
+        <font family="Droid Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+      <vertical_alignment>1</vertical_alignment>
+    </widget>
+    <widget type="textupdate" version="2.0.0">
+      <name>Text Update_4</name>
+      <pv_name>ICSLab:Xenon:JiraMessage</pv_name>
+      <x>174</x>
+      <y>250</y>
+      <width>510</width>
+      <height>30</height>
+      <font>
+        <font family="Droid Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+      <vertical_alignment>1</vertical_alignment>
+    </widget>
+    <widget type="textentry" version="3.0.0">
+      <name>Text Entry_2</name>
+      <pv_name>ICSLab:Xenon:IssueNumber</pv_name>
+      <x>174</x>
+      <y>197</y>
+      <width>230</width>
+      <height>30</height>
+      <font>
+        <font family="Droid Sans" style="BOLD" size="14.0">
+        </font>
+      </font>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="textupdate" version="2.0.0">
+      <name>Text Update_6</name>
+      <pv_name>ICSLab:Xenon:IssueNumber</pv_name>
+      <x>444</x>
+      <y>197</y>
+      <width>240</width>
+      <height>30</height>
+      <font>
+        <font family="Droid Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <show_units>false</show_units>
+      <horizontal_alignment>1</horizontal_alignment>
+      <vertical_alignment>1</vertical_alignment>
+    </widget>
+    <widget type="led" version="2.0.0">
+      <name>LED_2</name>
+      <pv_name>ICSLab:Xenon:EnableLabel</pv_name>
+      <x>261</x>
+      <y>24</y>
+      <width>90</width>
+      <height>36</height>
+      <off_label>Disable</off_label>
+      <on_label>Enable</on_label>
+      <square>true</square>
+    </widget>
+  </widget>
+  <widget type="progressbar" version="2.0.0">
+    <name>Progress Bar</name>
+    <x>930</x>
+    <y>580</y>
+    <width>1</width>
+    <height>1</height>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_15</name>
+    <text>Inventory System with JIRA and EPICS at ICS Lab </text>
+    <x>21</x>
+    <y>4</y>
+    <width>600</width>
+    <height>41</height>
+    <font>
+      <font family="Liberation Serif" style="BOLD" size="24.0">
+      </font>
+    </font>
+    <vertical_alignment>1</vertical_alignment>
+  </widget>
+</display>
