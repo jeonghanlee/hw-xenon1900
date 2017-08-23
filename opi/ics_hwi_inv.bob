@@ -315,13 +315,6 @@
       </items>
     </widget>
   </widget>
-  <widget type="progressbar" version="2.0.0">
-    <name>Progress Bar</name>
-    <x>930</x>
-    <y>580</y>
-    <width>1</width>
-    <height>1</height>
-  </widget>
   <widget type="label" version="2.0.0">
     <name>Label_15</name>
     <text>Inventory System with JIRA and EPICS at ICS Lab </text>
