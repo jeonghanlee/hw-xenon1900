@@ -152,6 +152,7 @@ static long DistXenonASub(aSubRecord *pRecord)
 	jira.AddObj(item);
 	jira.Print();
 	jira_return_msg = jira.CreateIssue();
+	jira.PrintBarcodes(item.IsLabel());
 	
       }
       else {
@@ -170,6 +171,7 @@ static long DistXenonASub(aSubRecord *pRecord)
 	  jira.AddObj(item);
 	  jira.SetIssueIdOrKey(issue_id);
 	  jira_return_msg = jira.UpdateIssue();
+	  jira.PrintBarcodes(item.IsLabel());
 	}
 	else{
 	  jira_return_msg = "SN and NAME are mandatory data!";
@@ -194,6 +196,18 @@ static long DistXenonASub(aSubRecord *pRecord)
       else {
 	jira_return_msg = "Define Issue Number for DELETE!";
       }
+      prec->valg = (void*)jira_return_msg.c_str();
+    }
+  else if ( epicsStrnCaseCmp(lp, aval, 2) == 0 ) /* Print Label */
+    {
+      jira_return_msg.clear();
+
+      ItemObject item(prec, url, project, issue);
+
+      JiraProject jira;
+      jira.AddObj(item);
+      jira.PrintBarcodes(item.IsLabel());
+
       prec->valg = (void*)jira_return_msg.c_str();
     }
   else

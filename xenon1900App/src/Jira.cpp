@@ -123,7 +123,7 @@ JiraProject::CreateIssue()
   // jSelf is the returned url from curl action
   this->SetIssueIdOrKeyUrl(jSelf);
   this->AddBarcodesJira();
-  if( fItemObject.IsLabel())  this->PrintBarcodes();
+  // this->PrintBarcodes(fItemObject.IsLabel());
   this->ClearActionResults();
 
   fItemObject.Init();
@@ -282,12 +282,8 @@ JiraProject::UpdateIssue()
 
     this->CreateUpdateBarcodes(fIssueIdOrKey, fItemObject.GetHashID());
     this->AddBarcodesJira();
+   
 
-    
-    if( fItemObject.IsLabel())  {
-      std::cout << "Printing Barcodes ... " << std::endl;
-      this->PrintBarcodes();
-    }
   }
 
   this->ClearActionResults();
@@ -774,47 +770,51 @@ JiraProject::cups_printer_status(const char* printer_name)
 
 
 void
-JiraProject::PrintBarcodes()
+JiraProject::PrintBarcodes(bool status)
 {
 
-  const char* label_printer_name = "DYMO_LabelWriter_450_DUO_Label";
-  const char* tape_printer_name  = "DYMO_LabelWriter_450_DUO_Tape";
+  if (status) {
+    
+    const char* label_printer_name = "DYMO_LabelWriter_450_DUO_Label";
+    const char* tape_printer_name  = "DYMO_LabelWriter_450_DUO_Tape";
 
-  int             num_options;
-  cups_option_t*  options;
-  int             job_id;
+    int             num_options;
+    cups_option_t*  options;
+    int             job_id;
   
-  if ( this-> cups_printer_status(label_printer_name) ) {
-    num_options = 0;
-    options = NULL;
-    job_id = -1;
-    num_options = cupsAddOption("PageSize",              "w72h72.1", num_options, &options);
-    num_options = cupsAddOption("scaling",               "100",      num_options, &options);
-    num_options = cupsAddOption("orientation-requested", "3",        num_options, &options);
-    num_options = cupsAddOption("DymoHalftoning",        "Default",  num_options, &options);
-    job_id = cupsPrintFile(label_printer_name, qr_file.c_str(), "print qr code", num_options, options);
-    this->cups_jobs_status(label_printer_name, job_id);
-    cupsFreeOptions(num_options, options);
-  }
+    if ( this-> cups_printer_status(label_printer_name) ) {
+      
+      num_options = 0;
+      options = NULL;
+      job_id = -1;
+      num_options = cupsAddOption("PageSize",              "w72h72.1", num_options, &options);
+      num_options = cupsAddOption("scaling",               "100",      num_options, &options);
+      num_options = cupsAddOption("orientation-requested", "3",        num_options, &options);
+      num_options = cupsAddOption("DymoHalftoning",        "Default",  num_options, &options);
+      job_id = cupsPrintFile(label_printer_name, qr_file.c_str(), "print qr code", num_options, options);
+      this->cups_jobs_status(label_printer_name, job_id);
+      cupsFreeOptions(num_options, options);
+    }
 
 
-  if ( this->cups_printer_status(tape_printer_name) ) {
-    num_options = 0;
-    options = NULL;
-    job_id = -1;
+    if ( this->cups_printer_status(tape_printer_name) ) {
+      num_options = 0;
+      options = NULL;
+      job_id = -1;
     
-    num_options = cupsAddOption("MediaType",             "6mm",     num_options, &options);
-    num_options = cupsAddOption("PageSize",              "w18h252", num_options, &options);
-    num_options = cupsAddOption("orientation-requested", "4",       num_options, &options);
-    num_options = cupsAddOption("DymoCutOptions",        "Cut",     num_options, &options);
-    num_options = cupsAddOption("DymoContinuousPaper",   "0",       num_options, &options);
-    num_options = cupsAddOption("DymoHalftoning",        "Default", num_options, &options);
+      num_options = cupsAddOption("MediaType",             "6mm",     num_options, &options);
+      num_options = cupsAddOption("PageSize",              "w18h252", num_options, &options);
+      num_options = cupsAddOption("orientation-requested", "4",       num_options, &options);
+      num_options = cupsAddOption("DymoCutOptions",        "Cut",     num_options, &options);
+      num_options = cupsAddOption("DymoContinuousPaper",   "0",       num_options, &options);
+      num_options = cupsAddOption("DymoHalftoning",        "Default", num_options, &options);
     
-    job_id = cupsPrintFile(tape_printer_name, dm_file.c_str(), "print dm code", num_options, options);
-    this->cups_jobs_status(tape_printer_name, job_id);
-    cupsFreeOptions(num_options, options);
+      job_id = cupsPrintFile(tape_printer_name, dm_file.c_str(), "print dm code", num_options, options);
+      this->cups_jobs_status(tape_printer_name, job_id);
+      cupsFreeOptions(num_options, options);
+    }
+
   }
-    
   return;
 }
 

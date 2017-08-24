@@ -88,6 +88,7 @@ public:
 
   void AddObj(ItemObject &in);
   void Print();
+  void PrintBarcodes(bool status);
   
 private:
 
@@ -175,7 +176,7 @@ private:
   void CreateBarcodes();
   void CreateUpdateBarcodes(std::string issue_id, std::string hash_id);
   bool AddBarcodesJira();
-  void PrintBarcodes();
+
   
   void cups_jobs_status(const char* printer_name, int job_id);
   bool cups_printer_status(const char* printer_name);
