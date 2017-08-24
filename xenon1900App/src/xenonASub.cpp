@@ -205,7 +205,6 @@ static long DistXenonASub(aSubRecord *pRecord)
       ItemObject item(prec, url, project, issue);
 
       JiraProject jira;
-      jira.AddObj(item);
       jira.PrintBarcodes(item.IsLabel());
 
       prec->valg = (void*)jira_return_msg.c_str();
