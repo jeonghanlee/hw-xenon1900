@@ -1,7 +1,8 @@
 CL,Clear all scanned PVs
 00,----------- place holder ----------
-LE,Enable Label Printing after JIRA action (JC)
-LD,Disable Label Printing after JIRA action (JC)
+LE,Enable Label Printing after JIRA action
+LD,Disable Label Printing after JIRA action
+LP,Print the last existent label
 00,----------- place holder ----------
 JC,Create an JIRA issue 
 JU,Update an JIRA issue (Define the issue number first)
