@@ -64,9 +64,9 @@
     <widget type="textupdate" version="2.0.0">
       <name>IOC Uptime</name>
       <pv_name>ICSLab:IocStat:UPTIME</pv_name>
-      <x>81</x>
+      <x>79</x>
       <y>44</y>
-      <width>82</width>
+      <width>180</width>
       <font>
         <font family="Digital-7" style="REGULAR" size="16.0">
         </font>
@@ -81,7 +81,7 @@
       <class>ON_OFF</class>
       <pv_name>ICSLab:IocStat:HEARTBEAT</pv_name>
       <bit>0</bit>
-      <x>103</x>
+      <x>106</x>
       <y>14</y>
       <off_color use_class="true">
         <color name="Off" red="60" green="100" blue="60">
@@ -96,7 +96,7 @@
     <widget type="label" version="2.0.0">
       <name>Label_4</name>
       <text>Hostname</text>
-      <x>264</x>
+      <x>149</x>
       <y>14</y>
       <width>110</width>
       <font>
@@ -107,9 +107,9 @@
     <widget type="textupdate" version="2.0.0">
       <name>Hostname</name>
       <pv_name>ICSLab:IocStat:HOSTNAME</pv_name>
-      <x>354</x>
+      <x>229</x>
       <y>14</y>
-      <width>82</width>
+      <width>255</width>
       <font>
         <font family="Droid Sans" style="REGULAR" size="14.0">
         </font>
@@ -121,7 +121,7 @@
     <widget type="label" version="2.0.0">
       <name>Label_5</name>
       <text>since </text>
-      <x>195</x>
+      <x>278</x>
       <y>44</y>
       <width>44</width>
       <font>
@@ -133,9 +133,9 @@
     <widget type="textupdate" version="2.0.0">
       <name>Started at</name>
       <pv_name>ICSLab:IocStat:STARTTOD</pv_name>
-      <x>266</x>
+      <x>339</x>
       <y>44</y>
-      <width>170</width>
+      <width>145</width>
       <font>
         <font family="Digital-7" style="REGULAR" size="16.0">
         </font>
