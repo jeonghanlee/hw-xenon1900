@@ -71,56 +71,128 @@
 
 %%% Actual Document Start at below
 \chapter{Overview}
-There are infinite ways to develop and maintain an inventory system. However, this inventory is the unique and \textbf{temporary} solution for the ICS Lab, especially, where the author works at. This inventory system is designed to minimize our time when we register an item to the existent JIRA ICS HW\&I group inventory task.  Therefore, it does \textbf{NOT} provide any fancy and beautiful ways to interact with users, BUT provide the minimal tool to monitor and track any equipment in ICS, ESS, and any IK partner. And the system only provide the following three features :
+re are infinite ways to develop and maintain an inventory system. However, this inventory is the unique and \textbf{temporary} solution for the ICS Lab, especially, where the author works at. This inventory system is designed to minimize our time when we register an item to the existent JIRA ICS HW\&I group inventory task. Therefore, it does \textbf{NOT} provide any fancy and beautiful ways to interact with users, BUT provide the minimal tool to monitor and track any equipment in ICS, ESS, and any IK partner. And the system only provide the following features :
 \begin{itemize}
 \item Do stock an item to JIRA, and do Add-and-Print its barcodes.
-\item Do add-and-print the barcodes of the item, which was registered in JIRA before.
-\item Delete an item from JIRA
+\item Do stock an item to JIRA, and do Add-and-Print its barcodes.
+\item Delete an item from JIRA.
+\item Print the existent (created) label (in case, the printer doesn't work properly)
 \end{itemize}
 
+
+\begin{figure}[!htb]
+%  \centering
+  \includegraphics[width=0.5\textwidth]{./pictures/inv01.eps}
+  \includegraphics[width=0.5\textwidth]{./pictures/inv02.eps}
+  \caption{
+            CS-Studio User Interface Screen Examples.
+          }
+  \label{fig:css-examples}   
+\end{figure}
+
+\clearpage
 \section{Inventory Workflow}
 
 \subsection{How to stock an item at the first time to JIRA}
 
 The mandatory steps are defined the following procedures :
-\begin{enumerate}
-\item Scan the Serial Number on the equipment  with the Xenon 190x barcode scanner.
-\item Scan  one of 3.3 Model Codes in the manual with the Xenon 190x scanner.
-\item Both case in below, the created labels are attached in the JIRA issue.
-  \begin{enumerate}
-  \item Scan Enable Label Printing after JIRA action if one wants to print labels (Default)
-  \item Scan Disable Label Printing after JIRA action if one wants not print labels
-  \end{enumerate}
-\item Scan Create an JIRA issue in the manual
-\item Attach two barcodes in the reserved box, an equipment, or both.
-\end{enumerate}
 
+\subsubsection{Scan the Serial Number on the equipment  with the Xenon 190x barcode scanner.}
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.35\textwidth,angle=90]{./pictures/01.eps}
+  \includegraphics[width=0.45\textwidth]{./pictures/02.eps}
+  \caption{
+    User Interface Screen Example after the serial number scan. 
+  }
+\end{figure}
+
+\subsubsection{Scan  one of 3.3 Model Codes in the manual with the Xenon 190x scanner.}
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.5\textwidth]{./pictures/03.eps}
+  \includegraphics[width=0.484\textwidth]{./pictures/04.eps}
+  \caption{
+    User Interface Screen Example after the Model Name scan. 
+  }
+\end{figure}
+
+\clearpage
+\subsubsection{Both case in below, the created labels are attached in the JIRA issue.}
+
+\begin{enumerate}
+\item Scan Enable Label Printing after JIRA action if one wants to print labels (Default)
+\item Scan Disable Label Printing after JIRA action if one wants not print labels
+\end{enumerate}
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.36\textwidth,angle=90]{./pictures/05.eps}
+    \includegraphics[width=0.466\textwidth]{./pictures/06.eps}
+  \caption{
+    User Interface Screen Example for Enable and Disable Labels
+  }
+\end{figure}
+
+\subsubsection{Scan Create an JIRA issue in the manual}
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.5\textwidth]{./pictures/07.eps}
+  \caption{
+    User Interface Screen Example after the Create an JIRA scan. 
+  }
+\end{figure}
+
+\clearpage
+\subsubsection{Attach two barcodes in the reserved box, an equipment, or both.}
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.466\textwidth]{./pictures/09.eps}
+    \includegraphics[width=0.466\textwidth]{./pictures/10.eps}
+  \caption{
+    Equipment with labels. The small one should be trimmed properly. 
+  }
+\end{figure}
 
 \subsection{How to add and print barcodes for an Item which has registered in JIRA}
 
 \begin{enumerate}
-\item Define the TAG number which one wants to delete it via caput \newline
+\item Define the TAG number which one wants to delete it via CS-Studio User Interface or caput \newline
   \texttt{caput ICSLAB:IssueNumber TAG-XXX}
 \item Scan the Serial Number on the equipment  with the Xenon 190x barcode scanner.
-\item Scan  Model Name in the manual with the Xenon 190x scanner.
+\item Scan Model Name in the manual with the Xenon 190x scanner.
 \item Both case in below, the updated labels are attached in the JIRA issue.
   \begin{enumerate}
   \item Scan Enable Label Printing after JIRA action if one wants to print the updated label (Default)
   \item Scan Disable Label Printing after JIRA action if one wants not print the updated label
   \end{enumerate}
-\item Scan Update an JIRA issue in the manual
+\item Scan Update an JIRA issue in the engineering manual
 \end{enumerate}
 
 
 \subsection{How to delete the existent Item}
 
 \begin{enumerate}
-\item  Define the TAG number which one wants to delete it via caput \newline
+\item  Define the TAG number which one wants to delete it via  CS-Studio User Interface or caput \newline
 \texttt{caput ICSLAB:IssueNumber TAG-XXX}
 \item Scan Delete an JIRA issue Barcode in the manual with the Xenon 190x barcode scanner.
 \end{enumerate}
 
 
+\subsection{Print the existent labels}
+In case, there is the printer issue, for example, print only one of two labels, not responding, and so on.
+\begin{enumerate}
+\item Please check the printer status at \url{http://localhost:631/} and resolve it. Note that one should know the basic CUPS configuration. 
+\item Print the existent label by scanning the barcode (Print the last existent label) in the manual. Note that this action will print only the recent created labels. 
+\end{enumerate}
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.4\textwidth,angle=90]{./pictures/11.eps}
+    \caption{
+    Bar code in the manual for the Print the Existent Label.
+  }
+\end{figure}
+
+\clearpage
 \section{Components}
 \subsection{Hardware}
 \begin{itemize}
@@ -129,7 +201,7 @@ The mandatory steps are defined the following procedures :
 \end{itemize}
 \subsection{Software}
 \begin{itemize}
-\item Linux OS
+\item Linux OS (tested with Debian 8) 
 \item EPICS IOC  {\tiny \url{https://github.com/jeonghanlee/hw-xenon1900}}
 \item JIRA {\tiny \url{https://jira.esss.lu.se/projects/TAG/summary}}
 \item DYMO LabelWriter 450 Duo CUP Driver \newline
@@ -234,5 +306,9 @@ Note that there are different procedure to setup Xenon 1900 corded scanner and X
 
 
 \chapter{Outlook}
+
+The system has the limited functionality for the usage of ICS Tuna Lab, since I would like to save at least 5 mins while stocking an equipment into the existent JIRA project. With the current implementation, it actually save my time a lot, so I can work more valuable subjects than tedious and time-consuming open-read-write-print activities when I have 50 boxes of an equipment. This system fulfilled already what I would like to achieve, i.e., saving 5 mins per an equipment. Therefore, I ended this development. 
+
+However, it may be the good starting point if one want to implement this system with any relational database, which is more flexible than the restricted JIRA project, which I don't have any permission to modify their structure. Please contact me through \href{mailto:han.lee@esss.se}{han.lee@esss.se} if one has any comments on this system. 
 
 \end{document}
