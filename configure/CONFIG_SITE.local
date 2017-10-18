@@ -9,14 +9,15 @@ USR_LDFLAGS += `pkg-config --libs   jsoncpp`
 PROD_LDLIBS += `pkg-config --libs   jsoncpp`
 
 ## ZINT : source compile and make install
-#USR_CFLAGS  += -I/usr/local/include/
-#USR_LDFLAGS += -L/usr/local/lib/
-#PROD_LDLIBS += -L/usr/local/lib/
+USR_CFLAGS  += -I/usr/local/include/
+USR_LDFLAGS += -L/usr/local/lib/ 
+PROD_LDLIBS += -L/usr/local/lib/ 
 
 ## ZINT : Deb packages
 USR_CFLAGS  += -I/usr/include/
 USR_LDFLAGS += -lzint
 PROD_LDLIBS += -lzint
+
 ## CUPS
 
 USR_CFLAGS  += -I/usr/include/

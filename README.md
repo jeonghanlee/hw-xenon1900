@@ -13,7 +13,9 @@ There are infinite ways to develop and maintain an inventory system. However, th
 * For Dymo LabelWriter 450 Duo : cups 
 
 ```
-aptitude install  libcurl4-gnutls-dev libjsoncpp-dev libcups2-dev libcupsimage2-dev
+$aptitude install  libcurl4-gnutls-dev libjsoncpp-dev libcups2-dev libcupsimage2-dev  qt4-default cmake devscripts cdbs  build-essential
+
+$ yum install jsoncpp-devel cups-devel libcurl-devel cmake devscripts 
 
 ```
 

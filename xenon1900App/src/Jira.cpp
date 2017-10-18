@@ -774,10 +774,16 @@ JiraProject::PrintBarcodes(bool status)
 {
 
   if (status) {
-    
-    const char* label_printer_name = "DYMO_LabelWriter_450_DUO_Label";
-    const char* tape_printer_name  = "DYMO_LabelWriter_450_DUO_Tape";
 
+    // Debian
+    //   const char* label_printer_name = "DYMO_LabelWriter_450_DUO_Label";
+    //    const char* tape_printer_name  = "DYMO_LabelWriter_450_DUO_Tape";
+
+    // CentOS
+    const char* label_printer_name = "DYMO-LabelWriter-450-DUO-Label";
+    const char* tape_printer_name  = "DYMO-LabelWriter-450-DUO-Tape";
+
+    
     int             num_options;
     cups_option_t*  options;
     int             job_id;
@@ -797,7 +803,7 @@ JiraProject::PrintBarcodes(bool status)
     }
 
 
-    if ( this->cups_printer_status(tape_printer_name) ) {
+    //   if ( this->cups_printer_status(tape_printer_name) ) {
       num_options = 0;
       options = NULL;
       job_id = -1;
@@ -812,7 +818,7 @@ JiraProject::PrintBarcodes(bool status)
       job_id = cupsPrintFile(tape_printer_name, dm_file.c_str(), "print dm code", num_options, options);
       this->cups_jobs_status(tape_printer_name, job_id);
       cupsFreeOptions(num_options, options);
-    }
+      //    }
 
   }
   return;

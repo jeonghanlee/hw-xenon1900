@@ -1,0 +1,17 @@
+
+
+
+[Unit]
+SourcePath=/home/iocuser/epics_env/epics-Apps/xenon1900/st.cmd
+Description=Inventory Service for ICS Lab
+After=network.target
+
+[Service]
+ExecStart="/home/iocuser/epics_env/epics-Apps/xenon1900/bin/linux-x86_64/xenon1900 /home/iocuser/epics_env/epics-Apps/xenon1900/iocBoot/iocxenon1900/st.cmd.sd"
+
+Type=forking
+
+[Install]
+WantedBy=multi-user.target
+Alias=inv.service
+

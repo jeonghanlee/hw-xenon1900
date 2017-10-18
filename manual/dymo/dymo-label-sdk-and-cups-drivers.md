@@ -6,15 +6,22 @@ http://www.dymo.com/en-US/dymo-label-sdk-and-cups-drivers-for-linux-dymo-label-s
 
 # Install packages and compile sources, and install source
 
+
+## Required Packages
+* Debian
 ```
-root@kaffee:# aptitude install libcups2-dev libcupsimage2-dev
+$ aptitude install libcups2-dev libcupsimage2-dev
+```
+* CentOS
+```
+$ yum install cups-devel
+```
 
-jhlee@kaffee: dymo-cups-drivers-1.4.0.5$ ./configure
-jhlee@kaffee: dymo-cups-drivers-1.4.0.5$ make
-
-root@kaffee:# make install
-
-root@kaffee:# systemctl restart cups
+## install sources
+$ ./configure
+$ make
+$ sudo make install
+$ sudo stemctl restart cups
 ```
 
 

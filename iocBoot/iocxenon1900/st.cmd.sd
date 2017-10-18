@@ -3,9 +3,10 @@
 ## You may have to change xenon1900 to something else
 ## everywhere it appears in this file
 
-< envPaths
+epicsEnvSet("IOC","iocxenon1900")
+epicsEnvSet("TOP","/home/iocuser/epics_env/epics-Apps/xenon1900")
 
-epicsEnvSet("EPICS_CAS_INTF_ADDR_LIST" "10.4.8.18")
+#epicsEnvSet("EPICS_CAS_INTF_ADDR_LIST" "10.0.5.54")
 
 epicsEnvSet("STREAM_PROTOCOL_PATH", ".:${TOP}/db")
 epicsEnvSet("TTY","$(TTY=/dev/ttyACM0)")
