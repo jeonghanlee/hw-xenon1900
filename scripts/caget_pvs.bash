@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-#  Copyright (c) 2016 Jeong Han Lee
-#  Copyright (c) 2016 European Spallation Source ERIC
+#  Copyright (c) 2016 - Present Jeong Han Lee
+#  Copyright (c) 2016 - Present European Spallation Source ERIC
 #
 #  The program is free software: you can redistribute
 #  it and/or modify it under the terms of the GNU General Public License
@@ -18,8 +18,8 @@
 #
 # Author  : Jeong Han Lee
 # email   : han.lee@esss.se
-# Date    : Monday, November 28 11:41:01 CET 2016
-# version : 0.0.1
+# Date    : Friday, October 20 09:39:11 CEST 2017
+# version : 0.0.2
 
 
 
@@ -46,6 +46,10 @@ function pvs_from_list()
     done < $1
 }
 
+
+export _HOST_IP="$(ip -4 route get 8.8.8.8 | awk {'print $7'} | tr -d '\n')";
+export EPICS_CA_AUTO_ADDR_LIST=NO
+export EPICS_CA_ADDR_LIST=${_HOST_IP}
 
 pvs_from_list $1
 
