@@ -91,3 +91,4 @@ inv_data_at_*
 *.changes
 *_*.png
 Jira_ess.hh
+*st.cmd
