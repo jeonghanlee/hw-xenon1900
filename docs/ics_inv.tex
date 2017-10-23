@@ -71,7 +71,7 @@
 
 %%% Actual Document Start at below
 \chapter{Overview}
-There are infinite ways to develop and maintain an inventory system. However, this inventory is the unique and \textbf{temporary} solution for the ICS Lab, especially, where the author works at. This inventory system is designed to minimize our time when we register an item to the existent JIRA ICS HW\&I group inventory task. Therefore, it does \textbf{NOT} provide any fancy and beautiful ways to interact with users, BUT provide the minimal tool to monitor and track any equipment in ICS, ESS, and any IK partner. And the system only provide the following features :
+There are infinite ways to develop and maintain an inventory system. However, this inventory is the unique and \textbf{temporary} solution for the ICS Tuna Lab. This inventory system is designed to minimize resources when an engineer register bulky items to the existent JIRA ICS HW\&I group inventory task. Therefore, it does \textbf{NOT} provide any fancy and beautiful ways to interact with users, \textbf{BUT} does provide the minimal tool to monitor and track any equipment in ICS, ESS, and any IK partner. And the system only provide the following features :
 \begin{itemize}
 \item Do stock an item to JIRA, and do Add-and-Print its barcodes.
 \item Do stock an item to JIRA, and do Add-and-Print its barcodes.
@@ -258,9 +258,7 @@ Note that there are different procedure to setup Xenon 1900 corded scanner and X
 \end{figure}
 
 
-\newpage
-
-%% \chapter{Frequently Usage Case}
+% \chapter{Frequently Usage Case}
 %% \section{MTCA}
 %% \subsection{MTCA IOxOS IFC1410}
 %% \subsection{MRF EVR-300DC}
@@ -273,14 +271,14 @@ Note that there are different procedure to setup Xenon 1900 corded scanner and X
 
 \newpage
 \chapter{Predefined Bar Codes}
-\section{Vendor Codes}
-\vspace{1cm}
-\input{./zint/vd_images/vd}
+%% \section{Vendor Codes}
+%% \vspace{1cm}
+%% \input{./zint/vd_images/vd}
 
-\newpage
-\section{FormFactor Codes}
-\vspace{1cm}
-\input{./zint/ff_images/ff}
+%% \newpage
+%% \section{FormFactor Codes}
+%% \vspace{1cm}
+%% \input{./zint/ff_images/ff}
 
 %% \newpage
 %% \section{ICS Location Codes}
@@ -292,8 +290,6 @@ Note that there are different procedure to setup Xenon 1900 corded scanner and X
 %% \vspace{1cm}
 %% \input{./zint/st_images/st}
 
-
-\newpage
 \section{Model Codes}
 \vspace{1cm}
 \input{./zint/mo_images/mo}
@@ -305,10 +301,12 @@ Note that there are different procedure to setup Xenon 1900 corded scanner and X
 \input{./zint/act_images/actions}
 
 
-\chapter{Outlook}
+\chapter{Summary}
 
-The system has the limited functionality for the usage of ICS Tuna Lab, since the author would like to save at least 5 mins while stocking an equipment into the existent JIRA project. With the current implementation, it actually save the author's time a lot, so the author can work more valuable subjects than tedious and time-consuming open-read-write-print activities when the author has more than 50 boxes of an equipment. This system fulfilled the early and naive requirement, i.e., saving 5 mins per an equipment. Therefore, the author ended this development. 
+The system has the limited functionality for the usage of ICS Tuna Lab, since ICS would like to save at least 5 mins while stocking an equipment into the existent JIRA project. The system fulfilled the early and limited requirement, i.e., saving 5 mins per an equipment. Therefore, this development was ended. The system is now running in the ICS Lab. 
 
-However, it may be the good starting point if one wants to implement this system with any relational database, which is more flexible than the restricted JIRA project, which the author doesn't have any permission to modify their structure. Please contact the author through \href{mailto:han.lee@esss.se}{han.lee@esss.se} if one has any comments on this system. 
+However, it may be the good starting point if one wants to implement the system with any relational database, which is more flexible than the restricted JIRA project, which cannot be modified with the current permission.
+
+If one has any questions and comments on this system, please contact the developer through \href{mailto:han.lee@esss.se}{han.lee@esss.se}.
 
 \end{document}
