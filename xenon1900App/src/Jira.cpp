@@ -143,7 +143,12 @@ JiraProject::SetCreateJsonData(bool json_style)
   Json::Value       fields;
   Json::Value       labels;
 
-  jRoot.clear();
+  item.clear();
+  fields.clear();
+  labels.clear();
+
+  if (! jRoot.empty() ) jRoot.clear();
+  
 
   jRoot["issueUpdates"]                = Json::Value::null;
   
@@ -266,6 +271,7 @@ JiraProject::UpdateIssue()
   
   std::string jira_return_message;
 
+  jira_return_message.clear();
 
   
   this->SetUpdateJsonData(true);
@@ -314,8 +320,21 @@ JiraProject::SetUpdateJsonData(bool json_style)
   // 0123
   Json::Value j0123_name;
   Json::Value j0123_value;
+
+  j01_update.clear();
+  j012_summary.clear();
+  j012_cfield10500.clear();
+  j012_cfield11002.clear();
+  j012_desc.clear();
+
+  j012_cfield10502.clear();
+  j012_assignee.clear();
+  j0123_name.clear();
+  j0123_value.clear();
   
-  jRoot.clear();
+  
+  if (! jRoot.empty() ) jRoot.clear();
+
 
   // Data > 0123
   j0123_name             ["name"] = "ics_inventory";
@@ -441,6 +460,7 @@ std::string
 JiraProject::DeleteIssue()
 {
   std::string jira_return_message;
+  jira_return_message.clear();
   
   this->SetDeleteCurlData();
   jira_return_message = this->GetDeleteCurlResponse();

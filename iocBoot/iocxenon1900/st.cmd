@@ -30,7 +30,7 @@ asynSetOption("L0", -1, "stop", "1")
 asynSetOption("L0", -1, "clocal", "Y")
 asynSetOption("L0", -1, "crtscts", "N")
 
-dbLoadRecords("db/iocAdminSoft.db", "IOC=ICSLab:IocStat")
+dbLoadRecords("db/iocAdminSoft.db", "IOC=ICSLab:InvIocStat")
 dbLoadRecords("db/xenon1900.db",    "SYSDEV=ICSLab:Xenon:,PORT=L0")
 
 ## Set this to see messages from xenonASub.c

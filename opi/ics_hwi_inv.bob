@@ -23,7 +23,7 @@
     </background_color>
     <widget type="linear-meter" version="2.0.0">
       <name>CPU Load</name>
-      <pv_name>ICSLab:IocStat:SYS_CPU_LOAD</pv_name>
+      <pv_name>ICSLab:InvIocStat:SYS_CPU_LOAD</pv_name>
       <x>514</x>
       <width>214</width>
       <height>91</height>
@@ -63,7 +63,7 @@
     </widget>
     <widget type="textupdate" version="2.0.0">
       <name>IOC Uptime</name>
-      <pv_name>ICSLab:IocStat:UPTIME</pv_name>
+      <pv_name>ICSLab:InvIocStat:UPTIME</pv_name>
       <x>79</x>
       <y>44</y>
       <width>180</width>
@@ -79,7 +79,7 @@
     <widget type="led" version="2.0.0">
       <name>IOC heartbeat</name>
       <class>ON_OFF</class>
-      <pv_name>ICSLab:IocStat:HEARTBEAT</pv_name>
+      <pv_name>ICSLab:InvIocStat:HEARTBEAT</pv_name>
       <bit>0</bit>
       <x>106</x>
       <y>14</y>
@@ -106,7 +106,7 @@
     </widget>
     <widget type="textupdate" version="2.0.0">
       <name>Hostname</name>
-      <pv_name>ICSLab:IocStat:HOSTNAME</pv_name>
+      <pv_name>ICSLab:InvIocStat:HOSTNAME</pv_name>
       <x>229</x>
       <y>14</y>
       <width>255</width>
@@ -132,7 +132,7 @@
     </widget>
     <widget type="textupdate" version="2.0.0">
       <name>Started at</name>
-      <pv_name>ICSLab:IocStat:STARTTOD</pv_name>
+      <pv_name>ICSLab:InvIocStat:STARTTOD</pv_name>
       <x>339</x>
       <y>44</y>
       <width>145</width>
