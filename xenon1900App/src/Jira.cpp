@@ -796,12 +796,12 @@ JiraProject::PrintBarcodes(bool status)
   if (status) {
 
     // Debian
-    //   const char* label_printer_name = "DYMO_LabelWriter_450_DUO_Label";
-    //    const char* tape_printer_name  = "DYMO_LabelWriter_450_DUO_Tape";
+    const char* label_printer_name = "DYMO_LabelWriter_450_DUO_Label";
+    const char* tape_printer_name  = "DYMO_LabelWriter_450_DUO_Tape";
 
     // CentOS
-    const char* label_printer_name = "DYMO-LabelWriter-450-DUO-Label";
-    const char* tape_printer_name  = "DYMO-LabelWriter-450-DUO-Tape";
+    //const char* label_printer_name = "DYMO-LabelWriter-450-DUO-Label";
+	//const char* tape_printer_name  = "DYMO-LabelWriter-450-DUO-Tape";
 
     
     int             num_options;
@@ -823,7 +823,7 @@ JiraProject::PrintBarcodes(bool status)
     }
 
 
-    //   if ( this->cups_printer_status(tape_printer_name) ) {
+    //    if ( this->cups_printer_status(tape_printer_name) ) {
       num_options = 0;
       options = NULL;
       job_id = -1;
