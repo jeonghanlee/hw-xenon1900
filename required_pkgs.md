@@ -17,7 +17,17 @@ $ cd ../
 # dpkg -i *.deb
 ```
 
+Debian 9, debian/control
 
+-Build-Depends: cdbs, debhelper (>= 7), cmake, libpng12-dev, libqt4-dev
++Build-Depends: cdbs, debhelper (>= 7), cmake, libpng-dev, libqt4-dev
+ 
+-Depends: libpng12-dev
++Depends: libpng-dev
+
+
+
+change libpng12 -> libpng
 ### Installation from source
 
 ```
