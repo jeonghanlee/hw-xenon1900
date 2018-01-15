@@ -1,0 +1,8 @@
+source ~/ics_gitsrc/epics_env/setEpicsEnv.bash
+
+runInventory () {
+
+  cd ${EPICS_APPS}/hw-xenon1900/iocBoot/iocxenon1900/
+  ./st.cmd
+
+}
