@@ -1,9 +1,8 @@
 
-## Linux 
+## Debian Linux 
 ```
-aptitude install  qt4-default cmake  devscripts cdbs  build-essential  libcups2-dev libcupsimage2-dev  printer-driver-dymo
+aptitude install  qt4-default cmake  devscripts cdbs  build-essential  libcups2-dev libcupsimage2-dev  printer-driver-dymo   libcurl4-gnutls-dev libjsoncpp-dev libcups2-dev libcupsimage2-dev texlive java-package
 ```
-
 ## Zint
 
 git clone https://github.com/zint/zint
@@ -15,6 +14,16 @@ $ cd zint
 $ dpkg-buildpackage -us -uc
 $ cd ../
 # dpkg -i *.deb
+```
+
+In case of Debian 9, Edit debian/control file to replace libpng12 with libpng as follows:
+
+```
+-Build-Depends: cdbs, debhelper (>= 7), cmake, libpng12-dev, libqt4-dev
++Build-Depends: cdbs, debhelper (>= 7), cmake, libpng-dev, libqt4-dev
+ 
+-Depends: libpng12-dev
++Depends: libpng-dev
 ```
 
 
