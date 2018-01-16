@@ -6,3 +6,19 @@ runInventory () {
   ./st.cmd
 
 }
+
+makeDocs() {
+  cd ${EPICS_APPS}/hw-xenon1900/docs
+  make
+}
+
+openDoc() {
+  cd ${EPICS_APPS}/hw-xenon1900/docs
+  atril ics_inv.pdf&
+
+}
+runAll() {
+  openDoc
+  css &> css_log &
+  runInventory
+}
