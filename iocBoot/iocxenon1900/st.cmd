@@ -5,7 +5,7 @@
 
 < envPaths
 
-epicsEnvSet("EPICS_CAS_INTF_ADDR_LIST" "10.4.8.18")
+#epicsEnvSet("EPICS_CAS_INTF_ADDR_LIST" "10.4.8.18")
 
 epicsEnvSet("STREAM_PROTOCOL_PATH", ".:${TOP}/db")
 epicsEnvSet("TTY","$(TTY=/dev/ttyACM0)")
